@@ -1,0 +1,29 @@
+@extends('layouts.store')
+@section('title', 'Order received')
+@section('content')<div class="container confirmation-page">
+        <div class="confirmation-icon"><x-icon name="check" width="40" height="40" /></div><span class="eyebrow muted">A
+            GOOD FIND IS ON ITS WAY</span>
+        <h1>It’s yours, {{ explode(' ', $order->customer_name)[0] }}<span>.</span></h1>
+        <p>Your order has been received. Our team will contact you to confirm the details.</p>
+        @if($whatsappUrl)
+            <x-whatsapp-order :url="$whatsappUrl" :auto-open="$autoOpenWhatsApp" />
+        @endif
+        <div class="confirmation-card">
+            <div class="section-heading">
+                <div><small class="muted">ORDER NUMBER</small>
+                    <h2>{{ $order->number }}</h2>
+                </div><span class="status-badge status-{{ $order->status }}">{{ ucfirst($order->status) }}</span>
+            </div>
+            @foreach ($order->items as $item)
+                <div class="summary-row"><span>{{ $item->name }}{{ $item->color ? ' · ' . $item->color : '' }} ×
+                        {{ $item->quantity }}</span><strong>${{ number_format(($item->price_cents * $item->quantity) / 100, 2) }}</strong>
+                </div>
+            @endforeach
+            <div class="summary-row">
+                <span>Delivery{{ $order->delivery_area ? ' · ' . $order->delivery_area : '' }}</span><strong>${{ number_format($order->delivery_cents / 100, 2) }}</strong>
+            </div>
+            <div class="summary-row total"><strong>Total · Cash on
+                    delivery</strong><strong>${{ number_format($order->total_cents / 100, 2) }}</strong></div>
+            <p class="muted">Deliver to {{ $order->address }}</p>
+        </div><a class="button button-dark" href="{{ route('shop') }}">Keep exploring <x-icon name="arrow" /></a>
+</div>@endsection
