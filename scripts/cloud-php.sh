@@ -4,9 +4,9 @@
 set -euo pipefail
 mesh_runtime=/workspace/.runtime
 if ! command -v php >/dev/null 2>&1; then
-  if [ ! -x "$mesh_runtime/php/usr/bin/php8.4" ]; then
+  if [ ! -x "$mesh_runtime/php/usr/bin/php8.4" ] || [ ! -f "$mesh_runtime/php/usr/lib/php/20240924/pdo_mysql.so" ]; then
     if [ ! -f /etc/debian_version ] || ! command -v dpkg-deb >/dev/null; then
-      printf '%s\n' 'Install PHP 8.2+ with PDO, SQLite or MySQL, GD, mbstring, XML, cURL, ZIP, and fileinfo.' >&2
+      printf '%s\n' 'Install PHP 8.2+ with PDO MySQL, GD, mbstring, XML, cURL, ZIP, and fileinfo.' >&2
       return 1
     fi
     mkdir -p "$mesh_runtime/apt/lists/partial" "$mesh_runtime/apt/cache/archives/partial" "$mesh_runtime/php" "$mesh_runtime/bin"
@@ -18,7 +18,7 @@ EOF
     /usr/bin/apt-get "${mesh_apt[@]}" update
     (
       cd "$mesh_runtime/apt/cache/archives"
-      /usr/bin/apt-get "${mesh_apt[@]}" download php8.4-cli php8.4-common php8.4-sqlite3 php8.4-mbstring php8.4-xml php8.4-gd php8.4-curl php8.4-zip php8.4-opcache libxml2 libsqlite3-0 libonig5 libsodium23 libargon2-1 libpcre2-8-0 libssl3t64 libcurl4t64 libgd3 libzip5
+      /usr/bin/apt-get "${mesh_apt[@]}" download php8.4-cli php8.4-common php8.4-sqlite3 php8.4-mysql php8.4-mbstring php8.4-xml php8.4-gd php8.4-curl php8.4-zip php8.4-opcache libxml2 libsqlite3-0 libonig5 libsodium23 libargon2-1 libpcre2-8-0 libssl3t64 libcurl4t64 libgd3 libzip5
       for mesh_package in ./*.deb; do dpkg-deb -x "$mesh_package" "$mesh_runtime/php"; done
     )
   fi
@@ -34,6 +34,9 @@ extension=gd
 extension=iconv
 extension=mbstring
 extension=pdo
+extension=mysqlnd
+extension=pdo_mysql
+extension=mysqli
 extension=pdo_sqlite
 extension=sqlite3
 extension=tokenizer

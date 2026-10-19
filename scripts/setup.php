@@ -11,7 +11,7 @@ if (PHP_VERSION_ID < 80200) {
 }
 
 $missing = array_values(array_filter(
-    ['ctype', 'dom', 'fileinfo', 'gd', 'mbstring', 'pdo', 'xml', 'xmlwriter'],
+    ['ctype', 'dom', 'fileinfo', 'gd', 'mbstring', 'pdo', 'pdo_mysql', 'xml', 'xmlwriter'],
     fn ($extension) => ! extension_loaded($extension)
 ));
 if ($missing || ! function_exists('imagewebp')) {
@@ -49,15 +49,16 @@ $run = function (string $command, array $arguments = []) use ($kernel): void {
 if (! config('app.key')) {
     $run('key:generate', ['--force' => true]);
 }
-if (config('database.default') === 'sqlite') {
-    if (! extension_loaded('pdo_sqlite')) {
-        fwrite(STDERR, "Enable pdo_sqlite in your active php.ini, then rerun setup.\n");
-        exit(1);
-    }
-    $database = config('database.connections.sqlite.database');
-    if ($database !== ':memory:' && ! file_exists($database) && ! touch($database)) {
-        throw new RuntimeException('Could not create the SQLite database.');
-    }
+if (config('database.default') !== 'mysql') {
+    fwrite(STDERR, "This shop uses MySQL. Preserve your existing database, configure DB_CONNECTION=mysql in .env, and create the database in phpMyAdmin or follow docs/WINDOWS-SETUP.md.\n");
+    exit(1);
+}
+try {
+    $app['db']->connection()->getPdo();
+} catch (Throwable $exception) {
+    // Avoid exposing a connection string or credentials in setup diagnostics.
+    fwrite(STDERR, "Cannot connect to MySQL. Start MySQL, create the database, check DB_* in .env, and run php artisan config:clear. See docs/WINDOWS-SETUP.md.\n");
+    exit(1);
 }
 
 $run('migrate', ['--force' => true]);

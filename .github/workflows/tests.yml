@@ -20,7 +20,32 @@ jobs:
       matrix:
         php: [8.2, 8.3, 8.4]
 
-    name: PHP ${{ matrix.php }}
+    name: PHP ${{ matrix.php }} / MySQL 8.4
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ci_root_password
+          MYSQL_DATABASE: ecommerce_shop
+          MYSQL_USER: mesh
+          MYSQL_PASSWORD: ci_app_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --host=127.0.0.1 --silent"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
+
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: ecommerce_shop_test
+      DB_USERNAME: mesh
+      DB_PASSWORD: ci_app_password
+      DB_URL: ''
 
     steps:
       - name: Checkout code
@@ -30,10 +55,24 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, exif, fileinfo
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_mysql, gd, exif, fileinfo
           coverage: none
 
+      - name: Prepare isolated test databases
+        env:
+          MYSQL_PWD: ci_root_password
+          MYSQL_CONTAINER: ${{ job.services.mysql.id }}
+        run: |
+          docker exec -i -e MYSQL_PWD "$MYSQL_CONTAINER" mysql --user=root <<'SQL'
+          CREATE DATABASE ecommerce_shop_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+          CREATE DATABASE ecommerce_shop_race_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+          GRANT ALL PRIVILEGES ON ecommerce_shop_test.* TO 'mesh'@'%';
+          GRANT ALL PRIVILEGES ON ecommerce_shop_race_test.* TO 'mesh'@'%';
+          SQL
+
       - name: Install dependencies and prepare a clean checkout
+        env:
+          DB_DATABASE: ecommerce_shop
         run: php scripts/setup.php
 
       - name: Execute tests

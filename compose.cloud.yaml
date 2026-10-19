@@ -1,0 +1,6 @@
+# Keep cloud MySQL files inside the snapshotted workspace. Local Windows users
+# should use compose.yaml alone, which uses a Docker-managed named volume.
+services:
+  mysql:
+    volumes:
+      - /workspace/.runtime/mysql-data:/var/lib/mysql

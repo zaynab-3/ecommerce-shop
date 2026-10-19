@@ -6,17 +6,18 @@ Screenshots: [desktop storefront](docs/screenshots/storefront-desktop.png) · [m
 
 ## Start here
 
-On Windows, follow the [PowerShell installation and manual test guide](docs/WINDOWS-SETUP.md). With PHP 8.2+ and Composer already installed, the portable setup command is `php scripts/setup.php`.
+The database is **MySQL 8.4**, with **phpMyAdmin** for database management. Laravel connects directly to MySQL. On Windows, follow the [PowerShell installation and manual test guide](docs/WINDOWS-SETUP.md), including the existing-server option if you already have MySQL/phpMyAdmin. The bundled Docker services require Docker Desktop/Engine with Compose.
 
 ```bash
 cd /workspace/ecommerce-shop
+bash scripts/cloud-database.sh  # starts MySQL + phpMyAdmin; preserves private configuration
 bash scripts/setup.sh
 source scripts/cloud-php.sh   # activates the local PHP/Composer runtime when needed
 php artisan db:seed --class=DemoCatalogSeeder  # optional demonstration products
 bash scripts/dev.sh
 ```
 
-The development server listens on port 8000 (`PORT` overrides it). `scripts/setup.sh` is repeatable: it preserves `.env`, the application key, catalog edits, order data, and existing accounts. It installs locked Composer dependencies, runs forward migrations, adds missing Lebanon delivery areas, links image storage, and compiles Blade views. It never seeds a default password. The Debian 13 cloud fallback installs a user-local PHP 8.4 runtime under `/workspace/.runtime` with verified APT metadata. On other machines, install PHP 8.2+ and the extensions below normally.
+The development server listens on port 8000 (`PORT` overrides it). The cloud database script uses `compose.cloud.yaml` to retain database files under `/workspace/.runtime/mysql-data`; it must run again after a task restart. On your own machine use `php scripts/local-database.php`, `docker compose up -d --wait`, then `php scripts/setup.php`. phpMyAdmin is on local port 8081; sign in with `DB_USERNAME` and `DB_PASSWORD` from your private `.env`. Both database services bind only to loopback. `scripts/setup.sh` is repeatable: it preserves `.env`, the application key, catalog edits, order data, and existing accounts. It installs locked Composer dependencies, runs forward migrations, adds missing Lebanon delivery areas, links image storage, and compiles Blade views. It never seeds a default password. The Debian 13 cloud fallback installs a user-local PHP 8.4 runtime under `/workspace/.runtime` with verified APT metadata. On other machines, install PHP 8.2+ and the extensions below normally.
 
 Create an owner securely:
 
@@ -58,7 +59,7 @@ The web server must restart when a cloud task or server restarts. See [deploymen
 | Shared UI | `resources/views/components/`, `resources/views/layouts/` |
 | Stock rules | `app/Models/Product.php` |
 | Cart and checkout | `app/Services/CartService.php`, `app/Services/CheckoutService.php` |
-| SQLite transaction retries | `app/Services/TransactionService.php` |
+| Database transactions and deadlock retries | `app/Services/TransactionService.php` |
 | Order transitions and restocking | `app/Services/OrderStatusService.php` |
 | Image conversion | `app/Services/ImageService.php` |
 | Admin features | `app/Http/Controllers/Admin/`, `resources/views/admin/` |
@@ -84,7 +85,7 @@ composer audit
 
 The feature suite exercises stock thresholds, oversell rejection, color ownership, duplicate checkout, cancellation, private order access, admin role restrictions, image processing, escaping, delivery pricing, polling, and WhatsApp message generation and handoff behavior. Tests verify the recipient, complete encoded order text, the enabled/disabled switch, and one-time automatic opening. Browser checks intercept the external WhatsApp navigation; no message is sent during testing.
 
-The separate race check runs ten PHP processes against an isolated temporary SQLite database with three units: exactly three orders should succeed and seven should report sold out. It leaves the development database untouched.
+The suite uses the separate MySQL database in `.env.testing` (`ecommerce_shop_test` by default); the race check uses `ecommerce_shop_race_test`. The local Docker initialization creates both and grants the application user access. Tests refuse non-MySQL databases, cached configuration, or names without a `_test` suffix before resetting tables. The race releases ten PHP processes together for three units: exactly three orders should succeed and seven should report sold out. It drops its test tables afterward and leaves the shop database untouched. Do not run two test suites/races against the same test database concurrently.
 
 Read-only local load smoke checks:
 

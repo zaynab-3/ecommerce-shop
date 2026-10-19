@@ -20,7 +20,9 @@ ADMIN_PATH=choose-a-private-route
 
 Create and retain a unique `APP_KEY` securely. Do not rotate it during routine deployments. Preserve private database credentials outside source control. WhatsApp checkout only needs the phone number in admin Store settings; it has no API credentials.
 
-For substantial concurrency and a large catalog, use MySQL 8+/MariaDB or PostgreSQL and shared Redis cache and sessions. Install the appropriate PDO driver and Redis extension or supported client. The local runtime currently supplies SQLite, and the test suite was run against SQLite; the production database and Redis configuration must be verified on the target infrastructure before launch. Local SQLite uses WAL and a busy timeout. Laravel honors immediate transactions on PHP 8.4+; checkout and fulfillment also use bounded retries for SQLite lock conflicts, including PHP 8.2/8.3 deferred transactions. The guarded stock update and transaction service also use row locks where supported.
+Use MySQL 8.4 with `pdo_mysql`; it is the configured default and the database exercised by the feature suite and synchronized checkout race. Configure a dedicated application database/user and least-privilege access on the target server. For multiple web servers or substantial traffic, use shared Redis cache and sessions, with the appropriate extension or supported client. Checkout uses transactions, row locks, guarded stock decrements, and deadlock retries. Verify the production database, Redis, PHP-FPM, backups, and capacity on the target infrastructure before launch.
+
+The bundled Compose stack is for development. MySQL and phpMyAdmin bind to loopback, and phpMyAdmin requires login. Do not expose phpMyAdmin publicly or deploy development/root database passwords. On production keep the app user confined to the shop database; the `_test` and `_race_test` databases and their destructive test permissions belong only on development/CI servers.
 
 ## Deploy process
 

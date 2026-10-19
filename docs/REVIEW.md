@@ -20,3 +20,7 @@ Reviewed the custom controllers, services, models, middleware, database schema/s
 See [validation results](VALIDATION.md) for the executed checks, and [Windows setup](WINDOWS-SETUP.md) for download, startup, and manual tests. Credentials, local SQLite data, caches, vendor files, and local owner passwords remain excluded from Git.
 
 The production boundaries remain documented: configure the real business details and policies, use an appropriate production PHP/database/cache deployment, and test against representative catalog/traffic sizes. Stock display uses polling; checkout performs immediate transactional validation. WhatsApp opens a prefilled message and the customer taps Send; the site cannot confirm that the customer sent it. Payments are cash on delivery and stock is tracked at product level, shared across colors.
+
+## MySQL and phpMyAdmin correction
+
+MySQL is now the environment/example default, and the portable setup requires `pdo_mysql`. The bundled local stack supplies MySQL 8.4 and phpMyAdmin; the cloud override retains database files inside the workspace. Generated local passwords stay in ignored configuration. The feature suite, deadlock rollback checks, and synchronized stock race run against isolated MySQL test databases. CI uses MySQL across PHP 8.2, 8.3, and 8.4. Tests reject an unsafe database name before resetting tables. The Windows guide covers the bundled services and an existing MySQL/phpMyAdmin server. Earlier SQLite notes above describe the previous setup, not the current database choice.

@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 use PDOException;
 use Tests\TestCase;
 
-class SqliteTransactionTest extends TestCase
+class TransactionTest extends TestCase
 {
     use DatabaseMigrations;
 
@@ -20,7 +20,7 @@ class SqliteTransactionTest extends TestCase
             $attempts++;
             $setting = StoreSetting::create(['store_name' => 'Attempt '.$attempts]);
             if ($attempts === 1) {
-                throw new PDOException('database is locked');
+                throw new PDOException('Deadlock found when trying to get lock; try restarting transaction', 40001);
             }
 
             return $setting;

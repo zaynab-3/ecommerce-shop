@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run 10 independent checkout processes competing for 3 units in a temporary SQLite database."""
+"""Run 10 independent checkouts for 3 units in the dedicated MySQL *_race_test database."""
 import json
 import os
 import subprocess
@@ -10,12 +10,10 @@ from pathlib import Path
 
 root = Path(__file__).resolve().parent.parent
 with tempfile.TemporaryDirectory(prefix='mesh-stock-race-') as temporary:
-    database = Path(temporary) / 'test.sqlite'
-    database.touch()
     ready_directory = Path(temporary) / 'ready'
     ready_directory.mkdir()
     start_file = Path(temporary) / 'start'
-    environment = dict(os.environ, APP_ENV='testing', DB_CONNECTION='sqlite', DB_DATABASE=str(database),
+    environment = dict(os.environ, APP_ENV='testing', DB_CONNECTION='mysql', DB_URL='',
                        CACHE_STORE='array', QUEUE_CONNECTION='sync', SESSION_DRIVER='array',
                        MESH_RACE_READY_DIR=str(ready_directory), MESH_RACE_START_FILE=str(start_file))
 
@@ -30,21 +28,24 @@ with tempfile.TemporaryDirectory(prefix='mesh-stock-race-') as temporary:
             raise RuntimeError(f'PHP worker exited with {result.returncode}:\n{detail}')
         return result.stdout.strip()
 
-    run('artisan', 'migrate', '--force')
-    run('tests/Support/stock-race-worker.php', 'init')
-    with ThreadPoolExecutor(max_workers=10) as pool:
-        futures = [pool.submit(run, 'tests/Support/stock-race-worker.php', f'worker-{i}') for i in range(10)]
-        deadline = time.monotonic() + 15
-        while len(list(ready_directory.iterdir())) < 10 and time.monotonic() < deadline:
-            if any(future.done() for future in futures):
-                break
-            time.sleep(.01)
-        ready_count = len(list(ready_directory.iterdir()))
-        start_file.touch()  # Release every initialized worker together, including on failure.
-        outcomes = [future.result() for future in futures]
-        assert ready_count == 10, f'Only {ready_count}/10 workers reached the start barrier.'
-    result = json.loads(run('tests/Support/stock-race-worker.php', 'check'))
-    assert outcomes.count('placed') == 3, outcomes
-    assert outcomes.count('sold_out') == 7, outcomes
-    assert result == {'quantity': 0, 'orders': 3, 'ordered_units': 3}, result
-    print('PASS: 10 concurrent checkouts; exactly 3 orders, 7 sold-out responses, zero remaining stock.')
+    environment['DB_DATABASE'] = run('tests/Support/stock-race-worker.php', 'database')
+    try:
+        run('tests/Support/stock-race-worker.php', 'init')
+        with ThreadPoolExecutor(max_workers=10) as pool:
+            futures = [pool.submit(run, 'tests/Support/stock-race-worker.php', f'worker-{i}') for i in range(10)]
+            deadline = time.monotonic() + 15
+            while len(list(ready_directory.iterdir())) < 10 and time.monotonic() < deadline:
+                if any(future.done() for future in futures):
+                    break
+                time.sleep(.01)
+            ready_count = len(list(ready_directory.iterdir()))
+            start_file.touch()  # Release every initialized worker together, including on failure.
+            outcomes = [future.result() for future in futures]
+            assert ready_count == 10, f'Only {ready_count}/10 workers reached the start barrier.'
+        result = json.loads(run('tests/Support/stock-race-worker.php', 'check'))
+        assert outcomes.count('placed') == 3, outcomes
+        assert outcomes.count('sold_out') == 7, outcomes
+        assert result == {'quantity': 0, 'orders': 3, 'ordered_units': 3}, result
+        print('PASS (MySQL): 10 concurrent checkouts; exactly 3 orders, 7 sold-out responses, zero remaining stock.')
+    finally:
+        run('tests/Support/stock-race-worker.php', 'cleanup')
