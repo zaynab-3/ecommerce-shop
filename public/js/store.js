@@ -13,3 +13,4 @@ import "./store/header.js";
 import "./store/cart.js";
 import "./store/favorites.js";
 import "./store/card-colors.js";
+import "./store/category-navigation.js";

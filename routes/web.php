@@ -27,7 +27,7 @@ Route::post('/saved/{product}', [StorefrontController::class, 'save'])->middlewa
 Route::get('/cart', [CartController::class, 'index'])->block(10, 10)->name('cart.index');
 Route::post('/cart/{product}', [CartController::class, 'add'])->middleware(['throttle:cart', 'Illuminate\Session\Middleware\AuthenticateSession'])->block(10, 10)->name('cart.add');
 Route::patch('/cart/{key}', [CartController::class, 'update'])->middleware('throttle:cart')->block(10, 10)->name('cart.update');
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::get('/checkout', [CheckoutController::class, 'index'])->block(10, 10)->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->block(15, 15)->name('checkout.store');
 Route::get('/orders/{order:public_id}', [CheckoutController::class, 'confirmation'])->name('orders.confirmation');
 Route::view('/help', 'store.help')->name('help');

@@ -15,8 +15,11 @@
     color: var(--store-text);
     overflow: hidden;
 }
-.mobile-navigation[open] { display: flex; flex-direction: column; animation: drawer-enter .22s ease-out; }
-.mobile-navigation::backdrop { background: #000; }
+.mobile-navigation[open] { display: flex; flex-direction: column; animation: drawer-enter .42s cubic-bezier(.22,1,.36,1); }
+.mobile-navigation::backdrop { background: rgb(0 0 0 / .08); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: drawer-backdrop-enter .42s ease both; }
+.mobile-navigation.is-closing::backdrop { animation: drawer-backdrop-leave .32s ease both; }
+@keyframes drawer-backdrop-enter { from { opacity: 0; } to { opacity: 1; } }
+@keyframes drawer-backdrop-leave { to { opacity: 0; } }
 html.has-mobile-navigation { overflow: hidden; overscroll-behavior: none; }
 .drawer-header { display: flex; align-items: center; justify-content: space-between; flex: 0 0 auto; gap: 16px; padding: 24px 20px 20px; }
 .drawer-header .logo { min-width: 0; font-size: 31px; overflow-wrap: anywhere; }
@@ -31,4 +34,4 @@ html.has-mobile-navigation { overflow: hidden; overscroll-behavior: none; }
 .drawer-cart-count { margin-left: auto; color: #fff; background: #000; padding: 0 8px; border-radius: 20px; font-size: 13px; }
 .drawer-help { color: #000; }
 @keyframes drawer-enter { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-@media (prefers-reduced-motion: reduce) { .mobile-navigation[open] { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .mobile-navigation[open], .mobile-navigation::backdrop, .mobile-navigation.is-closing::backdrop { animation: none; } }

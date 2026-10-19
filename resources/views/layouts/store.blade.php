@@ -52,6 +52,7 @@
     <main id="main">
         <x-flash />@yield('content')
     </main>
+    @unless(View::hasSection('hide-footer'))
     <section class="benefits">
         <div class="container benefits-grid">
             <div><x-icon name="truck" /><span><strong>Delivery in Lebanon</strong><small>Delivery to selected
@@ -83,6 +84,7 @@
                 {{ \App\Models\StoreSetting::current()->store_name }}. All rights reserved.</span><a
                 href="{{ route('help') }}#privacy">Privacy & terms</a><span>Lebanon · USD $</span></div>
     </footer>
+    @endunless
 </body>
 
 </html>

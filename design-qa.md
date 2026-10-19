@@ -28,14 +28,14 @@ Real Chromium captures use one image pixel per CSS pixel, excluding browser chro
 - P1 resolved: Mobile menu expanded inline and crowded navigation links. Replaced it with a native modal side drawer, separate close control, backdrop dismissal, Escape dismissal, background scroll locking, inert background controls, focus restoration, and desktop-resize cleanup. Links are stacked with comfortable touch spacing. Shared Blade links keep mobile and desktop destinations consistent.
 - P1 resolved: Open quantity showed irrelevant tracked-stock fields. Quantity and threshold are hidden and disabled in open mode; the manual status is visible. Tracked mode shows numeric fields and hides manual status. Values survive switching modes, and the required manual value remains submitted for backend compatibility. Existing open-stock products render correctly before JS initialization.
 - P1 resolved: Old colors leaked into quick stock and visibility controls. Reworked the controls with the same accent/black/white palette and explicit text labels. Theme tokens cannot introduce lighter/darker accent shades. A real saved purple accent was checked across the shop and admin product list, then restored.
-- P1 resolved during visual QA: Some admin inputs inherited black text on their new black surface. Added explicit white input/select/textarea text and verified the selected mode and entered values are visible.
+- P1 resolved during visual QA: Some admin inputs inherited black text on their new black surface. The latest requested revision uses white input/select/textarea surfaces with black text throughout, with simple form underlines and no framed cards.
 - P2 resolved: The role explainer and decorative admin introductions added clutter. Removed them, shortened empty states and shortcuts, and retained actual order metadata, essential constraints, and validation errors. Role permissions are unchanged.
 - P2 resolved: Tinting selected gallery thumbnails changed the appearance of product colors. Selection now uses a small accent marker under a white thumbnail; product colors remain intact.
 - Prior fixes retained: readable typography, aligned card actions, mobile category/subcategory filtering, sticky desktop categories, duplicate stock-action updates, short-screen admin navigation, and safe expired-login recovery with CSRF still enforced.
 
 ## Shopping interaction revision
 
-- Full-screen cart sheet animates upward on open and downward on close, with focus management, scroll locking, and background scroll restoration. Cart content loads only when needed; quantities, removal, delivery selection, prices, and totals use server-validated JSON/HTML snapshots.
+- Rounded 90%-height cart/checkout sheet animates upward on open and downward on close, with focus management, scroll locking, and background scroll restoration. Cart content loads only when needed; quantities, removal, delivery selection, prices, and totals use server-validated JSON/HTML snapshots.
 - Search opens in a centered dialog. The borderless hamburger uses a staggered two-line icon and retains the side drawer. The sticky store header slides away when scrolling down and returns after a small upward movement.
 - Add-to-cart and favorite actions update without navigation or resetting page scroll. Every card color, including a single color, has a selectable control below the price. Choosing a color updates its linked image and submitted color ID. Card prices use an aligned row, and hearts remain unframed.
 - All notifications use top-right toasts with a five-second lifetime. Main product/settings save actions sit in the sticky admin header and submit the associated form.
@@ -50,8 +50,20 @@ Additional captures: [cart modal](docs/screenshots/cart-modal-mobile.png), [sear
 - Drawer checks at 320, 393, and 600px widths and a 320px-high window: no page layout shift; keyboard focus cannot enter background page controls; close button, Escape, backdrop, link navigation, search interaction, and desktop resize all passed. Native browser chrome remains accessible with the keyboard.
 - Tracked/open stock checks on create and existing-product forms: visibility, required state, disabled state, FormData omission, manual-status submission, and readable selected values passed.
 - Actual authenticated owner color save: the visible shop/admin product-list CSS palette contained only accent, black, white, and transparent. Original settings were restored.
-- MySQL feature suite: **60 tests / 441 assertions**, including palette constraints, contrast, color validation, role authorization, stock behavior, and stale-login recovery.
+- MySQL feature suite: **62 tests / 492 assertions**, including palette constraints, contrast, color validation, role authorization, stock behavior, and stale-login recovery.
 - The final interaction flow passed in real mobile Chromium: selected-color cart data, asynchronous cart/favorites, quantity/delivery updates, preserved scroll, toast expiry, centered search, header motion, category navigation, top save actions, and actual SVG upload/render/cleanup. Composer audit reports no advisories.
 - Blade and route compilation, PHP/JavaScript syntax, and whitespace checks passed. Final rendered comparisons were visually inspected together. No unresolved P0, P1, or P2 findings remain within this scope.
 
 Native Windows, iOS Safari, and Android devices are not available in the cloud environment; responsive checks use Chromium at the stated sizes. Data-heavy admin tables retain horizontal scrolling within their own region. No WhatsApp message was sent during verification. See [validation notes](docs/VALIDATION.md) for infrastructure limits and earlier MySQL checkout-race results.
+
+
+## Combined cart and checkout refinement
+
+- Cards use an unframed cart icon at the bottom of the photo, matching the favorite action at the top. Quantity changes and removal use accessible icon controls; async requests retain entered checkout details.
+- The cart sheet leaves 10% of the underlying page visible, has rounded top corners, and includes checkout and confirmation without the website footer. Email is removed; +961 is fixed beside a formatted Lebanese national-number field. Server validation stores canonical international numbers.
+- Controls have white surfaces and black text. Notes keep “(optional)” at the end of their label. Confirmation check and order-status badge use the owner-selected accent with a readable black/white label.
+- Category navigation hides its scrollbar and centers the active category, including edge categories. All phone scrollbars are hidden while scrolling remains available.
+- The drawer replaces its opaque black backdrop with a light blur and slower eased opening/closing. Cart/search use the same light backdrop treatment; reduced-motion preferences are respected.
+- Visual QA found and corrected an initially blank status badge on the immediate JSON receipt: new orders now refresh database defaults before rendering. Receipt coverage asserts the Pending label.
+
+Current captures: [cart and checkout, phone](docs/screenshots/cart-modal-mobile.png), [desktop](docs/screenshots/cart-modal-desktop.png), [checkout fields](docs/screenshots/checkout-modal-mobile.png), [confirmation](docs/screenshots/confirmation-modal-mobile.png), [soft drawer](docs/screenshots/mobile-navigation.png). Five modal widths and the 111-page viewport pass completed without overflow or JavaScript errors. A real checkout was exercised and its temporary QA order deleted.

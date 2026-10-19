@@ -61,21 +61,21 @@ a, button, summary { touch-action: manipulation; }
 .color-option > span { border: 0; background: #fff; border-radius: 999px; }
 .color-option input:checked + span { background: #000; color: #fff; }
 .color-option input:checked + span span { color: #fff; }
-.quantity-control { background: #000; border-radius: 999px; border: 0; }
-.quantity-control button, .quantity-control input { background: #000; color: #fff; }
+.quantity-control { background: #fff; border-radius: 999px; border: 0; }
+.quantity-control button, .quantity-control input { background: #fff; color: #000; }
 .add-bag, .buy-now, .product-whatsapp { min-height: 52px; font-family: StoreSans, Arial, sans-serif; font-size: 16px; text-transform: none; letter-spacing: 0; font-weight: 600; border-radius: 999px; }
 .product-whatsapp { background: #000; color: #fff; border: 0; }
 .product-whatsapp:hover { background: #000; }
 .product-disclosure { border: 0; }
 .product-disclosure summary { padding-block: 18px; }
-.field input:not([type=checkbox]):not([type=radio]), .field select, .field textarea { background: #000; color: #fff; border: 0; border-radius: 12px; min-height: 46px; }
-.field input::placeholder, .field textarea::placeholder { color: #fff; opacity: 1; }
-.field option { background: #000; color: #fff; }
+.field input:not([type=checkbox]):not([type=radio]), .field select, .field textarea { background: #fff; color: #000; border: 0; border-bottom: 1px solid #000 !important; border-radius: 0; min-height: 46px; }
+.field input::placeholder, .field textarea::placeholder { color: #000; opacity: 1; }
+.field option, .field optgroup { background: #fff; color: #000; }
 .order-summary, .form-card, .payment-option, .whatsapp-handoff { background: #fff; border: 0; }
 .order-summary { padding-inline: 0; }
 .notice.success, .notice.error { border: 0; background: #000; color: #fff; border-radius: 12px; }
 .notice.success a, .notice.error a { color: #fff; }
-.step-number, .confirmation-icon { background: #000; color: #fff; }
+.step-number, .confirmation-icon { background: var(--store-accent); color: var(--store-on-accent); }
 @media (max-width: 600px) {
     .product-grid { gap: 28px 16px; }
     .product-card h3 { font-size: 16px; line-height: 1.5; letter-spacing: -.35px; }
@@ -106,9 +106,9 @@ a, button, summary { touch-action: manipulation; }
 .panel-heading { border: 0; padding-inline: 0; }
 .form-panel .panel-heading { border: 0; }
 .form-panel { padding: 24px; }
-.admin-search { background: #000; color: #fff; border: 0; border-radius: 999px; }
-.admin-search .icon, .admin-search input, .admin-search input::placeholder { color: #fff; }
-.admin-search input { background: transparent; }
+.admin-search { background: #fff; color: #000; border: 0; border-radius: 999px; }
+.admin-search .icon, .admin-search input, .admin-search input::placeholder { color: #000; }
+.admin-search input { background: #fff; }
 .admin-search button { background: var(--store-accent); color: var(--store-on-accent); border-radius: 999px; padding-inline: 16px; }
 th { background: #fff; font-weight: 600; }
 td { border: 0; padding-block: 22px; }
@@ -116,11 +116,11 @@ td { border: 0; padding-block: 22px; }
 .table-product strong { color: #000; }
 .quantity-quick { gap: 6px; }
 .quantity-quick > strong { font-size: 22px; }
-.quantity-quick form { background: #000; border-radius: 999px; padding: 4px; gap: 4px; }
-.quantity-quick input { background: #000; color: #fff; border: 0; border-radius: 999px; min-height: 44px; width: 60px; padding-inline: 8px; }
+.quantity-quick form { background: #fff; border-radius: 999px; padding: 4px; gap: 4px; }
+.quantity-quick input { background: #fff; color: #000; border: 0; border-radius: 999px; min-height: 44px; width: 60px; padding-inline: 8px; }
 .quantity-quick button, .inline-form button { background: var(--store-accent); color: var(--store-on-accent); border-radius: 999px; min-height: 44px; padding: 8px 14px; }
-.inline-form select, .order-filters select { background: #000; color: #fff; border: 0; border-radius: 999px; padding: 8px 12px; max-width: 140px; }
-.inline-form option { background: #000; color: #fff; }
+.inline-form select, .order-filters select { background: #fff; color: #000; border: 0; border-radius: 999px; padding: 8px 12px; max-width: 140px; }
+.inline-form option { background: #fff; color: #000; }
 .visibility-toggle, .visibility-toggle.on { background: #000; color: #fff; border-radius: 999px; padding: 8px 12px; min-height: 44px; gap: 10px; }
 .visibility-toggle > span { background: #fff; width: 30px; height: 18px; }
 .visibility-toggle > span:after { background: #000; width: 14px; height: 14px; left: 2px; top: 2px; }
@@ -141,9 +141,9 @@ td { border: 0; padding-block: 22px; }
 .gallery-thumb.selected { background: #fff; }
 .gallery-thumb.selected::after { content: ''; position: absolute; bottom: 2px; left: calc(50% - 10px); width: 20px; height: 4px; background: var(--store-accent); border-radius: 4px; }
 .admin-main .field input, .admin-main .field select, .admin-main .field textarea,
-.login-card .field input { background: #000; color: #fff; }
+.login-card .field input { background: #fff; color: #000; }
 .admin-main .field input::placeholder, .admin-main .field textarea::placeholder,
-.login-card .field input::placeholder { color: #fff; }
+.login-card .field input::placeholder { color: #000; }
 input[type=number] { appearance: textfield; }
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }

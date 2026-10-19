@@ -184,6 +184,46 @@ class ShopTest extends TestCase
         $this->getJson('/stock?ids[]='.$p->id)->assertOk()->assertHeaderMissing('Set-Cookie')->assertJsonPath('0.id', $p->id);
     }
 
+    public function test_cart_contains_checkout_and_creates_one_order_with_a_normalized_lebanese_phone(): void
+    {
+        $p = $this->product(['quantity' => 3]);
+        $data = $this->data();
+        $this->withSession(['cart' => $this->cart($p, 2)])
+            ->getJson(route('cart.index'))->assertOk()->assertSee('data-checkout', false)->assertDontSee('name="email"', false);
+        $data['idempotency_key'] = session('checkout_key');
+        $data['phone'] = '03 123 456';
+        $data['email'] = 'ignored@example.com';
+        $data['subtotal_cents'] = 1;
+        $first = $this->postJson(route('checkout.store'), $data)->assertOk()->assertJsonPath('count', 0)->assertJsonPath('whatsapp_url', null)->assertSee('Pending');
+        $order = Order::firstOrFail();
+        $this->assertSame('+9613123456', $order->phone);
+        $this->assertNull($order->email);
+        $this->assertSame(5300, $order->total_cents);
+        $this->assertSame(1, $p->fresh()->quantity);
+        $this->postJson(route('checkout.store'), $data)->assertOk()->assertJsonPath('confirmation_url', $first->json('confirmation_url'));
+        $this->assertSame(1, Order::count());
+        $this->assertSame(1, $p->fresh()->quantity);
+        $this->assertSame([], session('cart'));
+        $this->get($first->json('confirmation_url'))->assertOk();
+    }
+
+    public function test_checkout_rejects_invalid_phones_without_creating_an_order_or_losing_the_cart(): void
+    {
+        $p = $this->product();
+        $data = $this->data();
+        foreach (['+4470123456', '+4470123', '70 abc 456', '70 1234', '96170123456789', '+961 00 123 456', ['unexpected']] as $phone) {
+            Cache::flush(); // Independent input cases each start with a fresh rate-limit window.
+            $this->withSession(['cart' => $this->cart($p), 'checkout_key' => $data['idempotency_key']])
+                ->postJson(route('checkout.store'), [...$data, 'phone' => $phone])
+                ->assertUnprocessable()->assertJsonValidationErrors('phone')->assertSessionHas('cart.'.$p->id.'-none.quantity', 1);
+        }
+        $this->assertSame(0, Order::count());
+        $this->assertSame(10, $p->fresh()->quantity);
+        foreach (['70 123 456' => '+96170123456', '+961 03 123 456' => '+9613123456', '01 123 456' => '+9611123456', '00961 81 123 456' => '+96181123456'] as $input => $expected) {
+            $this->assertSame($expected, \App\Support\LebanesePhone::normalize($input));
+        }
+    }
+
     public function test_category_svg_upload_is_sanitized_and_served_in_a_sandbox(): void
     {
         Storage::fake('local');

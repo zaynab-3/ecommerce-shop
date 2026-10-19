@@ -3,10 +3,26 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Models\DeliveryZone;
+use App\Models\StoreSetting;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class CartService
 {
+    public function viewData(): array
+    {
+        $lines = $this->lines();
+        $settings = StoreSetting::current();
+        $zones = $settings->delivery_enabled ? DeliveryZone::where('is_active', true)->orderBy('governorate')->orderBy('name')->get() : collect();
+        $selectedZone = $zones->firstWhere('id', (int) session('delivery_zone_id'));
+        if ($lines->isNotEmpty() && (! session('checkout_key') || session('checkout_key') === session('checkout_completed_key'))) {
+            session(['checkout_key' => (string) Str::uuid()]);
+        }
+
+        return ['lines' => $lines, 'subtotal' => $lines->sum('total'), 'settings' => $settings, 'zones' => $zones, 'selectedZone' => $selectedZone];
+    }
+
     public function lines(): Collection
     {
         $cart = session('cart', []);

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\DeliveryZone;
 use App\Models\Product;
-use App\Models\StoreSetting;
 use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -24,23 +23,12 @@ class CartController extends Controller
             return $this->snapshot($cart);
         }
 
-        return view('store.cart', $this->viewData($cart));
-    }
-
-    private function viewData(CartService $cart): array
-    {
-        $settings = StoreSetting::current();
-        $zones = $settings->delivery_enabled ? DeliveryZone::where('is_active', true)->orderBy('governorate')->orderBy('name')->get() : collect();
-        $selectedZone = $zones->firstWhere('id', (int) session('delivery_zone_id'));
-
-        $lines = $cart->lines();
-
-        return ['lines' => $lines, 'subtotal' => $lines->sum('total'), 'settings' => $settings, 'zones' => $zones, 'selectedZone' => $selectedZone];
+        return view('store.cart', $cart->viewData());
     }
 
     private function snapshot(CartService $cart, ?string $message = null)
     {
-        $data = $this->viewData($cart);
+        $data = $cart->viewData();
 
         return response()->json([
             'html' => view('store.partials.cart-content', $data)->render(),

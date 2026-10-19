@@ -16,6 +16,22 @@
             <path d="M8 8V6a4 4 0 0 1 8 0v2" />
         @break
 
+        @case('bag-plus')
+            <path d="M5 7h14l1 14H4L5 7Z" /><path d="M8 8V6a4 4 0 0 1 8 0v2M9 14h6m-3-3v6" />
+        @break
+
+        @case('minus')
+            <path d="M5 12h14" />
+        @break
+
+        @case('plus')
+            <path d="M5 12h14m-7-7v14" />
+        @break
+
+        @case('trash')
+            <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7" />
+        @break
+
         @case('heart')
             <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" />
         @break
