@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import tempfile
+import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -11,17 +12,37 @@ root = Path(__file__).resolve().parent.parent
 with tempfile.TemporaryDirectory(prefix='mesh-stock-race-') as temporary:
     database = Path(temporary) / 'test.sqlite'
     database.touch()
+    ready_directory = Path(temporary) / 'ready'
+    ready_directory.mkdir()
+    start_file = Path(temporary) / 'start'
     environment = dict(os.environ, APP_ENV='testing', DB_CONNECTION='sqlite', DB_DATABASE=str(database),
-                       CACHE_STORE='array', QUEUE_CONNECTION='sync', SESSION_DRIVER='array')
+                       CACHE_STORE='array', QUEUE_CONNECTION='sync', SESSION_DRIVER='array',
+                       MESH_RACE_READY_DIR=str(ready_directory), MESH_RACE_START_FILE=str(start_file))
 
     def run(*arguments):
-        return subprocess.run(['php', *arguments], cwd=root, env=environment, check=True,
-                              capture_output=True, text=True).stdout.strip()
+        result = subprocess.run(['php', *arguments], cwd=root, env=environment,
+                                capture_output=True, text=True)
+        if result.returncode:
+            detail = (result.stdout + '\n' + result.stderr).strip()
+            if os.environ.get('GITHUB_ACTIONS') == 'true':
+                escaped = detail.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                print('::error title=Stock race worker failed::' + escaped, flush=True)
+            raise RuntimeError(f'PHP worker exited with {result.returncode}:\n{detail}')
+        return result.stdout.strip()
 
     run('artisan', 'migrate', '--force')
     run('tests/Support/stock-race-worker.php', 'init')
     with ThreadPoolExecutor(max_workers=10) as pool:
-        outcomes = list(pool.map(lambda _: run('tests/Support/stock-race-worker.php'), range(10)))
+        futures = [pool.submit(run, 'tests/Support/stock-race-worker.php', f'worker-{i}') for i in range(10)]
+        deadline = time.monotonic() + 15
+        while len(list(ready_directory.iterdir())) < 10 and time.monotonic() < deadline:
+            if any(future.done() for future in futures):
+                break
+            time.sleep(.01)
+        ready_count = len(list(ready_directory.iterdir()))
+        start_file.touch()  # Release every initialized worker together, including on failure.
+        outcomes = [future.result() for future in futures]
+        assert ready_count == 10, f'Only {ready_count}/10 workers reached the start barrier.'
     result = json.loads(run('tests/Support/stock-race-worker.php', 'check'))
     assert outcomes.count('placed') == 3, outcomes
     assert outcomes.count('sold_out') == 7, outcomes

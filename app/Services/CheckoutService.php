@@ -14,7 +14,7 @@ class CheckoutService
 {
     public function place(array $data, array $cart): Order
     {
-        return DB::transaction(function () use ($data, $cart) {
+        return app(TransactionService::class)->run(function () use ($data, $cart) {
             if ($existing = Order::where('idempotency_key', $data['idempotency_key'])->first()) {
                 return $existing;
             }
@@ -69,6 +69,6 @@ class CheckoutService
             $order->items()->createMany($rows);
 
             return $order;
-        }, 5);
+        });
     }
 }

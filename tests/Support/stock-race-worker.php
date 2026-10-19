@@ -27,9 +27,22 @@ if (($argv[1] ?? '') === 'check') {
     echo json_encode(['quantity' => Product::firstOrFail()->quantity, 'orders' => Order::count(), 'ordered_units' => OrderItem::sum('quantity')]);
     exit(0);
 }
+if (getenv('MESH_RACE_READY_DIR') && preg_match('/^worker-[0-9]+$/', $argv[1] ?? '')) {
+    file_put_contents(getenv('MESH_RACE_READY_DIR').'/'.$argv[1], 'ready');
+    $deadline = microtime(true) + 20;
+    while (! file_exists(getenv('MESH_RACE_START_FILE'))) {
+        if (microtime(true) >= $deadline) {
+            throw new RuntimeException('Timed out waiting for the checkout race start barrier.');
+        }
+        usleep(1000);
+    }
+}
 try {
     app(CheckoutService::class)->place(['idempotency_key' => (string) Str::uuid(), 'customer_name' => 'Concurrent customer', 'phone' => '+96170123456', 'address' => 'Isolated test address'], [['product_id' => 1, 'color_id' => null, 'quantity' => 1]]);
     echo 'placed';
 } catch (ValidationException $exception) {
     echo 'sold_out';
+} catch (Throwable $exception) {
+    fwrite(STDERR, $exception->getMessage().PHP_EOL);
+    exit(1);
 }

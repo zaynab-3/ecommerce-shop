@@ -13,6 +13,8 @@ Reviewed the custom controllers, services, models, middleware, database schema/s
 - **Windows setup gap:** added the portable `php scripts/setup.php` entry point and a detailed PowerShell installation/manual testing guide. The cloud shell wrapper uses the same PHP setup implementation.
 - **CI reproducibility:** the workflow runs the actual setup entry point on Ubuntu 24.04 and checks PHP 8.2, 8.3, and 8.4 independently.
 
+- **PHP 8.2/8.3 SQLite contention:** Laravel uses deferred SQLite transactions on these versions. Concurrent readers could fail to upgrade to writers, exhausting immediate retries. Checkout and fulfillment now use bounded, jittered full-transaction retries after rollback. The stock race releases all ten processes together and reports underlying worker errors with nonzero exit status.
+
 ## Verification and boundaries
 
 See [validation results](VALIDATION.md) for the executed checks, and [Windows setup](WINDOWS-SETUP.md) for download, startup, and manual tests. Credentials, local SQLite data, caches, vendor files, and local owner passwords remain excluded from Git.

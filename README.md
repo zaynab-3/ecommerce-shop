@@ -58,6 +58,7 @@ The web server must restart when a cloud task or server restarts. See [deploymen
 | Shared UI | `resources/views/components/`, `resources/views/layouts/` |
 | Stock rules | `app/Models/Product.php` |
 | Cart and checkout | `app/Services/CartService.php`, `app/Services/CheckoutService.php` |
+| SQLite transaction retries | `app/Services/TransactionService.php` |
 | Order transitions and restocking | `app/Services/OrderStatusService.php` |
 | Image conversion | `app/Services/ImageService.php` |
 | Admin features | `app/Http/Controllers/Admin/`, `resources/views/admin/` |

@@ -12,7 +12,7 @@ class OrderStatusService
 {
     public function update(Order $order, string $status, ?int $assignee): void
     {
-        DB::transaction(function () use ($order, $status, $assignee) {
+        app(TransactionService::class)->run(function () use ($order, $status, $assignee) {
             $order = Order::with('items')->whereKey($order->id)->lockForUpdate()->firstOrFail();
             if (auth()->user()?->role === 'orders') {
                 abort_if($order->assigned_to && $order->assigned_to !== auth()->id(), 403);
@@ -31,6 +31,6 @@ class OrderStatusService
             $order->assigned_to = $assignee;
             $order->save();
             AuditLog::record('order.updated', $order->number, ['status' => $status, 'assigned_to' => $assignee]);
-        }, 5);
+        });
     }
 }

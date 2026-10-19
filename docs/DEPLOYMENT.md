@@ -20,7 +20,7 @@ ADMIN_PATH=choose-a-private-route
 
 Create and retain a unique `APP_KEY` securely. Do not rotate it during routine deployments. Preserve private database credentials outside source control. WhatsApp checkout only needs the phone number in admin Store settings; it has no API credentials.
 
-For substantial concurrency and a large catalog, use MySQL 8+/MariaDB or PostgreSQL and shared Redis cache and sessions. Install the appropriate PDO driver and Redis extension or supported client. The local runtime currently supplies SQLite, and the test suite was run against SQLite; the production database and Redis configuration must be verified on the target infrastructure before launch. Local SQLite uses WAL and an immediate transaction with a busy timeout. The guarded stock update and transaction service also use row locks where supported.
+For substantial concurrency and a large catalog, use MySQL 8+/MariaDB or PostgreSQL and shared Redis cache and sessions. Install the appropriate PDO driver and Redis extension or supported client. The local runtime currently supplies SQLite, and the test suite was run against SQLite; the production database and Redis configuration must be verified on the target infrastructure before launch. Local SQLite uses WAL and a busy timeout. Laravel honors immediate transactions on PHP 8.4+; checkout and fulfillment also use bounded retries for SQLite lock conflicts, including PHP 8.2/8.3 deferred transactions. The guarded stock update and transaction service also use row locks where supported.
 
 ## Deploy process
 

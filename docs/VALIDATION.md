@@ -2,8 +2,8 @@
 
 Validated in the prepared cloud instance with Laravel 12, PHP 8.4, SQLite, and a four-worker PHP development server.
 
-- Feature suite: 45 tests and 232 assertions after the repository review, all passing. Re-run after later changes.
-- Independent stock race: ten checkout processes competing for three units produced three orders, seven sold-out responses, and zero remaining stock.
+- Feature suite: 47 tests and 239 assertions after the repository review, all passing. Re-run after later changes.
+- Independent stock race: ten checkout processes released together at a start barrier competed for three units and produced three orders, seven sold-out responses, and zero remaining stock. The synchronized check also passed ten consecutive times with a PHP 8.3 runtime after reproducing and fixing its SQLite lock-upgrade failure.
 - Browser checks: real Chromium at widths 360, 390, 768, 1024, and 1440. No homepage horizontal overflow. Admin products, categories, delivery, team, and settings were checked for mobile overflow.
 - Browser flow: color-linked image switching, add to bag, selected color in cart, delivery fee and total, guest checkout, private confirmation, admin login, catalog image settings, and cancellation/restocking. No JavaScript errors or failed resources in the tested flow. The review adds regression coverage for successive purchases in one session, HTML-form removal, stale color options, and literal SQL search characters.
 - All twelve demo product images loaded after scrolling through lazy-loaded content.
