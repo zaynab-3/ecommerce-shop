@@ -1,5 +1,4 @@
 import { openDialog, closeDialog } from "./dialogs.js";
-import { navigate } from "./page-motion.js";
 const menuButton = document.querySelector("[data-menu-toggle]");
 const drawer = document.getElementById("mobile-navigation");
 const search = document.getElementById("search-dialog");
@@ -11,12 +10,12 @@ drawer?.addEventListener("click", async (event) => {
     const link = event.target.closest("a[href]");
     if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || link.target === "_blank" || link.hasAttribute("download")) return;
     // Cart links have their own dialog handler. Page links wait for the drawer
-    // to finish sliding away before the page content fades out.
+    // to finish sliding away before following the link.
     const cartUrl = document.getElementById("cart-dialog")?.dataset.cartUrl;
     if (cartUrl && new URL(link.href).pathname === new URL(cartUrl).pathname) return;
     event.preventDefault();
     await closeDialog(drawer);
-    navigate(link.href);
+    location.assign(link.href);
 });
 searchButtons.forEach((button) => button.addEventListener("click", () => openDialog(search)));
 search?.addEventListener("close", () => searchButtons.forEach((button) => button.setAttribute("aria-expanded", "false")));

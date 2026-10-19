@@ -15,4 +15,4 @@ import "./store/favorites.js";
 import "./store/card-colors.js";
 import "./store/category-navigation.js";
 
-import "./store/page-navigation.js";
+import "./store/search.js";

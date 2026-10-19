@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryIconController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductImageController;
+use App\Http\Controllers\SearchSuggestionController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\StoreThemeController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,7 @@ Route::get('/category-icons/{filename}', CategoryIconController::class)->without
 Route::get('/', [StorefrontController::class, 'index'])->name('home');
 Route::get('/theme/{color}.css', StoreThemeController::class)->where('color', '[0-9a-fA-F]{6}')->withoutMiddleware('web')->name('store.theme');
 Route::get('/shop', [StorefrontController::class, 'index'])->name('shop');
+Route::get('/search/suggestions', SearchSuggestionController::class)->withoutMiddleware('web')->middleware('throttle:search')->name('search.suggestions');
 Route::get('/products/{product:slug}', [StorefrontController::class, 'show'])->name('products.show');
 Route::get('/stock', [StorefrontController::class, 'stock'])->withoutMiddleware('web')->middleware('throttle:stock')->name('stock');
 Route::get('/delivery-areas', [StorefrontController::class, 'areas'])->withoutMiddleware('web')->middleware('throttle:stock')->name('delivery.areas');

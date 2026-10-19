@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{{ asset('css/identity.css') }}?v={{ filemtime(public_path('css/identity.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/store-interactions.css') }}?v={{ filemtime(public_path('css/store-interactions.css')) }}">
     <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1), 'v' => \App\Services\StoreTheme::VERSION]) }}">
-    <script src="{{ asset('js/store.js') }}" type="module"></script>@stack('head')
+    <script src="{{ asset('js/store.js') }}?v={{ filemtime(public_path('js/store.js')) }}" type="module"></script>@stack('head')
 </head>
 
 <body>

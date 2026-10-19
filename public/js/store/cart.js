@@ -9,9 +9,22 @@ const originalUrl = location.href;
 let directCart = false;
 let receipt = false;
 let draft = {};
+let phase = 'cart';
 export function updateCount(count) {
     document.querySelectorAll("[data-cart-count]").forEach((el) => el.textContent = count);
     document.querySelector(".cart-link")?.setAttribute("aria-label", `Shopping cart, ${count} items`);
+}
+function setPhase(next, focus = false) {
+    phase = next === 'checkout' && content.querySelector('[data-checkout]') ? 'checkout' : 'cart';
+    content.querySelectorAll('[data-cart-phase]').forEach((panel) => panel.hidden = panel.dataset.cartPhase !== phase);
+    dialog.querySelector('[data-cart-title]').textContent = phase === 'checkout' ? 'Checkout' : 'Your cart';
+    dialog.querySelector('#cart-title [data-cart-count]').hidden = false;
+    if (focus) {
+        content.scrollTo({ top: 0, behavior: 'instant' });
+        const heading = dialog.querySelector('#cart-title');
+        heading.setAttribute('tabindex', '-1');
+        heading.focus({ preventScroll: true });
+    }
 }
 function rememberDetails() {
     const form = content?.querySelector('[data-checkout]');
@@ -33,22 +46,24 @@ function render(data) {
         initCheckout(content);
     }
     updateCount(data.count);
+    setPhase(phase);
     if (focused) [...content.querySelectorAll('[aria-label]')].find((el) => el.getAttribute('aria-label') === focused)?.focus({ preventScroll: true });
     document.dispatchEvent(new CustomEvent("store:cart-updated"));
 }
-async function loadCart() {
+async function loadCart(nextPhase = 'cart') {
     content.setAttribute("aria-busy", "true");
     try {
-        render(await request(dialog.dataset.cartUrl));
-        dialog.querySelector('[data-cart-title]').textContent = 'Cart & checkout';
-        dialog.querySelector('#cart-title [data-cart-count]').hidden = false;
+        const data = await request(dialog.dataset.cartUrl);
+        phase = nextPhase;
         receipt = false;
+        render(data);
+        content.scrollTo({ top: 0, behavior: 'instant' });
     } finally { content.removeAttribute("aria-busy"); }
 }
-async function openCart() {
+async function openCart(nextPhase = 'cart') {
     if (!dialog) return;
     await openDialog(dialog);
-    try { await serial(loadCart); }
+    try { await serial(() => loadCart(nextPhase)); }
     catch (error) { toast(error.message, "error"); }
 }
 document.addEventListener("click", (event) => {
@@ -63,8 +78,10 @@ document.addEventListener("click", (event) => {
     }
     const link = event.target.closest("a[href]");
     if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || link.target === "_blank") return;
+    if (link.matches('[data-proceed-checkout]') && dialog?.open) { event.preventDefault(); setPhase('checkout', true); return; }
+    if (link.matches('[data-cart-back]') && dialog?.open) { event.preventDefault(); setPhase('cart', true); return; }
     if (link.matches("[data-continue-shopping]") && dialog?.open && !directCart) { event.preventDefault(); closeDialog(dialog); return; }
-    if (dialog && [dialog.dataset.cartUrl, dialog.dataset.checkoutUrl].filter(Boolean).some((url) => new URL(link.href).pathname === new URL(url).pathname)) { event.preventDefault(); openCart(); }
+    if (dialog && [dialog.dataset.cartUrl, dialog.dataset.checkoutUrl].filter(Boolean).some((url) => new URL(link.href).pathname === new URL(url).pathname)) { event.preventDefault(); openCart(new URL(link.href).pathname === new URL(dialog.dataset.checkoutUrl).pathname ? 'checkout' : 'cart'); }
 });
 function showCheckoutError(form, error) {
     const box = form.querySelector('[data-checkout-errors]');
@@ -112,7 +129,7 @@ document.addEventListener("submit", (event) => {
             } else {
                 if (data.html !== undefined) render(data); else updateCount(data.count);
                 toast(data.message);
-                if (data.redirect) { await openDialog(dialog); await loadCart(); }
+                if (data.redirect) { await openDialog(dialog); await loadCart('checkout'); }
             }
         } catch (error) {
             if (checkout) showCheckoutError(form, error);
@@ -137,5 +154,6 @@ if (fallback && dialog) {
     content.append(document.querySelector("[data-cart-page-content]"));
     fallback.hidden = true;
     initCheckout(content);
+    setPhase(fallback.dataset.startPhase || 'cart');
     openDialog(dialog);
 }

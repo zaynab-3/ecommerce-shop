@@ -36,11 +36,13 @@
             </aside>
             <div class="catalog-main">
                 <nav class="catalog-category-nav" aria-label="Product categories">
-                    <a href="{{ route('shop', request()->except(['category', 'page'])) }}" @if(!request('category')) aria-current="page" @endif>All</a>
+                    <a class="category-all" href="{{ route('shop', request()->except(['category', 'page'])) }}" @if(!request('category')) aria-current="page" @endif>All</a>
+                    <div class="category-nav-track">
                     @foreach($categories as $category)
-                        <a href="{{ route('shop', [...request()->except('page'), 'category' => $category->slug]) }}" @if(request('category') === $category->slug) aria-current="page" @endif><x-category-icon :category="$category" />{{ $category->name }}</a>
-                        @foreach($category->children as $child)<a href="{{ route('shop', [...request()->except('page'), 'category' => $child->slug]) }}" @if(request('category') === $child->slug) aria-current="page" @endif><x-category-icon :category="$child" />{{ $child->name }}</a>@endforeach
+                        <a href="{{ route('shop', [...request()->except('page'), 'category' => $category->slug]) }}" @if(request('category') === $category->slug) aria-current="page" @endif><x-category-icon :category="$category" /><span>{{ $category->name }}</span></a>
+                        @foreach($category->children as $child)<a href="{{ route('shop', [...request()->except('page'), 'category' => $child->slug]) }}" @if(request('category') === $child->slug) aria-current="page" @endif><x-category-icon :category="$child" /><span>{{ $child->name }}</span></a>@endforeach
                     @endforeach
+                    </div>
                 </nav>
                 <form class="catalog-toolbar" method="get" action="{{ route('shop') }}">
                     @foreach (request()->except(['sort', 'available', 'page']) as $k => $v)

@@ -1,7 +1,9 @@
 <form method="post" action="{{ route('checkout.store') }}" class="sheet-checkout" data-checkout data-subtotal="{{ $subtotal }}">
     @csrf<input type="hidden" name="idempotency_key" value="{{ session('checkout_key') }}">
-    <h2>Checkout</h2>
+
     <div class="checkout-errors" data-checkout-errors role="alert" @if(!$errors->any()) hidden @endif>@if($errors->any()){{ $errors->first() }}@endif</div>
+    <div class="checkout-stage-layout">
+    <section class="checkout-details"><h2>Your details</h2>
     <div class="field-grid">
         <label class="field full-span"><span>Full name</span><input name="customer_name" value="{{ old('customer_name') }}" autocomplete="name" maxlength="120" required></label>
         <label class="field full-span"><span>Phone number</span>
@@ -19,6 +21,13 @@
         <label class="field full-span"><span>Full address</span><textarea name="address" rows="2" placeholder="Street, building, floor, landmarks" autocomplete="street-address" minlength="8" maxlength="1000" required>{{ old('address') }}</textarea></label>
         <label class="field full-span"><span class="field-label">Order notes <span class="optional">(optional)</span></span><textarea name="notes" rows="2" placeholder="Anything we should know?" maxlength="1000">{{ old('notes') }}</textarea></label>
     </div>
+    </section>
+    <aside class="checkout-order-review" data-order-review>
+    <h2>Order review</h2>
+    @foreach($lines as $line)
+        @php($reviewImage = ($line['color'] ? $line['product']->images->firstWhere('product_color_id', $line['color']->id) : null) ?? $line['product']->images->firstWhere('product_color_id', null) ?? $line['product']->images->first())
+        <div class="checkout-mini-item"><img src="{{ $reviewImage?->thumbnail_url ?? $line['product']->image_url }}" alt="" width="52" height="52"><div><strong>{{ $line['product']->name }}</strong><small>{{ $line['color']?->name ?? 'Standard' }} · Qty {{ $line['quantity'] }}</small></div><strong>${{ number_format($line['total'] / 100, 2) }}</strong></div>
+    @endforeach
     <p class="sheet-payment"><x-icon name="shield" />Cash on delivery</p>
     <div class="sheet-totals">
         <div class="summary-row"><span>Subtotal</span><strong>${{ number_format($subtotal / 100, 2) }}</strong></div>
@@ -27,4 +36,6 @@
     </div>
     <button type="submit" class="button button-dark full-width" @disabled($settings->delivery_enabled && $zones->isEmpty())><span>{{ $settings->whatsapp_enabled ? 'Place order & open WhatsApp' : 'Place order' }}</span><x-icon name="arrow" /></button>
     <p class="summary-note">By placing your order, you agree to our <a href="{{ route('help') }}#privacy">terms & privacy policy</a>.@if($settings->whatsapp_enabled) Your order is saved before WhatsApp opens. Tap Send there to share it.@endif</p>
+    </aside>
+    </div>
 </form>

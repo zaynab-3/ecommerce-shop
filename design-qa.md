@@ -2,77 +2,45 @@
 
 final result: passed
 
-## Current target
+## Current implementation
 
-The user approved the page layouts from the Jaber Games references, then requested a distinct MESH identity: **one configurable accent, black, and white**, no decorative borders or pastel surfaces, and no condensed uppercase typography. Product photography and genuine product-color swatches retain their colors. The home carousel, four-column desktop/two-column phone catalog, and responsive product gallery remain.
+The store keeps the approved four-column desktop/two-column phone catalog, horizontal home carousel, responsive gallery, and mobile side drawer. Its identity uses Space Grotesk, one owner-selected accent, black and white, light black-alpha product borders, and no decorative shadows. Genuine product colors and photos retain their colors. Header search/cart icons have transparent backgrounds and use the saved accent.
 
-MESH now uses locally hosted Space Grotesk throughout, sentence-case headings, black prices, rounded primary/secondary actions, and spacing rather than framed cards. Owner settings still control the single accent; light accents receive black button labels without introducing another shade. Versioned theme URLs invalidate the previous cached tinted palette.
+Page content stays visible throughout ordinary navigation. There are no page opacity transitions or delayed page-link interception. Native history and scrolling remain available, with smooth scrolling and reduced-motion support.
+
+## Cart and checkout
+
+The rounded sheet covers 90% of the viewport with a softly blurred backdrop. It first shows cart items, icon quantity/removal controls, subtotal, and **Proceed to checkout**. The second phase shows customer/delivery fields and an order review, with **Place order** as the final action. **Back to cart** preserves entered details and updates the review after quantity changes. Product colors and prices come from server-rendered snapshots; order prices and stock are validated on the server.
+
+Fields have white surfaces, black text, and a single underline. The phone field fixes +961 beside the formatted Lebanese number. Email is absent; optional notes are labelled at the end of the label row. Checkout and confirmation contain no website footer. Confirmation uses the selected accent for its check and status badge.
+
+## Search and catalog
+
+The centered search dialog has one underline, debounced live suggestions, cancellation of older requests, and keyboard selection. Each result links to its product detail page. Typing, submitting, or closing search does not filter or navigate the underlying shop page. Candidate lookup is bounded and briefly cached; visibility and prices are checked fresh without opening a customer session. Product names render as text, with escaped literal SQL wildcard searches.
+
+Product cards have slight borders, selectable colors above pricing, and a simple plus action beside the price. Color selection changes the linked image and cart color, including products with a single color. Favorites stay unframed. Cart/favorite mutations do not refresh the page or reset scroll.
+
+All remains fixed beside a separate scrolling category track. The selected category centers inside that track, icons retain their size, long names truncate, and the scrollbar stays hidden.
 
 ## Evidence
 
-Real Chromium captures use one image pixel per CSS pixel, excluding browser chrome. Catalog/product captures are 1440 × 1000 and 390 × 844. The mobile navigation before/after captures are both 393 × 851. Source/reference merchandise and brand assets differ intentionally; comparisons demonstrate layout structure, not a pixel-clone objective.
-
-| Surface | Evidence |
+| Surface | Captures |
 |---|---|
-| Home, desktop / phone | [Desktop](docs/screenshots/storefront-desktop.png), [phone](docs/screenshots/storefront-mobile.png) |
-| Catalog, desktop / phone | [Desktop](docs/screenshots/catalog-desktop.png), [phone](docs/screenshots/catalog-mobile.png) |
-| Product, desktop / phone | [Desktop](docs/screenshots/product-desktop.png), [phone](docs/screenshots/product-mobile.png) |
-| Mobile side drawer | [Before/after comparison](docs/screenshots/navigation-comparison-mobile.png) |
-| Admin product list | [Desktop](docs/screenshots/admin-desktop.png), [phone](docs/screenshots/admin-mobile.png) |
-| Open-stock editor | [Phone](docs/screenshots/admin-open-stock-mobile.png) |
-| Reference layout comparison | [Home](docs/screenshots/home-comparison-desktop.png), [catalog desktop](docs/screenshots/catalog-comparison-desktop.png), [catalog phone](docs/screenshots/catalog-comparison-mobile.png), [product desktop](docs/screenshots/product-comparison-desktop.png), [product phone](docs/screenshots/product-comparison-mobile.png) |
-
-## Findings and fixes
-
-- P1 resolved: The previous identity resembled the reference too closely. Replaced condensed uppercase display text, accent prices, framed cards, gradients, shadows, and pastel surfaces with MESH's borderless, three-color identity. Kept the approved layouts and merchandise functionality.
-- P1 resolved: Mobile menu expanded inline and crowded navigation links. Replaced it with a native modal side drawer, separate close control, backdrop dismissal, Escape dismissal, background scroll locking, inert background controls, focus restoration, and desktop-resize cleanup. Links are stacked with comfortable touch spacing. Shared Blade links keep mobile and desktop destinations consistent.
-- P1 resolved: Open quantity showed irrelevant tracked-stock fields. Quantity and threshold are hidden and disabled in open mode; the manual status is visible. Tracked mode shows numeric fields and hides manual status. Values survive switching modes, and the required manual value remains submitted for backend compatibility. Existing open-stock products render correctly before JS initialization.
-- P1 resolved: Old colors leaked into quick stock and visibility controls. Reworked the controls with the same accent/black/white palette and explicit text labels. Theme tokens cannot introduce lighter/darker accent shades. A real saved purple accent was checked across the shop and admin product list, then restored.
-- P1 resolved during visual QA: Some admin inputs inherited black text on their new black surface. The latest requested revision uses white input/select/textarea surfaces with black text throughout, with simple form underlines and no framed cards.
-- P2 resolved: The role explainer and decorative admin introductions added clutter. Removed them, shortened empty states and shortcuts, and retained actual order metadata, essential constraints, and validation errors. Role permissions are unchanged.
-- P2 resolved: Tinting selected gallery thumbnails changed the appearance of product colors. Selection now uses a small accent marker under a white thumbnail; product colors remain intact.
-- Prior fixes retained: readable typography, aligned card actions, mobile category/subcategory filtering, sticky desktop categories, duplicate stock-action updates, short-screen admin navigation, and safe expired-login recovery with CSRF still enforced.
-
-## Shopping interaction revision
-
-- Rounded 90%-height cart/checkout sheet animates upward on open and downward on close, with focus management, scroll locking, and background scroll restoration. Cart content loads only when needed; quantities, removal, delivery selection, prices, and totals use server-validated JSON/HTML snapshots.
-- Search opens in a centered dialog. The borderless hamburger uses a staggered two-line icon and retains the side drawer. The sticky store header slides away when scrolling down and returns after a small upward movement.
-- Add-to-cart and favorite actions update without navigation or resetting page scroll. Every card color, including a single color, has a selectable control below the price. Choosing a color updates its linked image and submitted color ID. Card prices use an aligned row, and hearts remain unframed.
-- All notifications use top-right toasts with a five-second lifetime. Main product/settings save actions sit in the sticky admin header and submit the associated form.
-- The phone/tablet category selector is replaced with a scrollable All/category/subcategory navigation bar. Existing filters are preserved. Icons can come from the local library or a sanitized SVG upload for any category/subcategory.
-- SVG files have size/complexity limits, a maintained sanitizer with a narrow shape/attribute allowlist, no linked resources/document entities, private storage, and a public UUID route with sandbox CSP. Product-photo SVG uploads remain prohibited.
-
-Additional captures: [cart modal](docs/screenshots/cart-modal-mobile.png), [search modal](docs/screenshots/search-modal-mobile.png), [sticky save action](docs/screenshots/admin-save-top-mobile.png).
+| Catalog | [Desktop](docs/screenshots/catalog-desktop.png), [phone](docs/screenshots/catalog-mobile.png) |
+| Cart phase | [Phone](docs/screenshots/cart-modal-mobile.png), [desktop](docs/screenshots/cart-modal-desktop.png) |
+| Checkout and order review | [Phone fields](docs/screenshots/checkout-modal-mobile.png), [phone review](docs/screenshots/checkout-review-mobile.png), [desktop](docs/screenshots/checkout-modal-desktop.png) |
+| Live search | [Phone](docs/screenshots/search-suggestions-mobile.png) |
+| Pinned category navigation | [Phone](docs/screenshots/category-centered-mobile.png) |
+| Gallery | [Desktop](docs/screenshots/product-desktop.png), [phone](docs/screenshots/product-mobile.png) |
+| Admin | [Desktop](docs/screenshots/admin-desktop.png), [phone](docs/screenshots/admin-mobile.png) |
 
 ## Verification
 
-- 111 public/admin page-and-viewport checks at widths 320, 360, 390, 768, 1024, 1440, and 1920: no horizontal document overflow or JavaScript errors.
-- Drawer checks at 320, 393, and 600px widths and a 320px-high window: no page layout shift; keyboard focus cannot enter background page controls; close button, Escape, backdrop, link navigation, search interaction, and desktop resize all passed. Native browser chrome remains accessible with the keyboard.
-- Tracked/open stock checks on create and existing-product forms: visibility, required state, disabled state, FormData omission, manual-status submission, and readable selected values passed.
-- Actual authenticated owner color save: the visible shop/admin product-list CSS palette contained only accent, black, white, and transparent. Original settings were restored.
-- MySQL feature suite: **62 tests / 492 assertions**, including palette constraints, contrast, color validation, role authorization, stock behavior, and stale-login recovery.
-- The final interaction flow passed in real mobile Chromium: selected-color cart data, asynchronous cart/favorites, quantity/delivery updates, preserved scroll, toast expiry, centered search, header motion, category navigation, top save actions, and actual SVG upload/render/cleanup. Composer audit reports no advisories.
-- Blade and route compilation, PHP/JavaScript syntax, and whitespace checks passed. Final rendered comparisons were visually inspected together. No unresolved P0, P1, or P2 findings remain within this scope.
+- MySQL: **64 tests / 516 assertions**, including live-search bounds, literal wildcard handling, validated input, session-free responses, cached-candidate visibility, role authorization, stock safety, idempotent orders, and Lebanese phone normalization.
+- **111 public/admin page-and-viewport checks** at 320, 360, 390, 768, 1024, 1440, and 1920px: no horizontal document overflow or JavaScript errors.
+- Separate cart/checkout phases at 320, 390, 768, and 1440px: no modal overflow; order review and totals update correctly; Back retains details. A real phone-only order completed and its temporary record was deleted, with demo stock unchanged.
+- Search suggestion clicks and keyboard selection opened product detail pages. Closing and submitting search preserved the original shop URL and products. The focused input has one underline and no extra oval outline.
+- Cards retained asynchronous add-to-cart behavior, a simple footer plus, selectable linked images, and colors above prices. All remained visible while the active category centered in its own track.
+- Blade/route compilation, JavaScript/PHP syntax, and whitespace checks passed. Final captures were visually inspected.
 
-Native Windows, iOS Safari, and Android devices are not available in the cloud environment; responsive checks use Chromium at the stated sizes. Data-heavy admin tables retain horizontal scrolling within their own region. No WhatsApp message was sent during verification. See [validation notes](docs/VALIDATION.md) for infrastructure limits and earlier MySQL checkout-race results.
-
-
-## Combined cart and checkout refinement
-
-- Cards use an unframed cart icon at the bottom of the photo, matching the favorite action at the top. Quantity changes and removal use accessible icon controls; async requests retain entered checkout details.
-- The cart sheet leaves 10% of the underlying page visible, has rounded top corners, and includes checkout and confirmation without the website footer. Email is removed; +961 is fixed beside a formatted Lebanese national-number field. Server validation stores canonical international numbers.
-- Controls have white surfaces and black text. Notes keep “(optional)” at the end of their label. Confirmation check and order-status badge use the owner-selected accent with a readable black/white label.
-- Category navigation hides its scrollbar and centers the active category, including edge categories. All phone scrollbars are hidden while scrolling remains available.
-- The drawer replaces its opaque black backdrop with a light blur and slower eased opening/closing. Cart/search use the same light backdrop treatment; reduced-motion preferences are respected.
-- Visual QA found and corrected an initially blank status badge on the immediate JSON receipt: new orders now refresh database defaults before rendering. Receipt coverage asserts the Pending label.
-
-Current captures: [cart and checkout, phone](docs/screenshots/cart-modal-mobile.png), [desktop](docs/screenshots/cart-modal-desktop.png), [checkout fields](docs/screenshots/checkout-modal-mobile.png), [confirmation](docs/screenshots/confirmation-modal-mobile.png), [soft drawer](docs/screenshots/mobile-navigation.png). Five modal widths and the 111-page viewport pass completed without overflow or JavaScript errors. A real checkout was exercised and its temporary QA order deleted.
-
-
-## Navigation and header icons
-
-The header search/cart actions now use accent-colored icons without filled backgrounds, including hover and the count. Ordinary page/category links fade the content out briefly and fade the destination in with a small vertical easing; header actions retain their layout. GET search and filter forms follow the same navigation, drawer links finish closing, and cart/favorite requests remain asynchronous. Native history, same-page anchors, modified clicks, and reduced-motion preferences are preserved. Scrollable shopping surfaces use CSS smooth scrolling without wheel/touch interception.
-
-Evidence: [phone header](docs/screenshots/header-icons-mobile.png), [desktop header](docs/screenshots/header-icons-desktop.png).
-
-The navigation/browser checks and full cart/checkout regression flow passed without JavaScript errors. Smooth scroll was measured inside consecutive animation frames, and reduced-motion restored immediate scrolling. MySQL: 62 tests / 492 assertions passed.
+Native Windows, iOS Safari, and Android devices are not available in this environment; responsive checks use real Chromium at the stated sizes. No WhatsApp message was sent during verification. Existing MySQL concurrency and infrastructure checks are recorded in [validation notes](docs/VALIDATION.md).

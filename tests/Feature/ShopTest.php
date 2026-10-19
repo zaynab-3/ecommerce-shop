@@ -184,6 +184,30 @@ class ShopTest extends TestCase
         $this->getJson('/stock?ids[]='.$p->id)->assertOk()->assertHeaderMissing('Set-Cookie')->assertJsonPath('0.id', $p->id);
     }
 
+    public function test_live_search_is_bounded_session_free_and_rechecks_cached_candidates_visibility(): void
+    {
+        $products = collect(range(0, 7))->map(fn ($i) => $this->product(['name' => 'Suggestion lamp '.$i]));
+        $products[0]->update(['is_active' => false]);
+        $response = $this->getJson(route('search.suggestions', ['q' => 'Suggestion lamp']))->assertOk()
+            ->assertHeaderMissing('Set-Cookie')->assertHeader('Cache-Control', 'no-store, private')
+            ->assertJsonCount(6, 'products')->assertJsonPath('products.0.name', 'Suggestion lamp 1')
+            ->assertJsonPath('products.0.price_cents', 2500)->assertJsonPath('products.0.url', route('products.show', $products[1]));
+        $products[1]->update(['is_active' => false]);
+        $this->getJson(route('search.suggestions', ['q' => 'Suggestion lamp']))->assertOk()->assertJsonCount(5, 'products')->assertJsonMissing(['name' => 'Suggestion lamp 1']);
+        $products[2]->category()->update(['is_active' => false]);
+        $this->getJson(route('search.suggestions', ['q' => 'Suggestion lamp']))->assertOk()->assertJsonCount(0, 'products');
+    }
+
+    public function test_live_search_treats_wildcards_literally_and_validates_query_input(): void
+    {
+        $literal = $this->product(['name' => 'Save 50%_! off']);
+        $this->product(['name' => 'Save 50ZZZ off']);
+        $this->getJson(route('search.suggestions', ['q' => '50%_!']))->assertOk()->assertJsonCount(1, 'products')->assertJsonPath('products.0.name', $literal->name);
+        $this->getJson(route('search.suggestions', ['q' => 'x']))->assertOk()->assertJsonCount(0, 'products');
+        $this->getJson(route('search.suggestions', ['q' => str_repeat('x', 101)]))->assertUnprocessable()->assertJsonValidationErrors('q');
+        $this->getJson(route('search.suggestions', ['q' => ['unexpected']]))->assertUnprocessable()->assertJsonValidationErrors('q');
+    }
+
     public function test_cart_contains_checkout_and_creates_one_order_with_a_normalized_lebanese_phone(): void
     {
         $p = $this->product(['quantity' => 3]);
