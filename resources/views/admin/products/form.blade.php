@@ -1,10 +1,11 @@
 @extends('layouts.admin')
 @section('title', $product->exists ? 'Edit product' : 'New product')
+@section('admin-actions')<button type="submit" form="product-form" class="button button-dark">Save changes <x-icon name="check" /></button>@endsection
 @section('content')<x-admin-heading :title="$product->exists ? 'Edit product' : 'Add product'"><a href="{{ route('admin.products.index') }}" class="text-link">← All
             products</a></x-admin-heading>
     <form method="post" enctype="multipart/form-data"
         action="{{ $product->exists ? route('admin.products.update', $product) : route('admin.products.store') }}"
-        class="admin-form-layout">@csrf @if ($product->exists)
+        class="admin-form-layout" id="product-form">@csrf @if ($product->exists)
             @method('PUT')
 <input type="hidden" name="stock_revision" value="{{ $product->stock_revision }}">
         @endif
@@ -96,7 +97,7 @@
                         </select>
                     </label>
                 </div>
-            </section><button class="button button-dark full-width">Save product <x-icon name="check" /></button>
+            </section>
         </aside>
     </form>
     @if ($product->exists && $product->images->isNotEmpty())

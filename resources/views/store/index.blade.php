@@ -7,7 +7,7 @@
             <div class="section-heading retail-section-heading"><h2>Shop by category</h2><a href="{{ route('shop') }}" class="text-link">View all products <x-icon name="arrow" /></a></div>
             <div class="category-grid">
                 @foreach ($categories as $category)
-                    <a class="category-tile" href="{{ route('shop', ['category' => $category->slug]) }}"><span class="category-icon category-{{ $loop->index % 6 }}"><x-icon :name="$category->icon" width="28" height="28" /></span><span>{{ $category->name }}</span><x-icon name="chevron" width="16" height="16" /></a>
+                    <a class="category-tile" href="{{ route('shop', ['category' => $category->slug]) }}"><span class="category-icon category-{{ $loop->index % 6 }}"><x-category-icon :category="$category" width="28" height="28" /></span><span>{{ $category->name }}</span><x-icon name="chevron" width="16" height="16" /></a>
                 @endforeach
             </div>
         </section>
@@ -24,8 +24,7 @@
                     href="{{ route('shop', request()->except(['category', 'page'])) }}">All products <x-icon name="arrow" width="16" height="16" /></a>
                 @foreach ($categories as $category)
                     <a class="sidebar-category {{ request('category') === $category->slug ? 'selected' : '' }}"
-                        href="{{ route('shop', [...request()->except('page'), 'category' => $category->slug]) }}"><x-icon
-                            :name="$category->icon" width="18" height="18" />{{ $category->name }}<x-icon name="chevron"
+                        href="{{ route('shop', [...request()->except('page'), 'category' => $category->slug]) }}"><x-category-icon :category="$category" width="18" height="18" />{{ $category->name }}<x-icon name="chevron"
                             width="13" height="13" /></a>
                     @if ($selected && ($selected->id === $category->id || $selected->parent_id === $category->id))
                         @foreach ($category->children as $child)
@@ -36,25 +35,13 @@
                 @endforeach
             </aside>
             <div class="catalog-main">
-                <form class="mobile-category-filter" method="get" action="{{ route('shop') }}">
-                    @foreach (request()->except(['category', 'page']) as $key => $value)
-                        @if (is_scalar($value))
-                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                        @endif
+                <nav class="catalog-category-nav" aria-label="Product categories">
+                    <a href="{{ route('shop', request()->except(['category', 'page'])) }}" @if(!request('category')) aria-current="page" @endif>All</a>
+                    @foreach($categories as $category)
+                        <a href="{{ route('shop', [...request()->except('page'), 'category' => $category->slug]) }}" @if(request('category') === $category->slug) aria-current="page" @endif><x-category-icon :category="$category" />{{ $category->name }}</a>
+                        @foreach($category->children as $child)<a href="{{ route('shop', [...request()->except('page'), 'category' => $child->slug]) }}" @if(request('category') === $child->slug) aria-current="page" @endif><x-category-icon :category="$child" />{{ $child->name }}</a>@endforeach
                     @endforeach
-                    <label class="field" for="mobile-category">Category
-                        <select id="mobile-category" name="category" data-submit>
-                            <option value="">All products</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->slug }}" @selected(request('category') === $category->slug)>{{ $category->name }}</option>
-                                @foreach ($category->children as $child)
-                                    <option value="{{ $child->slug }}" @selected(request('category') === $child->slug)>— {{ $child->name }}</option>
-                                @endforeach
-                            @endforeach
-                        </select>
-                    </label>
-                    <noscript><button class="button button-light" type="submit">Apply category</button></noscript>
-                </form>
+                </nav>
                 <form class="catalog-toolbar" method="get" action="{{ route('shop') }}">
                     @foreach (request()->except(['sort', 'available', 'page']) as $k => $v)
                         @if (is_scalar($v))

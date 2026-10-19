@@ -4,7 +4,7 @@
 
 Use a maintained PHP 8.2+ release with Composer and these extensions: PDO plus your database driver, mbstring, OpenSSL, tokenizer, XML/DOM, cURL, GD with WebP, fileinfo, ZIP, EXIF, and the normal Laravel prerequisites. The cloud-local runtime is for this Debian 13 development machine; it is not a replacement for a managed production PHP installation.
 
-Point Nginx/Apache to `public/`, never the repository root. Deny script execution inside uploaded image storage. Configure request/body upload limits to match PHP (`15M` upload size, `180M` post size in the cloud runtime; the application accepts at most ten 12 MB files). All uploads are decoded and rewritten as WebP, and user-supplied SVG files are refused.
+Point Nginx/Apache to `public/`, never the repository root. Deny script execution inside uploaded image storage. Configure request/body upload limits to match PHP (`15M` upload size, `180M` post size in the cloud runtime; the application accepts at most ten 12 MB files). Product photos are decoded and rewritten as WebP; SVG product photos are refused. Category/subcategory SVG icons are sanitized with a restricted shape/attribute allowlist, stored outside public storage, and served through a dedicated UUID route with a sandbox CSP.
 
 Set production values:
 

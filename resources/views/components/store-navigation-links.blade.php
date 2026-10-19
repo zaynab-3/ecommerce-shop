@@ -9,7 +9,7 @@
 @if ($drawer)
     <div class="drawer-utilities">
         <a href="{{ route('shop', ['saved' => 1]) }}"><x-icon name="heart" />Saved items</a>
-        <a href="{{ route('cart.index') }}"><x-icon name="bag" />My cart<span class="drawer-cart-count">{{ collect(session('cart', []))->sum('quantity') }}</span></a>
+        <a href="{{ route('cart.index') }}"><x-icon name="bag" />My cart<span class="drawer-cart-count" data-cart-count>{{ collect(session('cart', []))->sum('quantity') }}</span></a>
     </div>
 @endif
 <a class="{{ $drawer ? 'drawer-help' : 'nav-delivery' }}" href="{{ route('help') }}"><x-icon name="truck" /> Delivery across Lebanon</a>

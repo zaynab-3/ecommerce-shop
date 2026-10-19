@@ -13,12 +13,14 @@
     <link rel="stylesheet" href="{{ asset('css/store.css') }}?v={{ filemtime(public_path('css/store.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/store-navigation.css') }}?v={{ filemtime(public_path('css/store-navigation.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/identity.css') }}?v={{ filemtime(public_path('css/identity.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/store-interactions.css') }}?v={{ filemtime(public_path('css/store-interactions.css')) }}">
     <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1), 'v' => \App\Services\StoreTheme::VERSION]) }}">
     <script src="{{ asset('js/store.js') }}" type="module"></script>@stack('head')
 </head>
 
 <body>
     <a href="#main" class="skip-link">Skip to content</a>
+    <div class="store-chrome" data-store-header>
     <div class="announcement">
         <div class="container announcement-inner"><span>Delivery areas at checkout</span><span
                 class="announcement-center">Cash on delivery <x-icon name="arrow"
@@ -27,19 +29,16 @@
     <header class="site-header">
         <div class="container header-inner">
             <button class="icon-button mobile-menu-toggle" type="button" data-menu-toggle aria-label="Open navigation"
-                aria-expanded="false" aria-controls="mobile-navigation" aria-haspopup="dialog"><x-icon name="menu" /></button>
+                aria-expanded="false" aria-controls="mobile-navigation" aria-haspopup="dialog"><x-icon name="menu-staggered" /></button>
             <a class="logo" href="{{ route('home') }}">{{ \App\Models\StoreSetting::current()->store_name }}<span
                     class="logo-dot">.</span></a>
-            <form id="store-search" class="search-form" method="get" action="{{ route('shop') }}" role="search"><x-icon
-                    name="search" /><label for="search" class="sr-only">Search products</label><input id="search"
-                    name="q" placeholder="Search products…" value="{{ request('q') }}"
-                    maxlength="100"><button type="submit">Search</button></form>
-            <div class="header-actions"><button type="button" class="icon-button mobile-search-toggle" data-search-toggle aria-label="Open search" aria-expanded="false" aria-controls="store-search"><x-icon name="search" /></button><a href="{{ route('shop', ['saved' => 1]) }}" class="icon-button saved-link"
+            <button class="header-search-trigger" type="button" data-search-toggle aria-label="Open search" aria-controls="search-dialog" aria-haspopup="dialog" aria-expanded="false"><x-icon name="search" /><span>Search products…</span></button>
+            <div class="header-actions"><button type="button" class="icon-button mobile-search-toggle" data-search-toggle aria-label="Open search" aria-expanded="false" aria-controls="search-dialog" aria-haspopup="dialog"><x-icon name="search" /></button><a href="{{ route('shop', ['saved' => 1]) }}" class="icon-button saved-link"
                     aria-label="Saved items"><x-icon name="heart" /></a><a class="cart-link"
                     href="{{ route('cart.index') }}"
                     aria-label="Shopping cart, {{ collect(session('cart', []))->sum('quantity') }} items"><x-icon
                         name="bag" /><span class="bag-label">My cart</span><span
-                        class="bag-count">{{ collect(session('cart', []))->sum('quantity') }}</span></a></div>
+                        class="bag-count" data-cart-count>{{ collect(session('cart', []))->sum('quantity') }}</span></a></div>
         </div>
         <nav class="main-nav" aria-label="Main navigation">
             <div class="container nav-inner" data-mobile-nav>
@@ -47,11 +46,11 @@
             </div>
         </nav>
     </header>
+    </div>
     <x-mobile-navigation />
+    <x-store-dialogs />
     <main id="main">
-        @if (session('success') || $errors->any())
-            <div class="container flash-container"><x-flash /></div>
-        @endif @yield('content')
+        <x-flash />@yield('content')
     </main>
     <section class="benefits">
         <div class="container benefits-grid">

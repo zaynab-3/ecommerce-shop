@@ -33,13 +33,25 @@ Real Chromium captures use one image pixel per CSS pixel, excluding browser chro
 - P2 resolved: Tinting selected gallery thumbnails changed the appearance of product colors. Selection now uses a small accent marker under a white thumbnail; product colors remain intact.
 - Prior fixes retained: readable typography, aligned card actions, mobile category/subcategory filtering, sticky desktop categories, duplicate stock-action updates, short-screen admin navigation, and safe expired-login recovery with CSRF still enforced.
 
+## Shopping interaction revision
+
+- Full-screen cart sheet animates upward on open and downward on close, with focus management, scroll locking, and background scroll restoration. Cart content loads only when needed; quantities, removal, delivery selection, prices, and totals use server-validated JSON/HTML snapshots.
+- Search opens in a centered dialog. The borderless hamburger uses a staggered two-line icon and retains the side drawer. The sticky store header slides away when scrolling down and returns after a small upward movement.
+- Add-to-cart and favorite actions update without navigation or resetting page scroll. Every card color, including a single color, has a selectable control below the price. Choosing a color updates its linked image and submitted color ID. Card prices use an aligned row, and hearts remain unframed.
+- All notifications use top-right toasts with a five-second lifetime. Main product/settings save actions sit in the sticky admin header and submit the associated form.
+- The phone/tablet category selector is replaced with a scrollable All/category/subcategory navigation bar. Existing filters are preserved. Icons can come from the local library or a sanitized SVG upload for any category/subcategory.
+- SVG files have size/complexity limits, a maintained sanitizer with a narrow shape/attribute allowlist, no linked resources/document entities, private storage, and a public UUID route with sandbox CSP. Product-photo SVG uploads remain prohibited.
+
+Additional captures: [cart modal](docs/screenshots/cart-modal-mobile.png), [search modal](docs/screenshots/search-modal-mobile.png), [sticky save action](docs/screenshots/admin-save-top-mobile.png).
+
 ## Verification
 
 - 111 public/admin page-and-viewport checks at widths 320, 360, 390, 768, 1024, 1440, and 1920: no horizontal document overflow or JavaScript errors.
 - Drawer checks at 320, 393, and 600px widths and a 320px-high window: no page layout shift; keyboard focus cannot enter background page controls; close button, Escape, backdrop, link navigation, search interaction, and desktop resize all passed. Native browser chrome remains accessible with the keyboard.
 - Tracked/open stock checks on create and existing-product forms: visibility, required state, disabled state, FormData omission, manual-status submission, and readable selected values passed.
 - Actual authenticated owner color save: the visible shop/admin product-list CSS palette contained only accent, black, white, and transparent. Original settings were restored.
-- MySQL feature suite: **54 tests / 379 assertions**, including palette constraints, contrast, color validation, role authorization, stock behavior, and stale-login recovery.
+- MySQL feature suite: **60 tests / 441 assertions**, including palette constraints, contrast, color validation, role authorization, stock behavior, and stale-login recovery.
+- The final interaction flow passed in real mobile Chromium: selected-color cart data, asynchronous cart/favorites, quantity/delivery updates, preserved scroll, toast expiry, centered search, header motion, category navigation, top save actions, and actual SVG upload/render/cleanup. Composer audit reports no advisories.
 - Blade and route compilation, PHP/JavaScript syntax, and whitespace checks passed. Final rendered comparisons were visually inspected together. No unresolved P0, P1, or P2 findings remain within this scope.
 
 Native Windows, iOS Safari, and Android devices are not available in the cloud environment; responsive checks use Chromium at the stated sizes. Data-heavy admin tables retain horizontal scrolling within their own region. No WhatsApp message was sent during verification. See [validation notes](docs/VALIDATION.md) for infrastructure limits and earlier MySQL checkout-race results.

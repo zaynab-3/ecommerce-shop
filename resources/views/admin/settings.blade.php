@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 @section('title', 'Store settings')
+@section('admin-actions')<button type="submit" form="store-settings-form" class="button button-dark">Save changes <x-icon name="check" /></button>@endsection
 @section('content')<x-admin-heading title="Store settings" />
-    <form method="post" action="{{ route('admin.settings.update') }}" class="settings-form">@csrf @method('PATCH')<section
+    <form method="post" action="{{ route('admin.settings.update') }}" class="settings-form" id="store-settings-form">@csrf @method('PATCH')<section
             class="admin-panel form-panel">
             <h2>Store details</h2><label class="field">Store name<input name="store_name"
                     value="{{ old('store_name', $settings->store_name) }}" maxlength="80" required></label>
@@ -35,5 +36,5 @@
                     value="{{ old('whatsapp_recipient', $settings->whatsapp_recipient) }}" placeholder="+961 70 123 456"
                     type="tel" inputmode="tel" maxlength="30"><small>Include the country code, for example +961 70 123 456.</small></label>
             <p class="form-hint">The customer reviews the WhatsApp message and taps Send.</p>
-        </section><button class="button button-dark">Save settings <x-icon name="check" /></button>
+        </section>
 </form>@endsection

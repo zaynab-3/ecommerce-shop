@@ -8,3 +8,8 @@ import "./store/quantity.js";
 import "./store/checkout.js";
 import "./store/whatsapp.js";
 import "./store/stock.js";
+
+import "./store/header.js";
+import "./store/cart.js";
+import "./store/favorites.js";
+import "./store/card-colors.js";

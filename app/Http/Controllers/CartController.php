@@ -14,17 +14,41 @@ class CartController extends Controller
     public function index(Request $r, CartService $cart)
     {
         $data = $r->validate(['delivery_zone_id' => 'nullable|integer']);
-        if ($r->filled('delivery_zone_id')) {
+        if ($r->has('delivery_zone_id') && ! $r->filled('delivery_zone_id')) {
+            session()->forget('delivery_zone_id');
+        } elseif ($r->filled('delivery_zone_id')) {
             $zone = DeliveryZone::whereKey($data['delivery_zone_id'])->where('is_active', true)->firstOrFail();
             session(['delivery_zone_id' => $zone->id]);
         }
+        if ($r->expectsJson()) {
+            return $this->snapshot($cart);
+        }
+
+        return view('store.cart', $this->viewData($cart));
+    }
+
+    private function viewData(CartService $cart): array
+    {
         $settings = StoreSetting::current();
         $zones = $settings->delivery_enabled ? DeliveryZone::where('is_active', true)->orderBy('governorate')->orderBy('name')->get() : collect();
         $selectedZone = $zones->firstWhere('id', (int) session('delivery_zone_id'));
 
         $lines = $cart->lines();
 
-        return view('store.cart', ['lines' => $lines, 'subtotal' => $lines->sum('total'), 'settings' => $settings, 'zones' => $zones, 'selectedZone' => $selectedZone]);
+        return ['lines' => $lines, 'subtotal' => $lines->sum('total'), 'settings' => $settings, 'zones' => $zones, 'selectedZone' => $selectedZone];
+    }
+
+    private function snapshot(CartService $cart, ?string $message = null)
+    {
+        $data = $this->viewData($cart);
+
+        return response()->json([
+            'html' => view('store.partials.cart-content', $data)->render(),
+            'count' => collect(session('cart', []))->sum('quantity'),
+            'subtotal_cents' => $data['subtotal'],
+            'delivery_cents' => $data['selectedZone']?->fee_cents ?? 0,
+            'message' => $message,
+        ]);
     }
 
     public function add(Request $r, Product $product)
@@ -51,10 +75,14 @@ class CartController extends Controller
         $cart[$key] = ['product_id' => $product->id, 'color_id' => $color, 'quantity' => $quantity];
         session(['cart' => $cart]);
 
+        if ($r->expectsJson()) {
+            return response()->json(['message' => 'Added to your cart.', 'count' => collect($cart)->sum('quantity'), 'redirect' => $r->boolean('buy_now') ? route('checkout') : null]);
+        }
+
         return ($r->boolean('buy_now') ? redirect()->route('checkout') : back())->with('success', 'Added to your cart.');
     }
 
-    public function update(Request $r, string $key)
+    public function update(Request $r, string $key, CartService $cartService)
     {
         $data = $r->validate(['quantity' => 'required|integer|min:0|max:99']);
         $data['quantity'] = (int) $data['quantity'];
@@ -70,6 +98,10 @@ class CartController extends Controller
                 throw ValidationException::withMessages(['quantity' => 'That quantity is no longer available.']);
             }$cart[$key]['quantity'] = $data['quantity'];
         }session(['cart' => $cart]);
+
+        if ($r->expectsJson()) {
+            return $this->snapshot($cartService, 'Your cart has been updated.');
+        }
 
         return back()->with('success', 'Your cart has been updated.');
     }

@@ -1,49 +1,16 @@
+import { openDialog, closeDialog } from "./dialogs.js";
 const menuButton = document.querySelector("[data-menu-toggle]");
-const searchButton = document.querySelector("[data-search-toggle]");
-const header = document.querySelector(".site-header");
 const drawer = document.getElementById("mobile-navigation");
+const search = document.getElementById("search-dialog");
+const searchButtons = document.querySelectorAll("[data-search-toggle]");
 const mobile = matchMedia("(max-width: 600px)");
-
-const closeSearch = () => {
-    header?.classList.remove("has-open-search");
-    searchButton?.setAttribute("aria-expanded", "false");
-    searchButton?.setAttribute("aria-label", "Open search");
-};
-const syncClosedMenu = () => {
-    if (drawer?.open) return;
-    document.documentElement.classList.remove("has-mobile-navigation");
-    menuButton?.setAttribute("aria-expanded", "false");
-    menuButton?.setAttribute("aria-label", "Open navigation");
-};
-const closeMenu = () => { if (drawer?.open) drawer.close(); syncClosedMenu(); };
-drawer?.addEventListener("close", syncClosedMenu);
-menuButton?.addEventListener("click", () => {
-    if (!mobile.matches || !drawer) return;
-    if (drawer.open) { closeMenu(); return; }
-    closeSearch();
-    drawer.showModal();
-    document.documentElement.classList.add("has-mobile-navigation");
-    menuButton.setAttribute("aria-expanded", "true");
-    menuButton.setAttribute("aria-label", "Close navigation");
+menuButton?.addEventListener("click", () => { if (mobile.matches) openDialog(drawer); });
+drawer?.addEventListener("close", () => menuButton?.setAttribute("aria-expanded", "false"));
+drawer?.addEventListener("click", (event) => { if (event.target.closest("a[href]")) closeDialog(drawer); });
+searchButtons.forEach((button) => button.addEventListener("click", () => openDialog(search)));
+search?.addEventListener("close", () => searchButtons.forEach((button) => button.setAttribute("aria-expanded", "false")));
+document.addEventListener("store:dialog-open", ({ detail }) => {
+    if (detail === drawer) menuButton?.setAttribute("aria-expanded", "true");
+    if (detail === search) { searchButtons.forEach((button) => button.setAttribute("aria-expanded", "true")); document.getElementById("search").focus(); }
 });
-drawer?.querySelector("[data-menu-close]")?.addEventListener("click", closeMenu);
-drawer?.addEventListener("click", (event) => {
-    if (event.target.closest("a[href]")) closeMenu();
-    if (event.target !== drawer) return;
-    const bounds = drawer.getBoundingClientRect();
-    if (event.clientX < bounds.left || event.clientX > bounds.right ||
-        event.clientY < bounds.top || event.clientY > bounds.bottom) closeMenu();
-});
-searchButton?.addEventListener("click", () => {
-    closeMenu();
-    const open = header.classList.toggle("has-open-search");
-    searchButton.setAttribute("aria-expanded", String(open));
-    searchButton.setAttribute("aria-label", open ? "Close search" : "Open search");
-    if (open) document.getElementById("search").focus();
-});
-document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && header?.classList.contains("has-open-search")) {
-        closeSearch(); searchButton.focus();
-    }
-});
-mobile.addEventListener("change", () => { closeSearch(); closeMenu(); });
+mobile.addEventListener("change", () => { if (!mobile.matches) closeDialog(drawer); });

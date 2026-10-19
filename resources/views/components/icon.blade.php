@@ -68,6 +68,10 @@
             <path d="M8 6V1h8v5M8 18v5h8v-5m-4-8v3l2 1" />
         @break
 
+        @case('menu-staggered')
+            <path d="M4 8h16M4 16h10" />
+        @break
+
         @case('menu')
             <path d="M3 6h18M3 12h18M3 18h18" />
         @break

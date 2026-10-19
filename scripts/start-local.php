@@ -6,6 +6,18 @@ if (! is_file('vendor/autoload.php')) {
     fwrite(STDERR, "Install dependencies first: php scripts/setup.php\n");
     exit(1);
 }
+// A pull may add a locked dependency even when vendor already exists.
+$lock = json_decode(file_get_contents('composer.lock'), true);
+$installed = json_decode(file_get_contents('vendor/composer/installed.json'), true);
+$versions = array_column($installed['packages'] ?? $installed, 'version', 'name');
+$needsInstall = false;
+foreach ($lock['packages'] ?? [] as $package) {
+    if (($versions[$package['name']] ?? null) !== $package['version']) { $needsInstall = true; break; }
+}
+if ($needsInstall) {
+    passthru('composer install --prefer-dist --no-interaction', $status);
+    if ($status !== 0) exit($status);
+}
 require 'vendor/autoload.php';
 Dotenv\Dotenv::createImmutable(getcwd())->safeLoad();
 if (($_ENV['APP_ENV'] ?? '') !== 'local') {

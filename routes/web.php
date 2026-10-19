@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryIconController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\StorefrontController;
@@ -14,14 +15,16 @@ Route::get('/storage/products/{filename}', ProductImageController::class)
     ->where('filename', '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}(-480)?\.webp')
     ->name('product-images.show');
 
+Route::get('/category-icons/{filename}', CategoryIconController::class)->withoutMiddleware('web')->where('filename', '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\.svg')->name('category-icons.show');
+
 Route::get('/', [StorefrontController::class, 'index'])->name('home');
 Route::get('/theme/{color}.css', StoreThemeController::class)->where('color', '[0-9a-fA-F]{6}')->withoutMiddleware('web')->name('store.theme');
 Route::get('/shop', [StorefrontController::class, 'index'])->name('shop');
 Route::get('/products/{product:slug}', [StorefrontController::class, 'show'])->name('products.show');
-Route::get('/stock', [StorefrontController::class, 'stock'])->middleware('throttle:stock')->name('stock');
-Route::get('/delivery-areas', [StorefrontController::class, 'areas'])->middleware('throttle:stock')->name('delivery.areas');
-Route::post('/saved/{product}', [StorefrontController::class, 'save'])->middleware('throttle:cart')->name('saved.toggle');
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::get('/stock', [StorefrontController::class, 'stock'])->withoutMiddleware('web')->middleware('throttle:stock')->name('stock');
+Route::get('/delivery-areas', [StorefrontController::class, 'areas'])->withoutMiddleware('web')->middleware('throttle:stock')->name('delivery.areas');
+Route::post('/saved/{product}', [StorefrontController::class, 'save'])->middleware('throttle:cart')->block(10, 10)->name('saved.toggle');
+Route::get('/cart', [CartController::class, 'index'])->block(10, 10)->name('cart.index');
 Route::post('/cart/{product}', [CartController::class, 'add'])->middleware(['throttle:cart', 'Illuminate\Session\Middleware\AuthenticateSession'])->block(10, 10)->name('cart.add');
 Route::patch('/cart/{key}', [CartController::class, 'update'])->middleware('throttle:cart')->block(10, 10)->name('cart.update');
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');

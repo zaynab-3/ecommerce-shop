@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\StoreSetting;
 use App\Models\User;
 use App\Services\CheckoutService;
+use App\Services\CategoryIconService;
 use App\Services\ImageService;
 use App\Services\OrderStatusService;
 use App\Services\StoreTheme;
@@ -89,7 +90,7 @@ class ShopTest extends TestCase
         $color = $single->colors()->create(['name' => 'Natural']);
         $multiple = $this->product();
         $multiple->colors()->createMany([['name' => 'Red'], ['name' => 'Black']]);
-        $this->get(route('shop'))->assertOk()->assertSee('Choose options')->assertSee('Add to cart');
+        $this->get(route('shop'))->assertOk()->assertSee('data-card-color', false)->assertSee('Add to cart');
         $this->post(route('cart.add', $plain), ['quantity' => 1])->assertRedirect()
             ->assertSessionHas('cart.'.$plain->id.'-none.quantity', 1);
         $this->post(route('cart.add', $single), ['quantity' => 1, 'color_id' => $color->id])->assertRedirect()
@@ -144,6 +145,71 @@ class ShopTest extends TestCase
         $this->assertStringContainsString($p->name, rawurldecode($url));
         $this->assertStringContainsString(route('products.show', $p), rawurldecode($url));
         $this->get(route('products.show', $p))->assertSee('Ask about this product')->assertSee(e($url), false);
+    }
+
+    public function test_ajax_cart_add_update_remove_and_validation_use_server_values(): void
+    {
+        $p = $this->product(['quantity' => 3]);
+        $color = $p->colors()->create(['name' => 'Black']);
+        $this->postJson(route('cart.add', $p), ['quantity' => 2, 'color_id' => $color->id, 'price' => 1])
+            ->assertOk()->assertJsonPath('count', 2)->assertJsonPath('redirect', null)->assertSessionMissing('success');
+        $this->getJson(route('cart.index'))->assertOk()->assertHeader('Cache-Control', 'no-store, private')->assertJsonPath('subtotal_cents', 5000)->assertJsonPath('count', 2);
+        $this->postJson(route('cart.add', $p), ['quantity' => 2, 'color_id' => $color->id])->assertUnprocessable()->assertJsonValidationErrors('quantity');
+        $this->patchJson(route('cart.update', $p->id.'-'.$color->id), ['quantity' => 1])->assertOk()->assertJsonPath('count', 1)->assertJsonPath('subtotal_cents', 2500)->assertSee('Black');
+        $this->patchJson(route('cart.update', $p->id.'-'.$color->id), ['quantity' => 0])->assertOk()->assertJsonPath('count', 0)->assertJsonPath('subtotal_cents', 0);
+        $this->assertSame(3, $p->fresh()->quantity);
+    }
+
+    public function test_ajax_delivery_estimate_can_be_changed_and_cleared(): void
+    {
+        $p = $this->product();
+        $zone = DeliveryZone::create(['name' => 'Test town', 'governorate' => 'Beirut', 'fee_cents' => 450, 'is_active' => true]);
+        $this->withSession(['cart' => $this->cart($p)])->getJson(route('cart.index', ['delivery_zone_id' => $zone->id]))
+            ->assertOk()->assertJsonPath('delivery_cents', 450)->assertJsonPath('subtotal_cents', 2500)->assertSessionHas('delivery_zone_id', $zone->id);
+        $this->getJson(route('cart.index').'?delivery_zone_id=')->assertOk()->assertJsonPath('delivery_cents', 0)->assertSessionMissing('delivery_zone_id');
+        $zone->update(['is_active' => false]);
+        $this->getJson(route('cart.index', ['delivery_zone_id' => $zone->id]))->assertNotFound();
+    }
+
+    public function test_ajax_saved_toggle_returns_state_without_redirect_or_flash(): void
+    {
+        $p = $this->product();
+        $this->postJson(route('saved.toggle', $p))->assertOk()->assertJsonPath('saved', true)->assertJsonPath('product_id', $p->id)->assertSessionHas('saved', [$p->id])->assertSessionMissing('success');
+        $this->postJson(route('saved.toggle', $p))->assertOk()->assertJsonPath('saved', false)->assertSessionHas('saved', []);
+    }
+
+    public function test_public_stock_polling_does_not_write_a_session_cookie(): void
+    {
+        $p = $this->product();
+        $this->getJson('/stock?ids[]='.$p->id)->assertOk()->assertHeaderMissing('Set-Cookie')->assertJsonPath('0.id', $p->id);
+    }
+
+    public function test_category_svg_upload_is_sanitized_and_served_in_a_sandbox(): void
+    {
+        Storage::fake('local');
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onload="alert(1)"><script>alert(1)</script><foreignObject>bad</foreignObject><image href="https://example.com/track"/><path d="M1 1L20 20" stroke="black"/></svg>';
+        $this->actingAs($this->admin())->post(route('admin.categories.store'), ['name' => 'Custom category', 'icon' => 'gem', 'icon_file' => UploadedFile::fake()->createWithContent('icon.svg', $svg)])->assertSessionHasNoErrors();
+        $category = Category::where('name', 'Custom category')->firstOrFail();
+        $clean = Storage::disk('local')->get($category->icon_path);
+        $this->assertStringContainsString('<path', $clean);
+        foreach (['onload', '<script', 'foreignObject', '<image', 'https://example.com'] as $unsafe) $this->assertStringNotContainsString($unsafe, $clean);
+        $response = $this->get(route('category-icons.show', basename($category->icon_path)))->assertOk()->assertHeader('Content-Type', 'image/svg+xml')->assertHeaderMissing('Set-Cookie');
+        $this->assertStringContainsString('sandbox', $response->headers->get('Content-Security-Policy'));
+        $old = $category->icon_path;
+        $this->patch(route('admin.categories.update', $category), ['remove_icon' => 1])->assertSessionHasNoErrors();
+        $this->assertNull($category->fresh()->icon_path);
+        Storage::disk('local')->assertMissing($old);
+        $this->get('/category-icons/..%2F.env')->assertNotFound();
+    }
+
+    public function test_category_icons_reject_document_entities_and_linked_paint(): void
+    {
+        Storage::fake('local');
+        $this->actingAs($this->admin());
+        foreach (['<!DOCTYPE svg [<!ENTITY x SYSTEM "file:///etc/passwd">]><svg>&x;</svg>', '<svg xmlns="http://www.w3.org/2000/svg"><path fill="url(https://example.com/paint)" d="M1 1L2 2"/></svg>', 'not an svg'] as $svg) {
+            $this->post(route('admin.categories.store'), ['name' => 'Rejected icon', 'icon_file' => UploadedFile::fake()->createWithContent('bad.svg', $svg)])->assertSessionHasErrors('icon_file');
+        }
+        $this->assertFalse(Category::where('name', 'Rejected icon')->exists());
     }
 
     public function test_uploaded_images_and_thumbnails_are_accessible_without_a_storage_link(): void

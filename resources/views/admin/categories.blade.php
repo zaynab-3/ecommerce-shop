@@ -5,8 +5,7 @@
         <div class="admin-form-primary">
             @forelse($categories as $category)
                 <section class="admin-panel category-admin-panel">
-                    <div class="category-admin-row"><x-reorder type="categories" :id="$category->id" /><x-icon
-                            :name="$category->icon" />
+                    <div class="category-admin-row"><x-reorder type="categories" :id="$category->id" /><x-category-icon :category="$category" />
                         <form method="post" action="{{ route('admin.categories.update', $category) }}"
                             class="category-name-form">@csrf @method('PATCH')<input name="name"
                                 value="{{ $category->name }}" aria-label="Category name" required maxlength="100"><button
@@ -23,9 +22,10 @@
                                 aria-label="Delete {{ $category->name }}"><x-icon name="close" width="15" /></button>
                         </form>
                     </div>
+                    <x-category-icon-form :category="$category" />
                     @foreach ($category->children as $child)
                         <div class="category-admin-row child-row"><x-reorder type="categories" :id="$child->id" /><span
-                                class="muted">↳</span>
+                                class="muted">↳</span><x-category-icon :category="$child" />
                             <form method="post" action="{{ route('admin.categories.update', $child) }}"
                                 class="category-name-form">@csrf @method('PATCH')<input name="name"
                                     value="{{ $child->name }}" aria-label="Subcategory name" required
@@ -43,6 +43,7 @@
                                     class="icon-button" aria-label="Delete {{ $child->name }}"><x-icon name="close"
                                         width="15" /></button></form>
                         </div>
+                        <x-category-icon-form :category="$child" />
                     @endforeach
                 </section>
             @empty<div class="admin-panel table-empty">
@@ -52,7 +53,7 @@
             @endforelse
         </div>
         <aside class="admin-form-secondary">
-            <form method="post" action="{{ route('admin.categories.store') }}" class="admin-panel form-panel">@csrf<h2>
+            <form method="post" enctype="multipart/form-data" action="{{ route('admin.categories.store') }}" class="admin-panel form-panel">@csrf<h2>
                     Add category</h2>
                 <div class="field-grid single"><label class="field">Name<input name="name" value="{{ old('name') }}"
                             maxlength="100" required></label><label class="field">Parent category<select name="parent_id">
@@ -62,10 +63,10 @@
                             @endforeach
                         </select>
                     </label><label class="field">Icon<select name="icon">
-                            @foreach (['grid', 'headphones', 'home', 'bag', 'sparkles', 'gamepad', 'watch'] as $icon)
+                            @foreach (['grid', 'headphones', 'home', 'bag', 'sparkles', 'gamepad', 'watch', 'gem'] as $icon)
                                 <option>{{ $icon }}</option>
                             @endforeach
-                        </select></label><button class="button button-dark">Add category <x-icon name="plus" /></button>
+                        </select></label><label class="field">SVG icon (optional)<input type="file" name="icon_file" accept="image/svg+xml,.svg"><small>Up to 128 KB.</small></label><button class="button button-dark">Add category <x-icon name="plus" /></button>
                 </div>
             </form>
             <p class="form-hint">Hiding a parent category hides its subcategories and products in the store. Existing orders

@@ -1,10 +1,14 @@
 @props(['product'])
+@php
+$firstColor = $product->colors->first();
+$initialImage = ($firstColor ? $product->images->firstWhere('product_color_id', $firstColor->id) : null) ?? $product->images->firstWhere('product_color_id', null) ?? $product->images->first();
+@endphp
 <article class="product-card" data-product-id="{{ $product->id }}">
     <div class="product-visual">
         <a href="{{ route('products.show', $product) }}" class="product-image-link"
             aria-label="View {{ $product->name }}"><img
-                src="{{ $product->images->first()?->thumbnail_url ?? $product->image_url }}"
-                srcset="{{ $product->images->first()?->thumbnail_url ?? $product->image_url }} 480w, {{ $product->image_url }} 1600w"
+                src="{{ $initialImage?->thumbnail_url ?? $product->image_url }}"
+                srcset="{{ $initialImage?->thumbnail_url ?? $product->image_url }} 480w, {{ $initialImage?->url ?? $product->image_url }} 1600w"
                 sizes="(max-width: 600px) 45vw, (max-width: 1200px) 30vw, 20vw"
                 alt="{{ $product->images->first()?->alt ?? $product->name }}" width="420" height="420"
                 loading="lazy" decoding="async"></a>
@@ -12,9 +16,9 @@
             <span
                 class="product-badge {{ $product->compare_price_cents > $product->price_cents ? 'sale' : '' }}">{{ $product->badge }}</span>
         @endif
-        <form method="post" action="{{ route('saved.toggle', $product) }}" class="save-form">@csrf<button
+        <form method="post" action="{{ route('saved.toggle', $product) }}" class="save-form" data-ajax-save data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">@csrf<button
                 class="icon-button save-button {{ in_array($product->id, session('saved', [])) ? 'is-saved' : '' }}"
-                aria-label="{{ in_array($product->id, session('saved', [])) ? 'Unsave' : 'Save' }} {{ $product->name }}"><x-icon
+                aria-pressed="{{ in_array($product->id, session('saved', [])) ? 'true' : 'false' }}" aria-label="{{ in_array($product->id, session('saved', [])) ? 'Unsave' : 'Save' }} {{ $product->name }}"><x-icon
                     name="heart" /></button></form>
         <a class="quick-view" href="{{ route('products.show', $product) }}">View product <x-icon name="arrow" /></a>
     </div>
@@ -26,24 +30,19 @@
                 <del>${{ number_format($product->compare_price_cents / 100, 2) }}</del>
             @endif
         </div>
-        <div class="mini-colors" aria-label="{{ $product->colors->count() }} colors available">
-            @foreach ($product->colors->take(4) as $color)
-                <svg width="13" height="13" viewBox="0 0 16 16" role="img" aria-label="{{ $color->name }}">
-                    <circle cx="8" cy="8" r="6" fill="{{ $color->hex ?? '#eeeeee' }}" stroke="#c2c2c2" />
-                </svg>
-            @endforeach
-        </div>
     </div>
-    @if ($product->colors->count() > 1)
-        <a class="product-card-link" href="{{ route('products.show', $product) }}">Choose options <x-icon name="arrow" width="18" /></a>
-    @else
-        <form method="post" action="{{ route('cart.add', $product) }}" class="product-card-action">@csrf
+    <div class="card-colors" aria-label="Colors for {{ $product->name }}">
+        @foreach ($product->colors as $color)
+            @php($colorImage = $product->images->firstWhere('product_color_id', $color->id) ?? $product->images->firstWhere('product_color_id', null) ?? $product->images->first())
+            <button type="button" data-card-color data-color-id="{{ $color->id }}" data-color-image="{{ $colorImage?->thumbnail_url ?? $product->image_url }}" data-color-srcset="{{ $colorImage?->thumbnail_url ?? $product->image_url }} 480w, {{ $colorImage?->url ?? $product->image_url }} 1600w" aria-pressed="{{ $loop->first ? 'true' : 'false' }}" aria-label="Select {{ $color->name }} for {{ $product->name }}" title="{{ $color->name }}"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="{{ $color->hex ?? '#ffffff' }}" stroke="currentColor" stroke-width="1" />@unless($color->hex)<path d="m5 19 14-14" stroke="currentColor" />@endunless</svg></button>
+        @endforeach
+    </div>
+        <form method="post" action="{{ route('cart.add', $product) }}" class="product-card-action" data-ajax-cart>@csrf
             <input type="hidden" name="quantity" value="1">
             @if ($product->colors->isNotEmpty())<input type="hidden" name="color_id" value="{{ $product->colors->first()->id }}">@endif
             <button class="product-card-link" data-stock-button="{{ $product->id }}" data-available-label="Add to cart" @disabled($product->stock_status === 'out')>
                 <span aria-hidden="true">+</span><span data-stock-button-label>{{ $product->stock_status === 'out' ? 'Out of stock' : 'Add to cart' }}</span>
             </button>
         </form>
-    @endif
     </div>
 </article>

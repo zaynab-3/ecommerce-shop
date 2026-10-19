@@ -1,5 +1,5 @@
 // A shared five-second server cache keeps polling inexpensive across visitors.
-const stockIds = [
+const readStockIds = () => [
     ...new Set(
         [...document.querySelectorAll("[data-stock-id]")].map(
             (el) => el.dataset.stockId,
@@ -9,12 +9,14 @@ const stockIds = [
 let stockInFlight = false;
 function updateButtons(id, disabled, label) {
     document.querySelectorAll(`[data-stock-button="${id}"]`).forEach((buy) => {
-        buy.disabled = disabled;
+        buy.dataset.stockUnavailable = disabled ? "1" : "";
+        buy.disabled = disabled || !!buy.closest("form")?.dataset.busy;
         buy.querySelector("[data-stock-button-label]").textContent =
             label ?? buy.dataset.availableLabel;
     });
 }
 async function refreshStock() {
+    const stockIds = readStockIds();
     if (!stockIds.length || document.hidden || stockInFlight) return;
     stockInFlight = true;
     try {
@@ -66,9 +68,11 @@ async function refreshStock() {
         stockInFlight = false;
     }
 }
-if (stockIds.length) {
+{
     setInterval(refreshStock, 15000);
     document.addEventListener("visibilitychange", () => {
         if (!document.hidden) refreshStock();
     });
 }
+
+document.addEventListener("store:cart-updated", refreshStock);

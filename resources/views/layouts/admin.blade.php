@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/store.css') }}?v={{ filemtime(public_path('css/store.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ filemtime(public_path('css/admin.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/identity.css') }}?v={{ filemtime(public_path('css/identity.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/store-interactions.css') }}?v={{ filemtime(public_path('css/store-interactions.css')) }}">
     <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1), 'v' => \App\Services\StoreTheme::VERSION]) }}">
     <script src="{{ asset('js/admin.js') }}" type="module"></script>
 </head>
@@ -54,7 +55,7 @@
     <div class="admin-content">
         <header class="admin-topbar"><button class="icon-button admin-menu-toggle" type="button" data-admin-menu
                 aria-expanded="false" aria-label="Toggle admin navigation"><x-icon
-                    name="menu" /></button><span>Workspace <span>/</span> @yield('title', 'Overview')</span>
+                    name="menu" /></button><span>Workspace <span>/</span> @yield('title', 'Overview')</span><div class="admin-header-actions">@yield('admin-actions')</div>
         </header>
         <main id="main" class="admin-main"><x-flash />@yield('content')</main>
     </div>

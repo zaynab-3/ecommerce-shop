@@ -39,6 +39,7 @@ After setup, `php scripts/start-local.php --demo` starts a local checkout, adds 
 ## What works
 
 - Categories and one level of subcategories; parent visibility applies to every descendant product.
+- Scrollable category/subcategory navigation with All, bundled icons, and sanitized custom SVG icon uploads.
 - Search, category filters, in-stock filtering, sorting, pagination, session-based saved items, and shopping cart.
 - Products with optional colors and optional hex swatches. Images can belong to a color or remain unassigned. Choosing a color switches the main image; an unassigned image is the fallback.
 - Up to ten uploaded JPEG/PNG/WebP images per item. Server-side decoding, EXIF orientation, 1,600 px WebP masters and 480 px WebP thumbnails. Uploads are limited by byte size and pixel count. Quality-84 WebP is visually optimized but is lossy: neither a universal 500 KB target nor zero quality loss is promised.
@@ -69,6 +70,7 @@ After setup, `php scripts/start-local.php --demo` starts a local checkout, adds 
 | Access and security headers | `app/Http/Middleware/` |
 | WhatsApp integration | `app/Services/WhatsAppOrderService.php`, `resources/views/components/whatsapp-order.blade.php`, `public/js/store/whatsapp.js` |
 | Demo and delivery data | `database/seeders/` |
+| Category icons | `app/Services/CategoryIconService.php`, `app/Http/Controllers/CategoryIconController.php`, `resources/views/components/category-icon.blade.php` |
 | Website theme | `app/Services/StoreTheme.php`, `app/Http/Controllers/StoreThemeController.php`, admin Store settings |
 | Styles and interactions | `public/css/`, `public/js/` |
 | Schema | `database/migrations/` |
@@ -105,6 +107,6 @@ These are short development-server request bursts, not a sustained production lo
 
 The catalog, product names, prices, and descriptions are demo content. Replace them with your own merchandise. Product photography is sourced from the public [Fake Store API demo](https://github.com/keikaavousi/fake-store-api); replace it or verify rights for commercial use. The headphones, lamp, placeholder, favicon, and storefront decoration are local SVG illustrations. All images are served locally.
 
-MESH keeps the requested retail layouts while using its own borderless visual identity: locally hosted Space Grotesk, sentence-case product names, black prices, and rounded actions. The interface uses only **one owner-selected accent, black, and white**; product images and actual color swatches keep their colors. Choose the accent in **Store settings → Website appearance → Main color**. Button labels use black or white to remain readable. The storefront includes a touch-friendly product carousel, a four-column desktop/two-column phone catalog, and a responsive thumbnail gallery. The phone menu opens in a side drawer. Admin introductions and the role guide have been removed; stock fields adapt to tracked/open quantity. See [design QA](design-qa.md) for screenshots and responsive checks.
+MESH keeps the requested retail layouts while using its own borderless visual identity: locally hosted Space Grotesk, sentence-case product names, black prices, and rounded actions. The interface uses only **one owner-selected accent, black, and white**; product images and actual color swatches keep their colors. Choose the accent in **Store settings → Website appearance → Main color**. Button labels use black or white to remain readable. The storefront includes a touch-friendly product carousel, a four-column desktop/two-column phone catalog, and a responsive thumbnail gallery. The phone menu opens in a side drawer. Cart opens as a full-screen bottom sheet and search opens in a centered dialog; the header hides while scrolling down and returns when scrolling up. Cart/favorite actions use JSON without a page reload; notifications appear at the top right for five seconds. Admin introductions and the role guide have been removed; stock fields adapt to tracked/open quantity. See [design QA](design-qa.md) for screenshots and responsive checks.
 
 Complete the business contact details, legal identity, return periods, privacy retention policy, and shipping commitments in `resources/views/store/help.blade.php`. Online card payments, customer accounts, advanced shipping-provider integration, and per-color stock are not part of this implementation; stock is maintained at the product level and payment is cash on delivery.

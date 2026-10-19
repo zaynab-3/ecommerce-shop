@@ -34,7 +34,7 @@
                     @endif
                 </div>
                 <x-stock :product="$product" />
-                <form action="{{ route('cart.add', $product) }}" method="post" class="add-to-bag-form">@csrf
+                <form action="{{ route('cart.add', $product) }}" method="post" class="add-to-bag-form" data-ajax-cart>@csrf
                     @if ($product->colors->isNotEmpty())
                         <fieldset class="color-options">
                             <legend>Color: <strong
@@ -75,9 +75,9 @@
                 @if ($whatsappUrl)
                     <a class="button product-whatsapp" href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer"><x-icon name="phone" /><span>Ask about this product</span></a>
                 @endif
-                <form method="post" action="{{ route('saved.toggle', $product) }}">@csrf<button
-                        class="save-detail text-link"><x-icon
-                            name="heart" />{{ in_array($product->id, session('saved', [])) ? 'Saved to your favorites' : 'Save for later' }}</button>
+                <form method="post" action="{{ route('saved.toggle', $product) }}" data-ajax-save data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">@csrf<button
+                        class="save-detail text-link {{ in_array($product->id, session('saved', [])) ? 'is-saved' : '' }}" aria-pressed="{{ in_array($product->id, session('saved', [])) ? 'true' : 'false' }}"><x-icon
+                            name="heart" /><span data-saved-label>{{ in_array($product->id, session('saved', [])) ? 'Saved to your favorites' : 'Save for later' }}</span></button>
                 </form>
                 <div class="detail-benefits">
                     <div><x-icon name="truck" /><span><strong>Delivered to your doorstep</strong><small>Choose your
