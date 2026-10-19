@@ -66,6 +66,9 @@ $run('db:seed', ['--force' => true]);
 if (! file_exists('public/storage') && ! is_link('public/storage')) {
     $run('storage:link');
 }
+if (! is_dir('public/storage')) {
+    echo "Storage link unavailable; Laravel will serve generated product WebP images directly.\n";
+}
 $run('view:cache');
 
 echo "Setup complete.\n";

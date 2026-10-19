@@ -3,8 +3,15 @@
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\StorefrontController;
 use Illuminate\Support\Facades\Route;
+
+// Used when the web server cannot serve public/storage (for example, exFAT).
+Route::get('/storage/products/{filename}', ProductImageController::class)
+    ->withoutMiddleware('web')
+    ->where('filename', '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}(-480)?\.webp')
+    ->name('product-images.show');
 
 Route::get('/', [StorefrontController::class, 'index'])->name('home');
 Route::get('/shop', [StorefrontController::class, 'index'])->name('shop');

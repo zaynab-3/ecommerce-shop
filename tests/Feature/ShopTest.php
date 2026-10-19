@@ -66,6 +66,29 @@ class ShopTest extends TestCase
         $this->get('/checkout')->assertRedirect(route('cart.index'));
     }
 
+    public function test_uploaded_images_and_thumbnails_are_accessible_without_a_storage_link(): void
+    {
+        Storage::fake('public');
+        $path = app(ImageService::class)->store(UploadedFile::fake()->image('photo.jpg', 600, 400));
+        foreach ([$path, str_replace('.webp', '-480.webp', $path)] as $file) {
+            $response = $this->get('/storage/'.$file)->assertOk()
+                ->assertHeader('Content-Type', 'image/webp')
+                ->assertHeaderMissing('Set-Cookie')
+                ->assertHeader('X-Content-Type-Options', 'nosniff');
+            $this->assertStringContainsString('public', $response->headers->get('Cache-Control'));
+            $this->assertSame(Storage::disk('public')->get($file), file_get_contents($response->baseResponse->getFile()->getPathname()));
+        }
+    }
+
+    public function test_image_fallback_does_not_expose_other_files_or_missing_images(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('private.txt', 'Do not expose this file');
+        foreach (['/storage/private.txt', '/storage/products/private.txt', '/storage/products/'.Str::uuid().'.webp', '/storage/products/..%2F..%2F.env'] as $url) {
+            $this->get($url)->assertNotFound()->assertDontSee('Do not expose this file');
+        }
+    }
+
     public function test_categories_inherit_parent_visibility_and_checkout_rechecks_it(): void
     {
         $parent = Category::create(['name' => 'Parent', 'slug' => 'parent', 'is_active' => false]);

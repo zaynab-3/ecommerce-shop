@@ -34,6 +34,8 @@ WhatsApp checkout only needs the recipient phone number and its switch in **Stor
 
 The web server must restart when a cloud task or server restarts. See [deployment notes](docs/DEPLOYMENT.md).
 
+After setup, `php scripts/start-local.php --demo` starts a local checkout, adds demo products only to an empty catalog, and prompts for an owner if none exists. It supports an existing XAMPP database without Docker. Generated product WebP images have a Laravel fallback route when Windows cannot create the storage link; images still use direct static serving when the link works.
+
 ## What works
 
 - Categories and one level of subcategories; parent visibility applies to every descendant product.

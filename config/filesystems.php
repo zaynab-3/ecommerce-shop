@@ -33,7 +33,8 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // Private files have no public route. Product images are served separately.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],

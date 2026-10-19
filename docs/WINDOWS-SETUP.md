@@ -149,6 +149,16 @@ Replace the email with yours. Enter and confirm a password when prompted. Input 
 
 ## 4. Start the website
 
+After successful setup, this single command optionally adds demo products to an empty catalog, prompts for an owner email/password if no owner exists, and starts the server:
+
+```powershell
+php scripts/start-local.php --demo
+```
+
+It requires `APP_ENV=local`, preserves existing accounts and catalog data, and works without Docker when your own database is running. Generated product WebP images have a Laravel serving route when Windows cannot create `public/storage`, including on non-NTFS volumes. Keeping the standard storage link still lets production web servers serve images directly. The launcher and fallback were validated on Linux; native Windows execution must still be checked on your computer.
+
+To start only the server instead:
+
 ```powershell
 php artisan serve --host=127.0.0.1 --port=8000
 ```
@@ -202,7 +212,7 @@ Use demonstration orders for these checks. The development server is for local t
 | Access denied / unknown database | Check the account/password and database names in `.env` and `.env.testing`. For an existing Docker volume, keep its original password or change the account in MySQL too. |
 | Tests refuse the database | Configure `.env.testing` with `DB_DATABASE=ecommerce_shop_test`, then run `php artisan config:clear`. Never rename your real database to satisfy the guard. |
 | `imagewebp` unavailable | Enable a GD build with WebP support. The setup script checks this. |
-| `storage:link` fails on Windows | Verify the path is not already occupied by an ordinary directory. Enable Windows Developer Mode or retry that command in an elevated terminal if permissions require it. |
+| `storage:link` fails on Windows / NTFS required | Pull the latest code. Generated product WebP images work through Laravel even when no storage link exists. No drive conversion or project relocation is needed for this fallback. |
 | 500 error | Read the latest message in `storage/logs/laravel.log`. For local diagnosis, set `APP_DEBUG=true` in `.env` and run `php artisan optimize:clear`. Keep debug off on public deployments. |
 | 419 / session error | Keep the same hostname (use `127.0.0.1` consistently), reload the form, and ensure `SESSION_SECURE_COOKIE=false` for local HTTP. |
 | Port in use | Use `php artisan serve --host=127.0.0.1 --port=8001`. |
