@@ -1,75 +1,27 @@
 @extends('layouts.store')
+@section('title', request('saved') ? 'Saved items' : ($selected?->name ?? (request('q') ? 'Search results' : 'Shop')))
 @section('content')
     @if (request()->routeIs('home') && !request()->hasAny(['q', 'category', 'saved', 'sort']))
-        <section class="container hero-section">
-            <div class="hero-main">
-                <div class="hero-copy"><span class="eyebrow"><span class="tiny-star">✳︎</span> LESS ORDINARY. MORE YOU.</span>
-                    <h1>Your everyday,<br>upgraded<span>.</span></h1>
-                    <p>From little essentials to your next big find.<br>Discover things you’ll love, all in one place.</p><a
-                        class="button button-dark" href="{{ route('shop') }}">Explore the collection <x-icon
-                            name="arrow" /></a>
-                    <div class="hero-bottom">
-                        <div class="hero-line"></div><span>GOOD FINDS. GREAT PRICES. ENDLESS POSSIBILITIES.</span>
-                    </div>
-                </div>
-                <div class="hero-art" aria-hidden="true">
-                    <div class="orbit orbit-one"></div>
-                    <div class="orbit orbit-two"></div><span class="floating-label"><span>✦</span> Made for your
-                        everyday</span><img class="hero-bag" src="{{ asset('images/hero-bag.webp') }}" alt=""
-                        fetchpriority="high" width="420" height="520">
-                    <div class="hero-sticker">A little<br>different.<br><strong>A lot you.</strong><svg width="35"
-                            height="35" viewBox="0 0 24 24">
-                            <path d="M3 21 21 3M3 3h18v18" fill="none" stroke="currentColor" stroke-width="1.3" />
-                        </svg></div>
-                </div>
-            </div>
-            <a class="hero-side"
-                href="{{ route('shop', ['category' => $categories->firstWhere('name', 'Electronics')?->slug]) }}"><span
-                    class="eyebrow">SMALL DETAILS. BIG DIFFERENCE.</span>
-                <h2>Meet your<br>new essentials.</h2>
-                <p>Tech that fits your life.</p>
-                <div class="hero-monitor"><img src="{{ asset('images/hero-monitor.webp') }}" width="360" height="280"
-                        alt="Curved monitor for your workspace" fetchpriority="high"></div><span class="side-link">Explore
-                    tech <span class="round-arrow"><x-icon name="arrow" /></span></span>
-            </a>
-        </section>
+        <x-product-carousel :products="$products->getCollection()->take(8)" title="Top picks" :href="route('shop')" />
         <section class="container categories-section">
-            <div class="section-heading">
-                <h2>A world of good finds<span>.</span></h2><a href="{{ route('shop') }}" class="text-link">Browse
-                    everything <x-icon name="arrow" /></a>
-            </div>
+            <div class="section-heading retail-section-heading"><h2>Shop by category</h2><a href="{{ route('shop') }}" class="text-link">View all products <x-icon name="arrow" /></a></div>
             <div class="category-grid">
                 @foreach ($categories as $category)
-                    <a class="category-tile" href="{{ route('shop', ['category' => $category->slug]) }}"><span
-                            class="category-icon category-{{ $loop->index % 6 }}"><x-icon :name="$category->icon" width="29"
-                                height="29" /></span><span>{{ $category->name }}</span><x-icon name="chevron"
-                            width="14" height="14" /></a>
+                    <a class="category-tile" href="{{ route('shop', ['category' => $category->slug]) }}"><span class="category-icon category-{{ $loop->index % 6 }}"><x-icon :name="$category->icon" width="28" height="28" /></span><span>{{ $category->name }}</span><x-icon name="chevron" width="16" height="16" /></a>
                 @endforeach
             </div>
         </section>
     @endif
     <section class="container catalog-section" id="collection">
-        @if (request()->routeIs('home') && !request()->hasAny(['q', 'category', 'saved', 'sort']))
-            <div class="section-heading product-section-heading">
-                <div><span class="eyebrow muted">YOUR NEXT FAVORITES</span>
-                    <h2>Good finds, picked for you<span>.</span></h2>
-                </div><a href="{{ route('shop') }}" class="text-link">View all products <x-icon name="arrow" /></a>
-        </div>@else<div class="breadcrumb"><a href="{{ route('home') }}">Home</a><x-icon name="chevron" width="13"
-                    height="13" /><span>{{ request('saved') ? 'Saved items' : $selected?->name ?? 'Shop all' }}</span></div>
-            <div class="collection-title">
-                <div><span class="eyebrow muted">A LITTLE SOMETHING FOR EVERYONE</span>
-                    <h1>{{ request('saved') ? 'Your saved finds' : (request('q') ? 'Results for “' . request('q') . '”' : $selected?->name ?? 'The whole collection') }}<span>.</span>
-                    </h1>
-                    <p>{{ request('saved') ? 'Your favorites, all in one place.' : 'Thoughtful essentials and unexpected favorites. Find your thing.' }}
-                    </p>
-                </div><span class="collection-count">{{ $products->total() }} good finds</span>
-            </div>
-        @endif
+        @unless (request()->routeIs('home') && !request()->hasAny(['q', 'category', 'saved', 'sort']))
+            <div class="breadcrumb"><a href="{{ route('home') }}">Home</a><x-icon name="chevron" width="14" /><span>{{ request('saved') ? 'Saved items' : ($selected?->name ?? (request('q') ? 'Search results' : 'Shop all')) }}</span></div>
+        @endunless
+        <h1 class="sr-only">{{ request('saved') ? 'Saved items' : ($selected?->name ?? (request('q') ? 'Search results for '.request('q') : 'Products')) }}</h1>
         <div class="catalog-layout">
             <aside class="catalog-sidebar">
                 <div class="sidebar-heading"><x-icon name="grid" /><strong>Shop by category</strong></div><a
                     class="sidebar-category {{ !request('category') ? 'selected' : '' }}"
-                    href="{{ route('shop', request()->except(['category', 'page'])) }}">All products <span>↗</span></a>
+                    href="{{ route('shop', request()->except(['category', 'page'])) }}">All products <x-icon name="arrow" width="16" height="16" /></a>
                 @foreach ($categories as $category)
                     <a class="sidebar-category {{ request('category') === $category->slug ? 'selected' : '' }}"
                         href="{{ route('shop', [...request()->except('page'), 'category' => $category->slug]) }}"><x-icon
@@ -82,15 +34,27 @@
                         @endforeach
                     @endif
                 @endforeach
-                <div class="sidebar-help">
-                    <x-icon name="sparkles" />
-                    <h3>A little inspiration?</h3>
-                    <p>Start with our newest finds. You never know what you’ll discover.</p><a
-                        href="{{ route('shop', ['sort' => 'newest']) }}">See what's new <x-icon name="arrow"
-                            width="16" /></a>
-                </div>
             </aside>
             <div class="catalog-main">
+                <form class="mobile-category-filter" method="get" action="{{ route('shop') }}">
+                    @foreach (request()->except(['category', 'page']) as $key => $value)
+                        @if (is_scalar($value))
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                        @endif
+                    @endforeach
+                    <label class="field" for="mobile-category">Category
+                        <select id="mobile-category" name="category" data-submit>
+                            <option value="">All products</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->slug }}" @selected(request('category') === $category->slug)>{{ $category->name }}</option>
+                                @foreach ($category->children as $child)
+                                    <option value="{{ $child->slug }}" @selected(request('category') === $child->slug)>— {{ $child->name }}</option>
+                                @endforeach
+                            @endforeach
+                        </select>
+                    </label>
+                    <noscript><button class="button button-light" type="submit">Apply category</button></noscript>
+                </form>
                 <form class="catalog-toolbar" method="get" action="{{ route('shop') }}">
                     @foreach (request()->except(['sort', 'available', 'page']) as $k => $v)
                         @if (is_scalar($v))
@@ -112,10 +76,10 @@
                     @forelse($products as $product)
                     <x-product-card :product="$product" />@empty<div class="empty-state"><x-icon name="search"
                                 width="45" height="45" />
-                            <h2>{{ request('saved') ? 'Your favorites are waiting to be found.' : 'No finds here just yet.' }}
+                            <h2>{{ request('saved') ? 'No saved items yet' : 'No products found' }}
                             </h2>
-                            <p>{{ request('saved') ? 'Tap the heart on anything you love to keep it here.' : 'Try a different search or explore the full collection.' }}
-                            </p><a class="button button-dark" href="{{ route('shop') }}">Explore all products <x-icon
+                            <p>{{ request('saved') ? 'Use the heart button to save products.' : 'Try another search or category.' }}
+                            </p><a class="button button-dark" href="{{ route('shop') }}">View all products <x-icon
                                     name="arrow" /></a>
                         </div>
                     @endforelse
@@ -134,17 +98,5 @@
                 @endif
             </div>
         </div>
-    </section>
-    <section class="container discovery-banner">
-        <div><span class="eyebrow">THE BEAUTY OF A GOOD FIND</span>
-            <h2>Life’s little upgrades<br>start right here<span>.</span></h2>
-            <p>A fresh perspective. An everyday essential. Something just for you.</p>
-        </div><a class="button button-dark" href="{{ route('shop', ['sort' => 'newest']) }}">Discover something new <x-icon
-                name="arrow" /></a><svg class="banner-star" aria-hidden="true" viewBox="0 0 100 100" width="230"
-            height="230">
-            <g stroke="#dfe3ce" stroke-width="8" stroke-linecap="round">
-                <path d="M50 10v80M10 50h80M22 22l56 56M22 78l56-56" />
-            </g>
-        </svg>
     </section>
 @endsection

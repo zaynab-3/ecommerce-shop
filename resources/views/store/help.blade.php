@@ -1,8 +1,6 @@
 @extends('layouts.store')
-@section('title', 'Here to help')
-@section('content')<div class="container help-page"><span class="eyebrow muted">A LITTLE HELP GOES A LONG WAY</span>
-        <h1>Here for you<span>.</span></h1>
-        <p>Everything you need to shop with confidence.</p>
+@section('title', 'Help & delivery')
+@section('content')<div class="container help-page"><h1>Help & delivery</h1>
         <section id="delivery">
             <h2>Delivery information</h2>
             <p>We deliver to the areas available in the checkout area selector. Select your area to see the exact delivery
@@ -25,9 +23,9 @@
             <h2>Privacy & shopping terms</h2>
             <p>We use your name, contact details, address, and order information to process and deliver your purchase. Store
                 staff can access this information for order fulfillment. If WhatsApp checkout is enabled, WhatsApp opens with your order details addressed to the store. Review the message and tap Send to share it through WhatsApp. Your order is saved in our system even if you do not send the message.</p>
-            <p>Your shopping bag, saved items, and order confirmation access use a session cookie. Prices are in USD. Stock
+            <p>Your shopping cart, saved items, and order confirmation access use a session cookie. Prices are in USD. Stock
                 and delivery fees are checked again when your order is placed. An order is a request to purchase, subject to
                 confirmation by our team. These operational terms should be reviewed and completed with the business’s legal
                 identity, contact details, return periods, and local legal requirements before launch.</p>
-        </section><a class="button button-dark" href="{{ route('shop') }}">Back to the good finds <x-icon name="arrow" /></a>
+        </section><a class="button button-dark" href="{{ route('shop') }}">Back to shop <x-icon name="arrow" /></a>
 </div>@endsection

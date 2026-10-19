@@ -1,11 +1,15 @@
 @extends('layouts.admin')
 @section('title', 'Store settings')
-@section('content')<x-admin-heading title="Make it your own"
-        description="A few little switches. A store that works your way." eyebrow="STORE SETTINGS" />
+@section('content')<x-admin-heading title="Store settings"
+        description="Manage store details, delivery pricing, and WhatsApp checkout." eyebrow="STORE SETTINGS" />
     <form method="post" action="{{ route('admin.settings.update') }}" class="settings-form">@csrf @method('PATCH')<section
             class="admin-panel form-panel">
-            <h2>The name on the door</h2><label class="field">Store name<input name="store_name"
+            <h2>Store details</h2><label class="field">Store name<input name="store_name"
                     value="{{ old('store_name', $settings->store_name) }}" maxlength="80" required></label>
+        </section>
+        <section class="admin-panel form-panel">
+            <h2>Website appearance</h2>
+            <label class="field">Main color<input class="theme-color-picker" name="accent_color" type="color" value="{{ old('accent_color', $settings->accentColor()) }}" required><small>Used for buttons, prices, links, and selected options. The background stays white, with dark headings and gray secondary text.</small></label>
         </section>
         <section class="admin-panel form-panel">
             <div class="setting-toggle-row">
@@ -22,8 +26,8 @@
         <section class="admin-panel form-panel">
             <div class="setting-toggle-row">
                 <div><x-icon name="bag" />
-                    <h2>Orders to WhatsApp</h2>
-                    <p>Open WhatsApp at checkout with the customer’s order ready to send.</p>
+                    <h2>WhatsApp orders & questions</h2>
+                    <p>Enable WhatsApp checkout and product questions.</p>
                 </div><label class="switch"><input name="whatsapp_enabled" type="hidden" value="0"><input
                         name="whatsapp_enabled" type="checkbox" value="1"
                         @checked(old('whatsapp_enabled', $settings->whatsapp_enabled))><span></span><span class="sr-only">Enable WhatsApp
@@ -31,6 +35,6 @@
             </div><label class="field">Recipient phone number<input name="whatsapp_recipient"
                     value="{{ old('whatsapp_recipient', $settings->whatsapp_recipient) }}" placeholder="+961 70 123 456"
                     type="tel" inputmode="tel" maxlength="30"><small>Include the country code, for example +961 70 123 456.</small></label>
-            <p class="form-hint">That’s all the setup you need. Checkout saves the order, then opens the customer’s WhatsApp with the cart message addressed to this number. The customer reviews it and taps Send.</p>
+            <p class="form-hint">That’s all the setup you need. Checkout saves the order, then opens the customer’s WhatsApp with the cart message addressed to this number. The customer reviews it and taps Send. Product pages also show an “Ask about this product” link to the same number.</p>
         </section><button class="button button-dark">Save settings <x-icon name="check" /></button>
 </form>@endsection

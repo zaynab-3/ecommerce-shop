@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Products')
-@section('content')<x-admin-heading title="Your collection"
-        description="The good finds, and everything that keeps them moving." eyebrow="CATALOG">
+@section('content')<x-admin-heading title="Products"
+        description="Manage products, stock, and visibility." eyebrow="CATALOG">
         <a class="button button-dark" href="{{ route('admin.products.create') }}"><x-icon name="plus" /> Add
             product</a></x-admin-heading>
     <section class="admin-panel">
@@ -14,7 +14,8 @@
                     value="{{ request('q') }}" placeholder="Find a product" maxlength="100"
                     aria-label="Search products"><button>Search</button></form>
         </div>
-        <div class="table-scroll">
+        <p class="table-hint">Scroll across for stock and visibility controls.</p>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table">
             <table class="products-table">
                 <thead>
                     <tr>

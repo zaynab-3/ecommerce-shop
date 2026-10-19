@@ -29,7 +29,7 @@ class CartController extends Controller
 
     public function add(Request $r, Product $product)
     {
-        $data = $r->validate(['quantity' => 'required|integer|min:1|max:99', 'color_id' => 'nullable|integer']);
+        $data = $r->validate(['quantity' => 'required|integer|min:1|max:99', 'color_id' => 'nullable|integer', 'buy_now' => 'sometimes|boolean']);
         abort_unless(Product::visible()->whereKey($product->id)->exists(), 404);
         $color = $data['color_id'] ?? null;
         if ($color && ! $product->colors()->whereKey($color)->exists()) {
@@ -41,7 +41,7 @@ class CartController extends Controller
         $cart = session('cart', []);
         $key = $product->id.'-'.($color ?? 'none');
         if (! isset($cart[$key]) && count($cart) >= 50) {
-            throw ValidationException::withMessages(['cart' => 'Your bag can hold up to 50 different items.']);
+            throw ValidationException::withMessages(['cart' => 'Your cart can hold up to 50 different items.']);
         }
         $quantity = ($cart[$key]['quantity'] ?? 0) + $data['quantity'];
         $allQty = collect($cart)->where('product_id', $product->id)->sum('quantity') + $data['quantity'];
@@ -51,7 +51,7 @@ class CartController extends Controller
         $cart[$key] = ['product_id' => $product->id, 'color_id' => $color, 'quantity' => $quantity];
         session(['cart' => $cart]);
 
-        return back()->with('success', 'Added to your bag.');
+        return ($r->boolean('buy_now') ? redirect()->route('checkout') : back())->with('success', 'Added to your cart.');
     }
 
     public function update(Request $r, string $key)
@@ -71,6 +71,6 @@ class CartController extends Controller
             }$cart[$key]['quantity'] = $data['quantity'];
         }session(['cart' => $cart]);
 
-        return back()->with('success', 'Your bag has been updated.');
+        return back()->with('success', 'Your cart has been updated.');
     }
 }

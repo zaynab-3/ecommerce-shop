@@ -1,18 +1,16 @@
 @extends('layouts.store')
-@section('title', 'Your bag')
+@section('title', 'Your cart')
 @section('content')<div class="container shopping-page">
-        <div class="breadcrumb"><a href="{{ route('home') }}">Home</a><x-icon name="chevron" width="13" /><span>Your
-                bag</span></div>
+        <div class="breadcrumb"><a href="{{ route('home') }}">Home</a><x-icon name="chevron" width="13" /><span>Your cart</span></div>
         <div class="collection-title">
-            <div><span class="eyebrow muted">YOUR GOOD FINDS</span>
-                <h1>In the bag<span>.</span></h1>
+            <div><h1>Shopping cart</h1>
             </div><span>{{ $lines->sum('quantity') }} items</span>
         </div>
         @if ($lines->isEmpty())
             <div class="empty-state"><x-icon name="bag" width="56" height="56" />
-                <h2>A little room for something good.</h2>
-                <p>Your bag is empty. Let’s find your next favorite thing.</p><a class="button button-dark"
-                    href="{{ route('shop') }}">Start exploring <x-icon name="arrow" /></a>
+                <h2>Your cart is empty</h2>
+                <p>Add products to your cart to get started.</p><a class="button button-dark"
+                    href="{{ route('shop') }}">Shop products <x-icon name="arrow" /></a>
         </div>@else<div class="shopping-layout">
                 <div class="cart-lines">
                     @foreach ($lines as $line)
@@ -42,9 +40,9 @@
                         </article>
                     @endforeach
                     <a class="text-link continue-shopping" href="{{ route('shop') }}">
-                        ← Continue exploring</a>
+                        ← Continue shopping</a>
                 </div>
-                <aside class="order-summary"><span class="eyebrow muted">ALL THE GOOD STUFF</span>
+                <aside class="order-summary">
                     <h2>Order summary</h2>
                     <div class="summary-row"><span>Subtotal</span><strong>${{ number_format($subtotal / 100, 2) }}</strong>
                     </div>

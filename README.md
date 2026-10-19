@@ -39,12 +39,13 @@ After setup, `php scripts/start-local.php --demo` starts a local checkout, adds 
 ## What works
 
 - Categories and one level of subcategories; parent visibility applies to every descendant product.
-- Search, category filters, in-stock filtering, sorting, pagination, session-based saved items, and shopping bag.
+- Search, category filters, in-stock filtering, sorting, pagination, session-based saved items, and shopping cart.
 - Products with optional colors and optional hex swatches. Images can belong to a color or remain unassigned. Choosing a color switches the main image; an unassigned image is the fallback.
 - Up to ten uploaded JPEG/PNG/WebP images per item. Server-side decoding, EXIF orientation, 1,600 px WebP masters and 480 px WebP thumbnails. Uploads are limited by byte size and pixel count. Quality-84 WebP is visually optimized but is lossy: neither a universal 500 KB target nor zero quality loss is promised.
 - Tracked stock and open quantity with manual Available / Low / Out of stock states.
 - Editable low-stock thresholds. Defaults: initial stock ≤10 → 5, ≤30 → 10, ≤100 → 15, above 100 → ceil(15%). Thresholds remain fixed as items sell. A threshold may be overridden for any item.
 - Stock polling every 15 seconds while a tab is visible, backed by a five-second shared cache. Checkout always checks authoritative stock. This is periodic synchronization, not WebSocket push.
+- Owner-controlled website accent color, neutral body text, readable contrast for light colors, and locally hosted fonts.
 - Atomic checkout, aggregate stock checks across colors, integer-cent totals, immutable order item snapshots, idempotency keys, and session locking. Stock is deducted when the order is placed. Cancellation before shipping restores it exactly once.
 - Admin stock adjustments and visibility controls from the product list; category visibility controls and up/down reordering; color/image assignment and image ordering.
 - Owner, manager, and order-agent roles. Agents may claim unassigned orders and update only their assigned orders; assignment is rechecked inside the order transaction. Owners manage team access and settings.
@@ -68,6 +69,7 @@ After setup, `php scripts/start-local.php --demo` starts a local checkout, adds 
 | Access and security headers | `app/Http/Middleware/` |
 | WhatsApp integration | `app/Services/WhatsAppOrderService.php`, `resources/views/components/whatsapp-order.blade.php`, `public/js/store/whatsapp.js` |
 | Demo and delivery data | `database/seeders/` |
+| Website theme | `app/Services/StoreTheme.php`, `app/Http/Controllers/StoreThemeController.php`, admin Store settings |
 | Styles and interactions | `public/css/`, `public/js/` |
 | Schema | `database/migrations/` |
 | Automated checks | `tests/Feature/ShopTest.php`, `scripts/test-stock-race.py` |
@@ -103,6 +105,6 @@ These are short development-server request bursts, not a sustained production lo
 
 The catalog, product names, prices, and descriptions are demo content. Replace them with your own merchandise. Product photography is sourced from the public [Fake Store API demo](https://github.com/keikaavousi/fake-store-api); replace it or verify rights for commercial use. The headphones, lamp, placeholder, favicon, and storefront decoration are local SVG illustrations. All images are served locally.
 
-The supplied reference website blocked automated access during implementation. This is an original retail design with a similar general shopping structure; exact visual fidelity was not verified.
+The current storefront follows the retail structure of Jaber Games with independently branded MESH pages: locally hosted Space Grotesk and Teko, readable product cards, a touch-friendly Top picks carousel, a four-column desktop/two-column mobile catalog, and a thumbnail product gallery. Owners can choose the main website color in **Store settings → Website appearance → Main color**; buttons, prices, and selected options follow that choice, with white backgrounds and dark/gray text. Very light colors get contrasting button labels and a darker price/link shade. Decorative introductory copy was removed at the user’s request. See [design QA](design-qa.md) for screenshot comparisons and responsive checks. This is an adaptation for a general catalog, not a pixel clone.
 
 Complete the business contact details, legal identity, return periods, privacy retention policy, and shipping commitments in `resources/views/store/help.blade.php`. Online card payments, customer accounts, advanced shipping-provider integration, and per-color stock are not part of this implementation; stock is maintained at the product level and payment is cash on delivery.

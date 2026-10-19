@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Overview')
-@section('content')<x-admin-heading title="A good day to grow" description="Here’s what’s happening in your store."
+@section('content')<x-admin-heading title="Store overview" description="Orders, revenue, and stock."
         eyebrow="WELCOME BACK">
         <a class="button button-light" href="{{ route('home') }}" target="_blank" rel="noopener">Visit your store <x-icon
                 name="arrow" /></a></x-admin-heading>
@@ -8,7 +8,7 @@
         <div class="stat-card"><span>Today's order value</span><x-icon
                 name="bag" /><strong>${{ number_format($sales / 100, 2) }}</strong><small>Excludes cancelled orders</small>
         </div>
-        <div class="stat-card"><span>Waiting for a little attention</span><x-icon
+        <div class="stat-card"><span>Pending orders</span><x-icon
                 name="box" /><strong>{{ $pending }}</strong><small>Pending orders</small></div>
         <div class="stat-card"><span>In your collection</span><x-icon
                 name="grid" /><strong>{{ $productCount }}</strong><small>Total products</small></div>
@@ -19,11 +19,11 @@
     <section class="admin-panel">
         <div class="panel-heading">
             <div>
-                <h2>Fresh off the checkout</h2>
+                <h2>Recent orders</h2>
                 <p>Your latest orders, ready for their next step.</p>
             </div><a class="text-link" href="{{ route('admin.orders.index') }}">All orders <x-icon name="arrow" /></a>
         </div>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table">
             <table>
                 <thead>
                     <tr>
@@ -71,7 +71,7 @@
                 </div><x-icon name="arrow" />
             </a><a href="{{ route('admin.delivery.index') }}"><x-icon name="truck" />
                 <div>
-                    <h3>A little closer to your customers</h3>
+                    <h3>Manage delivery</h3>
                     <p>Manage areas and delivery prices.</p>
                 </div><x-icon name="arrow" />
             </a></div>

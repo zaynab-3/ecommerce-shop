@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title', $product->exists ? 'Edit product' : 'New product')
-@section('content')<x-admin-heading :title="$product->exists ? 'A little fine-tuning' : 'Something new'" description="Give your product the details it deserves."
+@section('content')<x-admin-heading :title="$product->exists ? 'Edit product' : 'Add product'" description="Manage product details, images, colors, and stock."
         eyebrow="YOUR COLLECTION"><a href="{{ route('admin.products.index') }}" class="text-link">← All
             products</a></x-admin-heading>
     <form method="post" enctype="multipart/form-data"
@@ -11,7 +11,7 @@
         @endif
         <div class="admin-form-primary">
             <section class="admin-panel form-panel">
-                <h2>The essentials</h2>
+                <h2>Product details</h2>
                 <div class="field-grid"><label class="field full-span">Product name<input name="name"
                             value="{{ old('name', $product->name) }}" maxlength="180" required></label><label
                         class="field">SKU<input name="sku" value="{{ old('sku', $product->sku) }}" maxlength="80"
@@ -37,7 +37,7 @@
             <section class="admin-panel form-panel">
                 <div class="panel-heading compact">
                     <div>
-                        <h2>A little color</h2>
+                        <h2>Colors</h2>
                         <p>Colors are optional. A blank hex creates a color without a swatch.</p>
                     </div><button type="button" class="button button-light small-button" data-add-color><x-icon
                             name="plus" width="15" /> Add color</button>
@@ -62,7 +62,7 @@
                 </template>
             </section>
             <section class="admin-panel form-panel">
-                <h2>Picture it</h2>
+                <h2>Product images</h2>
                 <p class="panel-description">Up to 10 images · JPEG, PNG or WebP · 12 MB each. Images are resized to 1,600
                     px and converted to quality-84 WebP. File size depends on the image.</p><label
                     class="upload-area"><x-icon name="plus" width="28" /><strong>Add your product
@@ -82,7 +82,7 @@
                             first in recommended sorting.</small></span></label>
             </section>
             <section class="admin-panel form-panel">
-                <h2>Stock, your way</h2>
+                <h2>Stock settings</h2>
                 <div class="field-grid single"><label class="field">Quantity type<select name="stock_mode"
                             data-stock-mode>
                             <option value="tracked" @selected(old('stock_mode', $product->stock_mode) === 'tracked')>Tracked quantity</option>
@@ -108,7 +108,7 @@
     </form>
     @if ($product->exists && $product->images->isNotEmpty())
         <section class="admin-panel form-panel image-management">
-            <h2>Make every color picture-perfect</h2>
+            <h2>Image and color settings</h2>
             <p class="panel-description">Choose a color per image, or leave it unassigned. The lowest position is the first
                 gallery image.</p>
             <div class="image-admin-grid">

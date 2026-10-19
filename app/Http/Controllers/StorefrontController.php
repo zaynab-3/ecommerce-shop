@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\DeliveryZone;
 use App\Models\Product;
+use App\Services\WhatsAppOrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -38,13 +39,15 @@ class StorefrontController extends Controller
         return view('store.index', compact('categories', 'products', 'selected'));
     }
 
-    public function show(Product $product)
+    public function show(Product $product, WhatsAppOrderService $whatsapp)
     {
         abort_unless(Product::visible()->whereKey($product->id)->exists(), 404);
         $product->load(['images', 'colors', 'category.parent']);
         $related = Product::visible()->with(['images', 'colors', 'category'])->where('category_id', $product->category_id)->whereKeyNot($product->id)->limit(4)->get();
 
-        return view('store.product', compact('product', 'related'));
+        $whatsappUrl = $whatsapp->productUrl($product);
+
+        return view('store.product', compact('product', 'related', 'whatsappUrl'));
     }
 
     public function stock(Request $r)

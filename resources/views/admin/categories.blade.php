@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Categories')
-@section('content')<x-admin-heading title="A place for everything"
+@section('content')<x-admin-heading title="Categories"
         description="Organize, reorder, and show or hide whole collections." eyebrow="CATEGORIES & SUBCATEGORIES" />
     <div class="admin-form-layout">
         <div class="admin-form-primary">
@@ -54,7 +54,7 @@
         </div>
         <aside class="admin-form-secondary">
             <form method="post" action="{{ route('admin.categories.store') }}" class="admin-panel form-panel">@csrf<h2>
-                    Create a little order</h2>
+                    Add category</h2>
                 <div class="field-grid single"><label class="field">Name<input name="name" value="{{ old('name') }}"
                             maxlength="100" required></label><label class="field">Parent category<select name="parent_id">
                             <option value="">None · top-level category</option>

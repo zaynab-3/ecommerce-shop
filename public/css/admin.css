@@ -1,6 +1,6 @@
 .admin-body {
     background: #f6f7f3;
-    font-size: 12px;
+    font-size: 15px;
 }
 .admin-sidebar {
     position: fixed;
@@ -11,6 +11,8 @@
     padding: 30px 21px;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
     z-index: 20;
 }
 .admin-sidebar > .logo {
@@ -19,7 +21,7 @@
     align-self: flex-start;
 }
 .studio-label {
-    font-size: 7px;
+    font-size: 12px;
     letter-spacing: 2px;
     color: #717768;
     margin: 9px 0 39px 15px;
@@ -30,7 +32,7 @@
     gap: 5px;
 }
 .nav-label {
-    font-size: 7px;
+    font-size: 12px;
     letter-spacing: 1.5px;
     color: #727869;
     padding-left: 15px;
@@ -42,7 +44,7 @@
     gap: 12px;
     padding: 12px 15px;
     color: #6c7663;
-    font-size: 11px;
+    font-size: 14px;
     border-radius: 5px;
 }
 .admin-sidebar nav > a > .icon {
@@ -67,7 +69,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 10px;
+    font-size: 14px;
     color: #6c775e;
     padding: 15px;
     border: 1px solid #e4eadb;
@@ -90,11 +92,11 @@
     background: #e9efdf;
     color: #6a7a56;
     border-radius: 50%;
-    font-size: 11px;
+    font-size: 14px;
     flex-shrink: 0;
 }
 .admin-profile strong {
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 500;
     display: block;
     max-width: 100px;
@@ -103,7 +105,7 @@
     text-overflow: ellipsis;
 }
 .admin-profile small {
-    font-size: 8px;
+    font-size: 12px;
     color: #6c7562;
 }
 .admin-profile form {
@@ -126,7 +128,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 40px;
-    font-size: 10px;
+    font-size: 14px;
     color: #6e7961;
 }
 .admin-topbar > span > span {
@@ -137,7 +139,7 @@
     display: flex;
     gap: 7px;
     align-items: center;
-    font-size: 9px;
+    font-size: 13px;
     color: #6b7561;
 }
 .workspace-status .stock-dot {
@@ -160,7 +162,7 @@
     margin-bottom: 32px;
 }
 .admin-page-heading .eyebrow {
-    font-size: 7px;
+    font-size: 12px;
     letter-spacing: 1.7px;
     margin-bottom: 12px;
 }
@@ -174,12 +176,12 @@
     color: #9a6542;
 }
 .admin-page-heading p {
-    font-size: 11px;
+    font-size: 14px;
     color: #6e7765;
     margin: 0;
 }
 .admin-page-heading .button {
-    font-size: 10px;
+    font-size: 14px;
     min-height: 42px;
     padding: 11px 17px;
     gap: 12px;
@@ -202,7 +204,7 @@
     position: relative;
 }
 .stat-card > span {
-    font-size: 9px;
+    font-size: 13px;
     color: #6e7765;
     display: block;
     padding-right: 24px;
@@ -223,7 +225,7 @@
     margin: 17px 0 8px;
 }
 .stat-card > small {
-    font-size: 8px;
+    font-size: 12px;
     color: #717967;
 }
 .admin-panel {
@@ -241,18 +243,18 @@
     border-bottom: 1px solid #e7eddf;
 }
 .panel-heading h2 {
-    font-size: 17px;
+    font-size: 18px;
     letter-spacing: -0.5px;
     font-weight: 500;
     margin: 0;
 }
 .panel-heading p {
-    font-size: 9px;
+    font-size: 13px;
     color: #6f7766;
     margin: 7px 0 0;
 }
 .panel-heading .text-link {
-    font-size: 9px;
+    font-size: 13px;
     color: #6a7757;
     gap: 9px;
 }
@@ -265,7 +267,7 @@
 table {
     border-collapse: collapse;
     width: 100%;
-    font-size: 10px;
+    font-size: 14px;
     text-align: left;
 }
 thead {
@@ -274,7 +276,7 @@ thead {
 th {
     font-weight: 400;
     color: #6e7862;
-    font-size: 8px;
+    font-size: 12px;
     padding: 14px 21px;
     white-space: nowrap;
 }
@@ -284,18 +286,18 @@ td {
     color: #667655;
 }
 td > strong {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 500;
     color: #4d633b;
 }
 td small {
     display: block;
-    font-size: 8px;
+    font-size: 12px;
     color: #6c7562;
     margin-top: 4px;
 }
 .table-link {
-    font-size: 10px;
+    font-size: 14px;
     color: #526c3d;
     font-weight: 500;
     white-space: nowrap;
@@ -314,14 +316,14 @@ td small {
     height: 31px;
 }
 .table-empty h3 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 500;
     color: #667c50;
     margin-bottom: 10px;
     letter-spacing: -0.5px;
 }
 .table-empty p {
-    font-size: 10px;
+    font-size: 14px;
     color: #6d7760;
     margin-bottom: 0;
 }
@@ -351,13 +353,13 @@ td small {
     color: #697857;
 }
 .admin-shortcuts h3 {
-    font-size: 13px;
+    font-size: 16px;
     letter-spacing: -0.3px;
     font-weight: 500;
     margin: 0 0 7px;
 }
 .admin-shortcuts p {
-    font-size: 9px;
+    font-size: 13px;
     color: #6b755d;
     margin: 0;
 }
@@ -365,7 +367,7 @@ td small {
     border-top: 1px solid #e3ead9;
     padding: 18px 40px;
     color: #6e7665;
-    font-size: 8px;
+    font-size: 12px;
     display: flex;
     justify-content: space-between;
 }
@@ -388,7 +390,7 @@ td small {
     min-width: 0;
     width: 150px;
     outline-offset: 0;
-    font-size: 9px;
+    font-size: 13px;
     color: #677d51;
 }
 .admin-search input::placeholder {
@@ -399,7 +401,7 @@ td small {
     background: #eef3e5;
     padding: 5px 9px;
     border-radius: 3px;
-    font-size: 8px;
+    font-size: 12px;
     color: #677952;
 }
 .products-table td {
@@ -424,14 +426,14 @@ td small {
     padding: 4px;
 }
 .table-product strong {
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 500;
     color: #536c3d;
     display: block;
     max-width: 240px;
 }
 .table-product small {
-    font-size: 7px;
+    font-size: 12px;
 }
 .reorder-buttons {
     display: flex;
@@ -446,7 +448,7 @@ td small {
     border-radius: 3px;
     background: #fbfcf8;
     color: #69795a;
-    font-size: 12px;
+    font-size: 15px;
     line-height: 1;
     padding: 0;
 }
@@ -459,24 +461,24 @@ td small {
     min-width: 150px;
 }
 .stock-quick > .stock {
-    font-size: 8px;
+    font-size: 12px;
 }
 .stock-quick > small {
-    font-size: 7px;
+    font-size: 12px;
     margin: 0;
 }
 .quantity-quick {
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 8px;
+    font-size: 12px;
 }
 .quantity-quick > strong {
     font-weight: 500;
-    font-size: 11px;
+    font-size: 14px;
 }
 .quantity-quick > span {
-    font-size: 7px;
+    font-size: 12px;
     color: #6b7460;
 }
 .quantity-quick form {
@@ -487,7 +489,7 @@ td small {
 }
 .quantity-quick input {
     width: 48px;
-    font-size: 9px;
+    font-size: 13px;
     padding: 3px 5px;
     height: 25px;
     border: 1px solid #e0e8d4;
@@ -500,7 +502,7 @@ td small {
     background: #eef4e4;
     border-radius: 3px;
     color: #677a54;
-    font-size: 8px;
+    font-size: 12px;
     padding: 5px 7px;
 }
 .inline-form {
@@ -512,7 +514,7 @@ td small {
     border: 1px solid #e0e8d4;
     border-radius: 3px;
     background: #fff;
-    font-size: 9px;
+    font-size: 13px;
     padding: 4px 5px;
     color: #687b55;
 }
@@ -524,7 +526,7 @@ td small {
     gap: 7px;
     padding: 0;
     color: #6f7966;
-    font-size: 8px;
+    font-size: 12px;
     white-space: nowrap;
 }
 .visibility-toggle > span {
@@ -575,7 +577,7 @@ td small {
 }
 .form-panel > h2,
 .form-panel > form > h2 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 500;
     letter-spacing: -0.5px;
     margin-bottom: 22px;
@@ -585,7 +587,7 @@ td small {
     gap: 17px;
 }
 .admin-main .field {
-    font-size: 10px;
+    font-size: 14px;
     color: #6a7957;
 }
 .admin-main .field input,
@@ -593,12 +595,12 @@ td small {
 .admin-main .field textarea {
     border-color: #e0e9d5;
     color: #617f46;
-    font-size: 11px;
+    font-size: 14px;
     min-height: 40px;
     padding: 10px 11px;
 }
 .admin-main .field input::placeholder {
-    font-size: 10px;
+    font-size: 14px;
     color: #6b7560;
 }
 .form-panel .panel-heading {
@@ -607,21 +609,21 @@ td small {
     border-bottom: 1px solid #e9efdf;
 }
 .panel-heading.compact h2 {
-    font-size: 17px;
+    font-size: 18px;
 }
 .panel-heading.compact p {
-    font-size: 9px;
+    font-size: 13px;
     line-height: 1.8;
     max-width: 350px;
 }
 .small-button {
-    font-size: 9px !important;
+    font-size: 13px !important;
     min-height: 33px;
     padding: 8px 11px !important;
     gap: 8px !important;
 }
 .form-hint {
-    font-size: 9px;
+    font-size: 13px;
     line-height: 1.9;
     color: #6e7a63;
     margin: 0;
@@ -630,7 +632,7 @@ td small {
     display: flex;
     gap: 10px;
     align-items: center;
-    font-size: 10px;
+    font-size: 14px;
     color: #677757;
     margin: 0;
 }
@@ -641,7 +643,7 @@ td small {
 }
 .checkbox-field small {
     display: block;
-    font-size: 8px;
+    font-size: 12px;
     color: #707a65;
     line-height: 1.8;
     margin-top: 4px;
@@ -685,22 +687,22 @@ td small {
     margin-bottom: 7px;
 }
 .upload-area strong {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 500;
     color: #677b54;
 }
 .upload-area > span {
-    font-size: 9px;
+    font-size: 13px;
     color: #6f7963;
 }
 .upload-area input {
     max-width: 100%;
-    font-size: 9px;
+    font-size: 13px;
     margin-top: 8px;
     color: #6f7963;
 }
 .panel-description {
-    font-size: 10px;
+    font-size: 14px;
     line-height: 1.9;
     color: #6d795f;
     margin-bottom: 20px;
@@ -740,7 +742,7 @@ td small {
 }
 .danger-link {
     color: #896c5e;
-    font-size: 9px;
+    font-size: 13px;
 }
 .category-admin-panel {
     padding: 5px 20px;
@@ -763,7 +765,7 @@ td small {
     min-width: 0;
 }
 .category-name-form input {
-    font-size: 12px;
+    font-size: 15px;
     border: 0;
     background: none;
     padding: 7px 0;
@@ -772,7 +774,7 @@ td small {
     color: #657c50;
 }
 .category-name-form button {
-    font-size: 8px;
+    font-size: 12px;
     color: #6d7a60;
 }
 .category-admin-row > .icon-button {
@@ -783,10 +785,10 @@ td small {
     padding-left: 25px;
 }
 .child-row .category-name-form input {
-    font-size: 11px;
+    font-size: 14px;
 }
 .category-count {
-    font-size: 8px;
+    font-size: 12px;
     color: #6c7762;
     white-space: nowrap;
 }
@@ -806,7 +808,7 @@ td small {
 }
 .order-filters > select {
     height: 33px;
-    font-size: 9px;
+    font-size: 13px;
     padding: 6px 9px;
     border: 1px solid #e1e9d6;
     border-radius: 4px;
@@ -814,7 +816,7 @@ td small {
     color: #6a795c;
 }
 .order-filters .checkbox-field {
-    font-size: 9px;
+    font-size: 13px;
     white-space: nowrap;
 }
 .order-filters .small-button {
@@ -826,10 +828,10 @@ td small {
     max-width: 340px;
 }
 .admin-order-totals .summary-row {
-    font-size: 11px;
+    font-size: 14px;
 }
 .admin-order-totals .total {
-    font-size: 14px;
+    font-size: 16px;
 }
 .customer-details {
     display: grid;
@@ -838,14 +840,14 @@ td small {
 }
 .customer-details > div > small,
 .order-notes > small {
-    font-size: 7px;
+    font-size: 12px;
     letter-spacing: 1.3px;
     display: block;
     color: #69755d;
     margin-bottom: 12px;
 }
 .customer-details strong {
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 500;
     color: #657a50;
     display: block;
@@ -854,7 +856,7 @@ td small {
 .customer-details a,
 .customer-details p {
     display: block;
-    font-size: 10px;
+    font-size: 14px;
     line-height: 1.9;
     color: #6c7a60;
     margin: 0;
@@ -865,7 +867,7 @@ td small {
     border-top: 1px solid #e8efdf;
 }
 .order-notes p {
-    font-size: 11px;
+    font-size: 14px;
     white-space: pre-line;
     color: #6a765d;
 }
@@ -884,7 +886,7 @@ td small {
     min-width: 0;
 }
 .bulk-delivery-controls .button {
-    font-size: 9px;
+    font-size: 13px;
     white-space: nowrap;
     padding: 11px 14px;
     min-height: 40px;
@@ -903,14 +905,14 @@ td small {
     margin-bottom: 14px;
 }
 .zone-heading h3 {
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 500;
     color: #687b57;
     letter-spacing: -0.2px;
     margin: 0;
 }
 .zone-heading .text-link {
-    font-size: 8px;
+    font-size: 12px;
     color: #6b775e;
 }
 .zone-grid {
@@ -938,13 +940,13 @@ td small {
     flex: 1;
 }
 .zone-card strong {
-    font-size: 9px;
+    font-size: 13px;
     font-weight: 500;
     color: #6b7c5b;
     display: block;
 }
 .zone-card small {
-    font-size: 7px;
+    font-size: 12px;
     display: block;
     color: #6b7660;
     margin-top: 3px;
@@ -985,7 +987,7 @@ td small {
     margin-bottom: 12px;
 }
 .setting-toggle-row p {
-    font-size: 10px;
+    font-size: 14px;
     color: #6b795d;
     margin-bottom: 0;
 }
@@ -1033,7 +1035,7 @@ td small {
     outline-offset: 4px;
 }
 .integration-status {
-    font-size: 10px;
+    font-size: 14px;
     display: flex;
     gap: 8px;
     align-items: center;
@@ -1060,18 +1062,18 @@ td small {
     margin-bottom: 24px;
 }
 .team-profile h2 {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
     margin-bottom: 5px;
 }
 .team-profile p {
-    font-size: 9px;
+    font-size: 13px;
     color: #69785a;
     margin-bottom: 0;
 }
 .team-profile > .status-badge {
     margin-left: auto;
-    font-size: 8px;
+    font-size: 12px;
 }
 .team-card > .button {
     margin-top: 20px;
@@ -1086,7 +1088,7 @@ td small {
     margin-bottom: 19px;
 }
 .access-guide p {
-    font-size: 10px;
+    font-size: 14px;
     line-height: 1.9;
     color: #6e7b60;
 }
@@ -1116,7 +1118,7 @@ td small {
     font-size: 38px;
 }
 .login-card > .eyebrow {
-    font-size: 7px;
+    font-size: 12px;
     letter-spacing: 1.7px;
     margin-top: 11px;
 }
@@ -1130,7 +1132,7 @@ td small {
     color: #926847;
 }
 .login-card > p {
-    font-size: 11px;
+    font-size: 14px;
     color: #6b775e;
     margin-bottom: 28px;
 }
@@ -1138,14 +1140,14 @@ td small {
     margin-bottom: 20px;
 }
 .login-card .field {
-    font-size: 11px;
+    font-size: 14px;
     color: #657753;
 }
 .login-card .field input {
-    font-size: 14px;
+    font-size: 16px;
 }
 .login-card .button {
-    font-size: 11px;
+    font-size: 14px;
     margin-top: 6px;
 }
 .admin-menu-toggle {
@@ -1166,46 +1168,46 @@ td small {
         grid-template-columns: minmax(0, 1fr) 330px;
     }
     .admin-sidebar nav > a {
-        font-size: 12px;
+        font-size: 15px;
         padding: 14px 15px;
     }
     .admin-sidebar .studio-label {
-        font-size: 8px;
+        font-size: 12px;
     }
     .admin-page-heading h1 {
         font-size: 36px;
     }
     table {
-        font-size: 12px;
+        font-size: 15px;
     }
     th {
-        font-size: 10px;
+        font-size: 14px;
     }
     td {
         padding: 19px 25px;
     }
     .table-product strong {
-        font-size: 12px;
+        font-size: 15px;
     }
     .table-product small {
-        font-size: 9px;
+        font-size: 13px;
     }
     .table-link {
-        font-size: 12px;
+        font-size: 15px;
     }
     .admin-main .field {
-        font-size: 12px;
+        font-size: 15px;
     }
     .admin-main .field input,
     .admin-main .field select,
     .admin-main .field textarea {
-        font-size: 13px;
+        font-size: 16px;
     }
     .stat-card > span {
-        font-size: 11px;
+        font-size: 14px;
     }
     .stat-card > small {
-        font-size: 10px;
+        font-size: 14px;
     }
 }
 @media (max-width: 1150px) {
@@ -1232,7 +1234,7 @@ td small {
         padding: 18px 15px;
     }
     .stat-card > span {
-        font-size: 8px;
+        font-size: 12px;
     }
     .stat-card > .icon {
         width: 15px;
@@ -1243,7 +1245,7 @@ td small {
         font-size: 26px;
     }
     .stat-card > small {
-        font-size: 7px;
+        font-size: 12px;
     }
     .admin-form-layout {
         grid-template-columns: minmax(0, 1fr) 250px;
@@ -1281,10 +1283,10 @@ td small {
         gap: 12px;
     }
     .admin-shortcuts h3 {
-        font-size: 11px;
+        font-size: 14px;
     }
     .admin-shortcuts p {
-        font-size: 8px;
+        font-size: 12px;
     }
     .order-filters {
         gap: 10px;
@@ -1295,10 +1297,10 @@ td small {
         min-width: 90px;
     }
     .order-filters .checkbox-field {
-        font-size: 8px;
+        font-size: 12px;
     }
     .order-filters .small-button {
-        font-size: 8px !important;
+        font-size: 13px !important;
     }
 }
 @media (max-width: 900px) {
@@ -1307,7 +1309,7 @@ td small {
         padding-inline: 12px;
     }
     .admin-sidebar nav > a {
-        font-size: 10px;
+        font-size: 14px;
         padding-inline: 11px;
         gap: 10px;
     }
@@ -1319,7 +1321,7 @@ td small {
         margin-left: 11px;
     }
     .nav-label {
-        font-size: 6px;
+        font-size: 12px;
     }
     .admin-content {
         margin-left: 175px;
@@ -1334,11 +1336,11 @@ td small {
         font-size: 27px;
     }
     .admin-page-heading p {
-        font-size: 10px;
+        font-size: 14px;
         max-width: 300px;
     }
     .admin-page-heading .button {
-        font-size: 8px;
+        font-size: 12px;
         padding: 9px 11px;
         min-height: 35px;
         gap: 8px;
@@ -1358,13 +1360,13 @@ td small {
         grid-template-columns: repeat(2, 1fr);
     }
     .stat-card > span {
-        font-size: 9px;
+        font-size: 13px;
     }
     .stat-card > strong {
         font-size: 29px;
     }
     .stat-card > small {
-        font-size: 8px;
+        font-size: 12px;
     }
     .admin-shortcuts {
         grid-template-columns: 1fr;
@@ -1374,10 +1376,10 @@ td small {
         padding: 20px;
     }
     .admin-shortcuts h3 {
-        font-size: 13px;
+        font-size: 16px;
     }
     .admin-shortcuts p {
-        font-size: 9px;
+        font-size: 13px;
     }
     .panel-heading {
         padding: 20px;
@@ -1386,10 +1388,10 @@ td small {
         font-size: 16px;
     }
     .panel-heading p {
-        font-size: 8px;
+        font-size: 12px;
     }
     .panel-heading .text-link {
-        font-size: 8px;
+        font-size: 12px;
         white-space: nowrap;
     }
     .products-table .table-product {
@@ -1414,7 +1416,7 @@ td small {
         flex: 1;
     }
     .order-filters .checkbox-field {
-        font-size: 9px;
+        font-size: 13px;
     }
     .admin-footer {
         padding-inline: 22px;
@@ -1427,7 +1429,7 @@ td small {
     }
     .admin-profile strong {
         max-width: 70px;
-        font-size: 9px;
+        font-size: 13px;
     }
     .admin-profile .avatar {
         width: 29px;
@@ -1446,10 +1448,10 @@ td small {
         max-width: none;
     }
     .team-profile h2 {
-        font-size: 14px;
+        font-size: 16px;
     }
     .team-profile p {
-        font-size: 9px;
+        font-size: 13px;
     }
     .settings-form .field-grid {
         grid-template-columns: 1fr 1fr;
@@ -1467,11 +1469,11 @@ td small {
         top: 57px;
     }
     .admin-sidebar nav > a {
-        font-size: 11px;
+        font-size: 14px;
         padding: 12px;
     }
     .admin-sidebar .studio-label {
-        font-size: 7px;
+        font-size: 12px;
         margin-bottom: 25px;
     }
     .admin-sidebar > .logo {
@@ -1481,7 +1483,7 @@ td small {
         max-width: 120px;
     }
     .nav-label {
-        font-size: 7px;
+        font-size: 12px;
     }
     .admin-content {
         margin-left: 0;
@@ -1494,7 +1496,7 @@ td small {
         top: 0;
         z-index: 21;
         justify-content: flex-start;
-        font-size: 9px;
+        font-size: 13px;
     }
     .admin-menu-toggle {
         display: inline-flex;
@@ -1506,7 +1508,7 @@ td small {
     }
     .workspace-status {
         margin-left: auto;
-        font-size: 7px;
+        font-size: 12px;
     }
     .workspace-status .stock-dot {
         width: 4px;
@@ -1525,24 +1527,24 @@ td small {
         line-height: 1.1;
     }
     .admin-page-heading .eyebrow {
-        font-size: 6px;
+        font-size: 12px;
         letter-spacing: 1.2px;
     }
     .admin-page-heading p {
-        font-size: 9px;
+        font-size: 13px;
         line-height: 1.8;
         max-width: 230px;
     }
     .admin-page-heading > .button,
     .admin-page-heading > div > .button {
-        font-size: 8px;
+        font-size: 12px;
         gap: 7px;
         white-space: nowrap;
         min-height: 33px;
         padding: 8px 10px;
     }
     .admin-page-heading .text-link {
-        font-size: 8px;
+        font-size: 12px;
         white-space: nowrap;
     }
     .stat-grid {
@@ -1553,7 +1555,7 @@ td small {
         padding: 17px 15px;
     }
     .stat-card > span {
-        font-size: 7px;
+        font-size: 12px;
     }
     .stat-card > .icon {
         width: 14px;
@@ -1566,41 +1568,41 @@ td small {
         margin-block: 14px 7px;
     }
     .stat-card > small {
-        font-size: 7px;
+        font-size: 12px;
     }
     .panel-heading {
         padding: 18px;
         gap: 12px;
     }
     .panel-heading h2 {
-        font-size: 15px;
+        font-size: 16px;
         letter-spacing: -0.4px;
     }
     .panel-heading p {
-        font-size: 8px;
+        font-size: 12px;
         line-height: 1.8;
     }
     .panel-heading .text-link {
-        font-size: 8px;
+        font-size: 12px;
         gap: 5px;
     }
     .panel-heading .text-link .icon {
         width: 13px;
     }
     th {
-        font-size: 8px;
+        font-size: 12px;
         padding: 13px 16px;
     }
     td {
-        font-size: 10px;
+        font-size: 14px;
         padding: 14px 16px;
         white-space: nowrap;
     }
     td small {
-        font-size: 7px;
+        font-size: 12px;
     }
     .table-link {
-        font-size: 10px;
+        font-size: 14px;
     }
     .admin-shortcuts {
         gap: 13px;
@@ -1611,21 +1613,21 @@ td small {
         gap: 14px;
     }
     .admin-shortcuts h3 {
-        font-size: 12px;
+        font-size: 15px;
     }
     .admin-shortcuts p {
-        font-size: 8px;
+        font-size: 12px;
     }
     .admin-footer {
         padding: 16px 17px;
-        font-size: 6px;
+        font-size: 12px;
         gap: 15px;
     }
     .products-table .table-product {
         min-width: 200px;
     }
     .products-table .table-product strong {
-        font-size: 11px;
+        font-size: 14px;
     }
     .panel-heading:has(.admin-search) {
         display: block;
@@ -1637,10 +1639,10 @@ td small {
         width: auto;
         flex: 1;
         height: 23px;
-        font-size: 11px;
+        font-size: 14px;
     }
     .admin-search button {
-        font-size: 9px;
+        font-size: 13px;
         padding: 7px 11px;
     }
     .admin-search .icon {
@@ -1650,7 +1652,7 @@ td small {
         padding: 20px 18px;
     }
     .form-panel > h2 {
-        font-size: 18px;
+        font-size: 20px;
     }
     .admin-form-primary {
         gap: 19px;
@@ -1663,7 +1665,7 @@ td small {
         grid-template-columns: 1fr;
     }
     .admin-main .field {
-        font-size: 11px;
+        font-size: 14px;
     }
     .admin-main .field input,
     .admin-main .field select,
@@ -1672,22 +1674,22 @@ td small {
         min-height: 43px;
     }
     .admin-main .field input::placeholder {
-        font-size: 12px;
+        font-size: 15px;
     }
     .field-grid.single {
         gap: 19px;
     }
     .checkbox-field {
-        font-size: 11px;
+        font-size: 14px;
     }
     .checkbox-field small {
-        font-size: 9px;
+        font-size: 13px;
     }
     .form-hint {
-        font-size: 10px;
+        font-size: 14px;
     }
     .panel-description {
-        font-size: 11px;
+        font-size: 14px;
     }
     .admin-form-secondary > .button {
         width: 100%;
@@ -1700,23 +1702,23 @@ td small {
         max-width: 110px;
     }
     .color-editor-row input {
-        font-size: 12px !important;
+        font-size: 13px !important;
     }
     .color-editor-row > .field {
-        font-size: 9px;
+        font-size: 13px;
     }
     .form-panel .panel-heading.compact {
         display: flex;
         margin-bottom: 20px;
     }
     .form-panel .panel-heading.compact h2 {
-        font-size: 17px;
+        font-size: 18px;
     }
     .form-panel .panel-heading.compact p {
-        font-size: 9px;
+        font-size: 13px;
     }
     .small-button {
-        font-size: 9px !important;
+        font-size: 13px !important;
         padding: 9px 11px !important;
     }
     .image-admin-grid {
@@ -1731,20 +1733,20 @@ td small {
         margin-bottom: 16px;
     }
     .image-admin-card .field {
-        font-size: 9px;
+        font-size: 13px;
     }
     .image-admin-card .field select,
     .image-admin-card .field input {
-        font-size: 11px;
+        font-size: 14px;
         padding: 9px 7px;
         min-height: 35px;
     }
     .image-admin-card .small-button {
-        font-size: 8px !important;
+        font-size: 13px !important;
         white-space: normal;
     }
     .image-admin-card .danger-link {
-        font-size: 8px;
+        font-size: 12px;
     }
     .category-admin-panel {
         padding-inline: 14px;
@@ -1759,13 +1761,13 @@ td small {
         gap: 7px;
     }
     .category-name-form input {
-        font-size: 11px;
+        font-size: 14px;
     }
     .category-name-form button {
-        font-size: 7px;
+        font-size: 12px;
     }
     .category-admin-row .visibility-toggle {
-        font-size: 7px;
+        font-size: 12px;
         gap: 4px;
     }
     .category-admin-row .visibility-toggle > span {
@@ -1787,7 +1789,7 @@ td small {
         padding-left: 12px;
     }
     .child-row .category-name-form input {
-        font-size: 10px;
+        font-size: 14px;
     }
     .category-admin-row .reorder-buttons {
         width: 20px;
@@ -1806,14 +1808,14 @@ td small {
         margin: 0;
     }
     .order-filters .admin-search input {
-        font-size: 11px;
+        font-size: 14px;
     }
     .order-filters > select {
-        font-size: 11px;
+        font-size: 14px;
         height: 36px;
     }
     .order-filters .checkbox-field {
-        font-size: 9px;
+        font-size: 13px;
     }
     .order-filters .small-button {
         flex: 1;
@@ -1822,17 +1824,17 @@ td small {
         gap: 20px;
     }
     .customer-details strong {
-        font-size: 12px;
+        font-size: 15px;
     }
     .customer-details a,
     .customer-details p {
-        font-size: 11px;
+        font-size: 14px;
     }
     .customer-details > div > small {
-        font-size: 7px;
+        font-size: 12px;
     }
     .order-notes p {
-        font-size: 11px;
+        font-size: 14px;
     }
     .bulk-delivery-controls {
         flex-wrap: wrap;
@@ -1844,7 +1846,7 @@ td small {
     }
     .bulk-delivery-controls .button {
         width: 100%;
-        font-size: 11px;
+        font-size: 14px;
     }
     .zone-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1855,56 +1857,56 @@ td small {
         gap: 7px;
     }
     .zone-card strong {
-        font-size: 10px;
+        font-size: 14px;
     }
     .zone-card small {
-        font-size: 8px;
+        font-size: 12px;
     }
     .zone-card input {
         width: 13px;
         height: 13px;
     }
     .zone-heading h3 {
-        font-size: 14px;
+        font-size: 16px;
     }
     .zone-heading .text-link {
-        font-size: 9px;
+        font-size: 13px;
     }
     .setting-toggle-row h2 {
         font-size: 21px;
     }
     .setting-toggle-row p {
-        font-size: 11px;
+        font-size: 14px;
         line-height: 1.8;
     }
     .settings-form .form-hint {
-        font-size: 10px;
+        font-size: 14px;
     }
     .integration-status {
-        font-size: 10px;
+        font-size: 14px;
         align-items: flex-start;
         line-height: 1.8;
     }
     .team-profile h2 {
-        font-size: 14px;
+        font-size: 16px;
         line-height: 1.4;
     }
     .team-profile p {
-        font-size: 9px;
+        font-size: 13px;
         word-break: break-all;
     }
     .team-profile > .status-badge {
-        font-size: 7px;
+        font-size: 12px;
         padding: 4px 7px;
     }
     .access-guide p {
-        font-size: 11px;
+        font-size: 14px;
     }
     .admin-profile strong {
-        font-size: 11px;
+        font-size: 14px;
     }
     .admin-profile small {
-        font-size: 9px;
+        font-size: 13px;
     }
     .login-body {
         padding: 20px;
@@ -1922,9 +1924,101 @@ td small {
         font-size: 35px;
     }
     .admin-main .notice {
-        font-size: 11px;
+        font-size: 14px;
     }
     .admin-menu-toggle:focus-visible {
         outline-offset: 0;
     }
 }
+
+/* Comfortable control sizes for store owners on desktop and phones. */
+.admin-body { font-size: 15px; background: #f5f7fa; }
+.admin-page-heading { gap: 18px; flex-wrap: wrap; align-items: center; margin-bottom: 24px; }
+.admin-page-heading h1 { font-size: 28px; line-height: 1.25; letter-spacing: -.03em; }
+.admin-page-heading p { font-size: 14px; max-width: 640px; line-height: 1.6; }
+.admin-topbar { font-size: 14px; }
+.admin-topbar > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-sidebar nav > a { font-size: 14px; min-height: 46px; }
+.studio-label, .nav-label { font-size: 12px; letter-spacing: .6px; }
+.admin-profile strong { font-size: 14px; }
+.admin-profile small, .store-link { font-size: 13px; }
+.panel-heading h2, .form-panel h2 { font-size: 20px; }
+.panel-heading p, .stat-card > span, .team-profile p { font-size: 14px; }
+.stat-card > small, .admin-footer, .table-product small, .muted { font-size: 13px; }
+th { font-size: 13px; }
+td { font-size: 14px; }
+.table-product strong { font-size: 15px; }
+.admin-main .field, .checkbox-field { font-size: 14px; }
+.admin-main .field input, .admin-main .field select, .admin-main .field textarea { font-size: 16px; min-height: 44px; }
+.admin-search input { font-size: 16px; min-height: 44px; }
+.admin-search button, .inline-form button { font-size: 14px; min-height: 40px; }
+.admin-main .button, .admin-page-heading .button { font-size: 14px; min-height: 44px; }
+.table-product img { flex-shrink: 0; }
+@media (max-width: 900px) {
+    .admin-sidebar nav > a { font-size: 14px; padding-inline: 8px; gap: 8px; }
+    .admin-topbar .workspace-status { font-size: 12px; }
+}
+@media (max-width: 600px) {
+    .admin-topbar { height: 64px; padding-inline: 16px; font-size: 13px; gap: 12px; }
+    .admin-topbar .workspace-status { display: none; }
+    .admin-menu-toggle { width: 44px; height: 44px; }
+    .admin-sidebar.is-open { top: 64px; }
+    .admin-main { padding: 24px 16px 32px; }
+    .admin-page-heading h1 { font-size: 25px; }
+    .admin-page-heading p { font-size: 14px; max-width: none; }
+    .admin-page-heading > .button, .admin-page-heading > div > .button { font-size: 14px; white-space: normal; min-height: 44px; }
+    .admin-page-heading .text-link { font-size: 14px; white-space: normal; }
+    .panel-heading { flex-wrap: wrap; gap: 14px; padding: 18px; }
+    .panel-heading h2 { font-size: 20px; }
+    .panel-heading p { font-size: 13px; }
+    .admin-main .field, .checkbox-field { font-size: 14px; }
+    .admin-main .field input, .admin-main .field select, .admin-main .field textarea, .image-admin-card .field input, .image-admin-card .field select { font-size: 16px; min-height: 44px; }
+    .admin-main .small-button { font-size: 13px !important; min-height: 40px; }
+    .stat-card > span { font-size: 13px; }
+    .stat-card > small { font-size: 12px; }
+    .login-card h1 { font-size: 28px; margin-block: 28px 16px; }
+    .login-card .field input { font-size: 16px; }
+    .admin-footer { font-size: 12px; gap: 12px; flex-wrap: wrap; }
+}
+
+.admin-sidebar, .admin-panel, .form-panel, .login-card, .stat-card, .admin-search { border-color: var(--store-border); }
+.admin-sidebar nav > a { color: var(--store-muted); }
+.admin-sidebar nav > a.active { background: var(--store-tint); color: var(--store-accent-ink); }
+.table-product strong, .admin-main .field input, .admin-main .field select, .admin-main .field textarea { color: var(--store-text); }
+.admin-main .field input, .admin-main .field select, .admin-main .field textarea { border-color: var(--store-border); }
+.admin-search button { background: var(--store-tint); color: var(--store-accent-ink); }
+
+.table-hint { display: none; }
+@media (max-width: 900px) {
+    .table-hint { display: block; margin: 0; padding: 0 18px 16px; font-size: 13px; color: var(--store-muted); }
+}
+.quantity-quick input { font-size: 16px; min-height: 44px; width: 64px; }
+.quantity-quick button, .visibility-toggle, .inline-form button { min-height: 44px; font-size: 14px; }
+.inline-form select { font-size: 16px; min-height: 44px; }
+.reorder-buttons button { min-width: 36px; min-height: 36px; }
+.team-profile p, .admin-page-heading h1 { overflow-wrap: anywhere; }
+
+.theme-color-picker { width: 100%; max-width: 180px; height: 52px; padding: 6px; cursor: pointer; }
+.admin-sidebar nav > a.active, .admin-search button { background: var(--store-tint); color: var(--store-accent-ink); }
+/* Use the same neutral text and saved brand color in the management interface. */
+.studio-label, .nav-label, .admin-profile small, .admin-topbar, .admin-topbar > span > span,
+.workspace-status, .admin-page-heading p, .stat-card > span, .stat-card > small,
+.panel-heading p, th, td small, .table-empty p, .admin-shortcuts p, .admin-footer,
+.admin-search input::placeholder, .quantity-quick > span, .admin-main .field,
+.admin-main .field input::placeholder, .form-hint, .checkbox-field, .checkbox-field small,
+.upload-area > span, .panel-description, .category-count, .customer-details > div > small,
+.order-notes > small, .zone-card small, .setting-toggle-row p, .team-profile p,
+.access-guide p, .login-card > p, .login-card .field { color: var(--store-muted); }
+.store-link, .avatar, .stat-card > .icon, .panel-heading .text-link, .table-link,
+.admin-shortcuts > a > .icon, .reorder-buttons button, .quantity-quick button,
+.inline-form button, .visibility-toggle.on, .category-admin-row > .icon,
+.category-name-form button, .zone-heading .text-link, .setting-toggle-row .icon { color: var(--store-accent-ink); }
+td, td > strong, .admin-search input, .quantity-quick input, .inline-form select,
+.upload-area strong, .category-name-form input, .order-filters > select,
+.customer-details strong, .customer-details a, .customer-details p, .order-notes p,
+.zone-heading h3, .zone-card strong, .access-guide strong { color: var(--store-text); }
+th, .admin-sidebar nav > a:hover, .avatar, .visibility-toggle.on { background: var(--store-surface); }
+.switch input:checked + span { background: var(--store-accent); }
+.checkbox-field input, .zone-card input { accent-color: var(--store-accent); }
+.reorder-buttons button, .quantity-quick input, .quantity-quick button, .inline-form button,
+.inline-form select, .visibility-toggle, .category-name-form input { border-color: var(--store-border); }

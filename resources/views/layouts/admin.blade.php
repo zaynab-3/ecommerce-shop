@@ -7,8 +7,10 @@
     <meta name="robots" content="noindex,nofollow">
     <title>@yield('title', 'Overview') · MESH Studio</title>
     <link rel="icon" href="{{ asset('images/favicon.svg') }}">
-    <link rel="stylesheet" href="{{ asset('css/store.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="preload" href="{{ asset('fonts/space-grotesk.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{{ asset('css/store.css') }}?v={{ filemtime(public_path('css/store.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ filemtime(public_path('css/admin.css')) }}">
+    <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1)]) }}">
     <script src="{{ asset('js/admin.js') }}" type="module"></script>
 </head>
 
@@ -55,8 +57,7 @@
             <div class="workspace-status"><span class="stock-dot"></span> Your store, at a glance</div>
         </header>
         <main id="main" class="admin-main"><x-flash />@yield('content')</main>
-        <footer class="admin-footer"><span>MESH Store Studio</span><span>A little more control. A lot less
-                effort.</span></footer>
+        <footer class="admin-footer"><span>MESH Store Studio</span><span>Store administration</span></footer>
     </div>
 </body>
 

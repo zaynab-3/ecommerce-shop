@@ -20,7 +20,7 @@
                             data-image="{{ $image->url }}" data-alt="{{ $image->alt }}"
                             data-image-color="{{ $image->product_color_id }}"
                             aria-label="View image {{ $loop->iteration }} of {{ $product->name }}"><img
-                                src="{{ $image->url }}" alt="{{ $image->alt }}" width="90" height="90"
+                                src="{{ $image->thumbnail_url }}" alt="{{ $image->alt }}" width="90" height="90"
                                 loading="lazy"></button>
                     @endforeach
                 </div>
@@ -34,7 +34,6 @@
                     @endif
                 </div>
                 <x-stock :product="$product" />
-                <p class="product-description">{{ $product->description }}</p>
                 <form action="{{ route('cart.add', $product) }}" method="post" class="add-to-bag-form">@csrf
                     @if ($product->colors->isNotEmpty())
                         <fieldset class="color-options">
@@ -61,18 +60,21 @@
                         </fieldset>
                     @endif
                     <div class="buy-row">
+                        <span class="quantity-label">Quantity</span>
                         <div class="quantity-control"><button type="button" data-quantity="-1"
                                 aria-label="Decrease quantity">−</button><label class="sr-only"
                                 for="quantity">Quantity</label><input id="quantity" name="quantity" type="number"
                                 value="1" min="1"
                                 max="{{ $product->stock_mode === 'tracked' ? min(99, max(1, $product->quantity)) : 99 }}"
                                 required><button type="button" data-quantity="1" aria-label="Increase quantity">+</button>
-                        </div><button class="button button-dark add-bag" data-stock-button="{{ $product->id }}"
-                            @disabled($product->stock_status === 'out')><x-icon
-                                name="bag" /><span>{{ $product->stock_status === 'out' ? 'Out of stock' : 'Add to bag' }}</span><x-icon
-                                name="arrow" /></button>
+                        </div><button class="button button-dark add-bag" data-stock-button="{{ $product->id }}" data-available-label="Add to cart"
+                            @disabled($product->stock_status === 'out')><span aria-hidden="true">+</span><span data-stock-button-label>{{ $product->stock_status === 'out' ? 'Out of stock' : 'Add to cart' }}</span></button>
+                        <button class="button buy-now" name="buy_now" value="1" data-stock-button="{{ $product->id }}" data-available-label="Buy it now" @disabled($product->stock_status === 'out')><span data-stock-button-label>{{ $product->stock_status === 'out' ? 'Out of stock' : 'Buy it now' }}</span></button>
                     </div>
                 </form>
+                @if ($whatsappUrl)
+                    <a class="button product-whatsapp" href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer"><x-icon name="phone" /><span>Ask about this product</span></a>
+                @endif
                 <form method="post" action="{{ route('saved.toggle', $product) }}">@csrf<button
                         class="save-detail text-link"><x-icon
                             name="heart" />{{ in_array($product->id, session('saved', [])) ? 'Saved to your favorites' : 'Save for later' }}</button>
@@ -97,7 +99,7 @@
         @if ($related->isNotEmpty())
             <section class="related">
                 <div class="section-heading">
-                    <h2>A few more good finds<span>.</span></h2><a class="text-link"
+                    <h2>Related products</h2><a class="text-link"
                         href="{{ route('shop', ['category' => $product->category->slug]) }}">Explore more <x-icon
                             name="arrow" /></a>
                 </div>

@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\StorefrontController;
+use App\Http\Controllers\StoreThemeController;
 use Illuminate\Support\Facades\Route;
 
 // Used when the web server cannot serve public/storage (for example, exFAT).
@@ -14,6 +15,7 @@ Route::get('/storage/products/{filename}', ProductImageController::class)
     ->name('product-images.show');
 
 Route::get('/', [StorefrontController::class, 'index'])->name('home');
+Route::get('/theme/{color}.css', StoreThemeController::class)->where('color', '[0-9a-fA-F]{6}')->withoutMiddleware('web')->name('store.theme');
 Route::get('/shop', [StorefrontController::class, 'index'])->name('shop');
 Route::get('/products/{product:slug}', [StorefrontController::class, 'show'])->name('products.show');
 Route::get('/stock', [StorefrontController::class, 'stock'])->middleware('throttle:stock')->name('stock');

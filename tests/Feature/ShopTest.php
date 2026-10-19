@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Services\CheckoutService;
 use App\Services\ImageService;
 use App\Services\OrderStatusService;
+use App\Services\StoreTheme;
 use App\Services\WhatsAppOrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -64,6 +65,82 @@ class ShopTest extends TestCase
             $this->get(route($route))->assertOk();
         }$this->get(route('products.show', $p))->assertOk()->assertSee($p->name);
         $this->get('/checkout')->assertRedirect(route('cart.index'));
+    }
+
+    public function test_buy_now_preserves_existing_cart_and_validates_color_and_stock(): void
+    {
+        $existing = $this->product();
+        $p = $this->product(['quantity' => 3]);
+        $color = $p->colors()->create(['name' => 'Black']);
+        $this->withSession(['cart' => $this->cart($existing)])
+            ->post(route('cart.add', $p), ['quantity' => 2, 'color_id' => $color->id, 'buy_now' => 1])
+            ->assertRedirect(route('checkout'))
+            ->assertSessionHas('cart.'.$existing->id.'-none.quantity', 1)
+            ->assertSessionHas('cart.'.$p->id.'-'.$color->id.'.quantity', 2);
+        $this->post(route('cart.add', $p), ['quantity' => 1, 'buy_now' => 1])->assertSessionHasErrors('color_id');
+        $this->post(route('cart.add', $p), ['quantity' => 2, 'color_id' => $color->id, 'buy_now' => 1])->assertSessionHasErrors('quantity');
+        $this->assertSame(3, $p->fresh()->quantity);
+    }
+
+    public function test_card_quick_add_supports_products_without_colors_and_with_a_single_color(): void
+    {
+        $plain = $this->product();
+        $single = $this->product();
+        $color = $single->colors()->create(['name' => 'Natural']);
+        $multiple = $this->product();
+        $multiple->colors()->createMany([['name' => 'Red'], ['name' => 'Black']]);
+        $this->get(route('shop'))->assertOk()->assertSee('Choose options')->assertSee('Add to cart');
+        $this->post(route('cart.add', $plain), ['quantity' => 1])->assertRedirect()
+            ->assertSessionHas('cart.'.$plain->id.'-none.quantity', 1);
+        $this->post(route('cart.add', $single), ['quantity' => 1, 'color_id' => $color->id])->assertRedirect()
+            ->assertSessionHas('cart.'.$single->id.'-'.$color->id.'.quantity', 1);
+        $this->post(route('cart.add', $multiple), ['quantity' => 1])->assertSessionHasErrors('color_id');
+    }
+
+    public function test_owner_can_change_website_color_and_invalid_css_is_rejected(): void
+    {
+        StoreSetting::current(); // Populate the cache before changing the setting.
+        $settings = ['store_name' => 'MESH', 'delivery_enabled' => 1, 'whatsapp_enabled' => 0, 'accent_color' => '#a12465'];
+        $this->actingAs($this->admin())->patch(route('admin.settings.update'), $settings)->assertSessionHasNoErrors();
+        $this->assertSame('#a12465', StoreSetting::current()->accentColor());
+        $this->get(route('shop'))->assertOk()->assertSee('/theme/a12465.css', false);
+        foreach (['red', '#123', '#ffffff;display:none', '</style><script>1</script>'] as $invalid) {
+            $this->patch(route('admin.settings.update'), [...$settings, 'accent_color' => $invalid])->assertSessionHasErrors('accent_color');
+        }
+        $this->assertSame('#a12465', StoreSetting::first()->accent_color);
+    }
+
+    public function test_theme_css_is_public_cacheable_and_handles_light_colors_with_readable_text(): void
+    {
+        $response = $this->get('/theme/ffff00.css')->assertOk()
+            ->assertHeader('Content-Type', 'text/css; charset=UTF-8')->assertHeaderMissing('Set-Cookie')
+            ->assertSee('--store-accent:#ffff00;', false)->assertSee('--store-on-accent:#000000;', false);
+        $this->assertStringContainsString('immutable', $response->headers->get('Cache-Control'));
+        $this->get('/theme/not-a-color.css')->assertNotFound();
+        foreach (['#ffff00', '#ffffff', '#000000', '#3868e9', '#ff77ff'] as $color) {
+            $vars = StoreTheme::variables($color);
+            $luminance = static function ($hex) {
+                $rgb = array_map(fn ($c) => hexdec($c) / 255, str_split(substr($hex, 1), 2));
+                $rgb = array_map(fn ($c) => $c <= .04045 ? $c / 12.92 : (($c + .055) / 1.055) ** 2.4, $rgb);
+                return .2126 * $rgb[0] + .7152 * $rgb[1] + .0722 * $rgb[2];
+            };
+            $this->assertGreaterThanOrEqual(4.5, 1.05 / ($luminance($vars['--store-accent-ink']) + .05));
+            $a = $luminance($color); $b = $luminance($vars['--store-on-accent']);
+            $this->assertGreaterThanOrEqual(4.5, (max($a, $b) + .05) / (min($a, $b) + .05));
+        }
+    }
+
+    public function test_product_whatsapp_enquiry_uses_the_store_phone_and_respects_the_switch(): void
+    {
+        $p = $this->product(['name' => 'Desk & lamp?']);
+        $this->get(route('products.show', $p))->assertDontSee('Ask about this product');
+        StoreSetting::first()->update(['whatsapp_enabled' => true, 'whatsapp_recipient' => '+961 70 123 456']);
+        Cache::forget('store.settings');
+        $url = app(WhatsAppOrderService::class)->productUrl($p);
+        $this->assertStringStartsWith('https://wa.me/96170123456?text=', $url);
+        $this->assertStringContainsString($p->name, rawurldecode($url));
+        $this->assertStringContainsString(route('products.show', $p), rawurldecode($url));
+        $this->get(route('products.show', $p))->assertSee('Ask about this product')->assertSee(e($url), false);
     }
 
     public function test_uploaded_images_and_thumbnails_are_accessible_without_a_storage_link(): void
@@ -503,10 +580,15 @@ class ShopTest extends TestCase
     public function test_state_changes_require_csrf_outside_the_testing_bypass(): void
     {
         $product = $this->product();
+        $owner = $this->admin();
         $this->app->instance('env', 'local');
         try {
             $this->post(route('cart.add', $product), ['quantity' => 1])->assertStatus(419);
-            $this->post('/manage-store/login', ['email' => 'x@example.com', 'password' => 'password'])->assertStatus(419);
+            $this->post('/manage-store/login', ['email' => $owner->email, 'password' => 'password'])
+                ->assertRedirect(route('admin.login'))->assertSessionHasErrors('email')
+                ->assertSessionHas('_old_input.email', $owner->email)
+                ->assertSessionMissing('_old_input.password');
+            $this->assertGuest();
         } finally {
             $this->app->instance('env', 'testing');
         }

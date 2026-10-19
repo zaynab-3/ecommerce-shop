@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Team & access')
-@section('content')<x-admin-heading title="Good people, great teamwork"
-        description="The right access for every member of your team." eyebrow="TEAM & ACCESS" />
+@section('content')<x-admin-heading title="Team & access"
+        description="Manage admin accounts and permissions." eyebrow="TEAM & ACCESS" />
     <div class="admin-form-layout">
         <div class="admin-form-primary">
             @foreach ($admins as $admin)

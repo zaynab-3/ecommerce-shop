@@ -3,10 +3,22 @@
 namespace App\Services;
 
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\StoreSetting;
 
 class WhatsAppOrderService
 {
+    public function productUrl(Product $product): ?string
+    {
+        $settings = StoreSetting::current();
+        $phone = static::normalizePhone((string) $settings->whatsapp_recipient);
+        if (! $settings->whatsapp_enabled || ! $phone) {
+            return null;
+        }
+
+        return 'https://wa.me/'.$phone.'?text='.rawurlencode('Hi, I would like to ask about '.$product->name."\n".route('products.show', $product));
+    }
+
     public static function normalizePhone(string $phone): ?string
     {
         $phone = trim($phone);

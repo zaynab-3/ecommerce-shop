@@ -5,7 +5,7 @@
             aria-label="View {{ $product->name }}"><img
                 src="{{ $product->images->first()?->thumbnail_url ?? $product->image_url }}"
                 srcset="{{ $product->images->first()?->thumbnail_url ?? $product->image_url }} 480w, {{ $product->image_url }} 1600w"
-                sizes="(max-width: 600px) 45vw, (max-width: 850px) 30vw, 26vw"
+                sizes="(max-width: 600px) 45vw, (max-width: 1200px) 30vw, 20vw"
                 alt="{{ $product->images->first()?->alt ?? $product->name }}" width="420" height="420"
                 loading="lazy" decoding="async"></a>
         @if ($product->badge)
@@ -16,8 +16,9 @@
                 class="icon-button save-button {{ in_array($product->id, session('saved', [])) ? 'is-saved' : '' }}"
                 aria-label="{{ in_array($product->id, session('saved', [])) ? 'Unsave' : 'Save' }} {{ $product->name }}"><x-icon
                     name="heart" /></button></form>
-        <a class="quick-view" href="{{ route('products.show', $product) }}">Explore item <x-icon name="arrow" /></a>
+        <a class="quick-view" href="{{ route('products.show', $product) }}">View product <x-icon name="arrow" /></a>
     </div>
+    <div class="product-card-body">
     <div class="product-meta"><span>{{ $product->category->name }}</span><x-stock :product="$product" /></div>
     <h3><a href="{{ route('products.show', $product) }}">{{ $product->name }}</a></h3>
     <div class="product-bottom">
@@ -32,5 +33,17 @@
                 </svg>
             @endforeach
         </div>
+    </div>
+    @if ($product->colors->count() > 1)
+        <a class="product-card-link" href="{{ route('products.show', $product) }}">Choose options <x-icon name="arrow" width="18" /></a>
+    @else
+        <form method="post" action="{{ route('cart.add', $product) }}" class="product-card-action">@csrf
+            <input type="hidden" name="quantity" value="1">
+            @if ($product->colors->isNotEmpty())<input type="hidden" name="color_id" value="{{ $product->colors->first()->id }}">@endif
+            <button class="product-card-link" data-stock-button="{{ $product->id }}" data-available-label="Add to cart" @disabled($product->stock_status === 'out')>
+                <span aria-hidden="true">+</span><span data-stock-button-label>{{ $product->stock_status === 'out' ? 'Out of stock' : 'Add to cart' }}</span>
+            </button>
+        </form>
+    @endif
     </div>
 </article>

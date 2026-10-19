@@ -6,14 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow">
     <title>Store Studio · Sign in</title>
-    <link rel="stylesheet" href="{{ asset('css/store.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="preload" href="{{ asset('fonts/space-grotesk.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{{ asset('css/store.css') }}?v={{ filemtime(public_path('css/store.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ filemtime(public_path('css/admin.css')) }}">
+    <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1)]) }}">
 </head>
 
 <body class="login-body">
     <main class="login-card"><a href="{{ route('home') }}" class="logo">MESH<span class="logo-dot">.</span></a><span
             class="eyebrow muted">STORE STUDIO</span>
-        <h1>A little more<br>behind the scenes<span>.</span></h1>
+        <h1>Admin sign in</h1>
         <p>Sign in to manage your store.</p><x-flash />
         <form method="post" action="{{ route('admin.login.store') }}">@csrf<label class="field">Email address<input
                     name="email" type="email" autocomplete="username" value="{{ old('email') }}" required

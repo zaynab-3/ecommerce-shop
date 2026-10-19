@@ -1,9 +1,8 @@
 @extends('layouts.store')
 @section('title', 'Order received')
 @section('content')<div class="container confirmation-page">
-        <div class="confirmation-icon"><x-icon name="check" width="40" height="40" /></div><span class="eyebrow muted">A
-            GOOD FIND IS ON ITS WAY</span>
-        <h1>It’s yours, {{ explode(' ', $order->customer_name)[0] }}<span>.</span></h1>
+        <div class="confirmation-icon"><x-icon name="check" width="40" height="40" /></div>
+        <h1>Order received</h1>
         <p>Your order has been received. Our team will contact you to confirm the details.</p>
         @if($whatsappUrl)
             <x-whatsapp-order :url="$whatsappUrl" :auto-open="$autoOpenWhatsApp" />
@@ -25,5 +24,5 @@
             <div class="summary-row total"><strong>Total · Cash on
                     delivery</strong><strong>${{ number_format($order->total_cents / 100, 2) }}</strong></div>
             <p class="muted">Deliver to {{ $order->address }}</p>
-        </div><a class="button button-dark" href="{{ route('shop') }}">Keep exploring <x-icon name="arrow" /></a>
+        </div><a class="button button-dark" href="{{ route('shop') }}">Continue shopping <x-icon name="arrow" /></a>
 </div>@endsection

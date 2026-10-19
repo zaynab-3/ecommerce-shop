@@ -7,6 +7,13 @@ const stockIds = [
     ),
 ].slice(0, 48);
 let stockInFlight = false;
+function updateButtons(id, disabled, label) {
+    document.querySelectorAll(`[data-stock-button="${id}"]`).forEach((buy) => {
+        buy.disabled = disabled;
+        buy.querySelector("[data-stock-button-label]").textContent =
+            label ?? buy.dataset.availableLabel;
+    });
+}
 async function refreshStock() {
     if (!stockIds.length || document.hidden || stockInFlight) return;
     stockInFlight = true;
@@ -36,16 +43,10 @@ async function refreshStock() {
                         out: "Out of stock",
                     }[row.status];
                 });
-            const buy = document.querySelector(
-                `[data-stock-button="${row.id}"]`,
-            );
-            if (buy) {
-                buy.disabled = row.status === "out";
-                buy.querySelector("span").textContent =
-                    row.status === "out" ? "Out of stock" : "Add to bag";
+            updateButtons(row.id, row.status === "out", row.status === "out" ? "Out of stock" : null);
+            if (document.querySelector(`[data-product-detail] [data-stock-button="${row.id}"]`)) {
                 const quantity = document.getElementById("quantity");
-                if (quantity && row.quantity !== null)
-                    quantity.max = Math.max(1, Math.min(99, row.quantity));
+                if (quantity) quantity.max = row.quantity === null ? 99 : Math.max(1, Math.min(99, row.quantity));
             }
         }
         for (const id of stockIds) {
@@ -58,11 +59,7 @@ async function refreshStock() {
                     el.querySelector("[data-stock-label]").textContent =
                         "Unavailable";
                 });
-            const buy = document.querySelector(`[data-stock-button="${id}"]`);
-            if (buy) {
-                buy.disabled = true;
-                buy.querySelector("span").textContent = "Unavailable";
-            }
+            updateButtons(id, true, "Unavailable");
         }
     } catch {
     } finally {

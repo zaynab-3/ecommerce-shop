@@ -1,14 +1,9 @@
 @extends('layouts.store')
 @section('title', 'Checkout')
 @section('content')<div class="container shopping-page">
-        <div class="breadcrumb"><a href="{{ route('cart.index') }}">Your bag</a><x-icon name="chevron"
+        <div class="breadcrumb"><a href="{{ route('cart.index') }}">Your cart</a><x-icon name="chevron"
                 width="13" /><span>Checkout</span></div>
-        <div class="collection-title">
-            <div><span class="eyebrow muted">YOU’RE ONE STEP AWAY</span>
-                <h1>Make it yours<span>.</span></h1>
-                <p>No account needed. Just the essentials.</p>
-            </div><x-icon name="shield" width="38" height="38" />
-        </div>
+        <div class="collection-title"><h1>Checkout</h1></div>
         <form method="post" action="{{ route('checkout.store') }}" class="shopping-layout checkout-form" data-checkout
             data-subtotal="{{ $subtotal }}">@csrf<input type="hidden" name="idempotency_key"
                 value="{{ session('checkout_key') }}">
@@ -60,7 +55,7 @@
                     <h2><span class="step-number">03</span> Payment</h2>
                     <div class="payment-option"><span class="radio-dot"></span>
                         <div><strong>Cash on delivery</strong>
-                            <p>Pay when your good finds arrive.</p>
+                            <p>Pay when your order arrives.</p>
                         </div><x-icon name="shield" />
                     </div>
                 </section>

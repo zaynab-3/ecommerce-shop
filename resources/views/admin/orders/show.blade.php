@@ -6,10 +6,10 @@
         <div class="admin-form-primary">
             <section class="admin-panel">
                 <div class="panel-heading">
-                    <h2>The good finds</h2><span
+                    <h2>Order items</h2><span
                         class="status-badge status-{{ $order->status }}">{{ ucfirst($order->status) }}</span>
                 </div>
-                <div class="table-scroll">
+                <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table">
                     <table>
                         <thead>
                             <tr>
@@ -63,7 +63,7 @@
         </div>
         <aside class="admin-form-secondary">
             <form method="post" action="{{ route('admin.orders.update', $order) }}" class="admin-panel form-panel">@csrf
-                @method('PATCH')<h2>The next step</h2>
+                @method('PATCH')<h2>Order status</h2>
                 <div class="field-grid single"><label class="field">Order status<select name="status">
                             @foreach (['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'] as $status)
                                 <option value="{{ $status }}" @selected($order->status === $status)>{{ ucfirst($status) }}

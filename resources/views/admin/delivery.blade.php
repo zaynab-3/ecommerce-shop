@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 @section('title', 'Delivery areas')
-@section('content')<x-admin-heading title="From here to everywhere"
-        description="Choose where you deliver and set prices for a whole group at once." eyebrow="DELIVERY" />
+@section('content')<x-admin-heading title="Delivery areas"
+        description="Set delivery areas and fees." eyebrow="DELIVERY" />
     <div class="admin-form-layout">
         <div class="admin-form-primary">
             <form method="post" action="{{ route('admin.delivery.update') }}" class="admin-panel form-panel">@csrf
                 @method('PATCH')<div class="panel-heading compact">
                     <div>
-                        <h2>Pick your places</h2>
+                        <h2>Delivery areas</h2>
                         <p>Only enabled areas are available at checkout.</p>
                     </div><label class="checkbox-field"><input type="checkbox" data-select-all="zones[]"> Select all</label>
                 </div>
@@ -37,7 +37,7 @@
         </div>
         <aside class="admin-form-secondary">
             <section class="admin-panel form-panel"><x-icon name="truck" width="30" />
-                <h2 class="spaced-title">A flexible doorstep</h2>
+                <h2 class="spaced-title">Delivery settings</h2>
                 <p class="panel-description">Use select-all, a governorate group, or individual areas. Apply one price and
                     availability setting to your selection.</p>
                 <p class="panel-description">The store-wide delivery fee switch is in Store settings. Fees are calculated

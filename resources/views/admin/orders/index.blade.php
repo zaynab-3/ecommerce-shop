@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Orders')
-@section('content')<x-admin-heading title="Good things, on their way"
-        description="A clear view of every order, from checkout to doorstep." eyebrow="ORDER DESK" />
+@section('content')<x-admin-heading title="Orders"
+        description="Manage orders, assignments, and fulfillment." eyebrow="ORDER DESK" />
     <section class="admin-panel">
         <form method="get" class="order-filters"><label class="admin-search"><x-icon name="search" /><input name="q"
                     value="{{ request('q') }}" placeholder="Order number or customer" maxlength="100"
@@ -15,7 +15,7 @@
                     @checked(request('mine'))>Assigned to me</label><button
                 class="button button-light small-button">Filter orders</button>
         </form>
-        <div class="table-scroll">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table">
             <table>
                 <thead>
                     <tr>

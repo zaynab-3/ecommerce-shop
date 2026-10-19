@@ -21,7 +21,7 @@ def request(_):
             body = response.read()
             valid = response.status == 200 and bool(body)
             if args.path == '/shop':
-                valid = valid and b'product-grid' in body and b'The whole collection' in body
+                valid = valid and b'product-grid' in body and b'Sort products' in body
             return valid, (time.perf_counter() - start) * 1000
     except Exception:
         return False, (time.perf_counter() - start) * 1000

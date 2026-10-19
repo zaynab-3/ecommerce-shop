@@ -22,6 +22,7 @@ class SettingsController extends Controller
     {
         $data = $r->validate([
             'store_name' => 'required|string|max:80',
+            'accent_color' => ['sometimes', 'required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/D'],
             'delivery_enabled' => 'required|boolean',
             'whatsapp_enabled' => 'required|boolean',
             'whatsapp_recipient' => ['nullable', Rule::requiredIf($r->boolean('whatsapp_enabled')), 'string', 'max:30'],
