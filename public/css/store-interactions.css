@@ -2,6 +2,15 @@
 .store-chrome { position: sticky; top: 0; z-index: 40; background: #fff; transition: transform .24s ease; }
 .store-chrome.is-hidden { transform: translateY(-110%); }
 .header-search-trigger { flex: 1; max-width: 600px; min-height: 48px; border: 0; border-radius: 999px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; background: #000; color: #fff; text-align: left; }
+.site-header .mobile-search-toggle, .site-header .mobile-search-toggle:hover,
+.site-header .cart-link, .site-header .cart-link:hover {
+    background: transparent; color: var(--store-accent-ink); border: 0;
+}
+.site-header .header-actions .mobile-search-toggle .icon,
+.site-header .header-actions .cart-link > .icon { width: 24px; height: 24px; }
+.site-header .bag-count { background: transparent; color: var(--store-accent-ink); border: 0; font-weight: 700; }
+.site-header .header-search-trigger { background: transparent; color: #000; }
+.site-header .header-search-trigger > .icon { color: var(--store-accent-ink); }
 .mobile-menu-toggle, .mobile-menu-toggle:hover { background: transparent; border: 0; border-radius: 0; color: #000; }
 .mobile-menu-toggle .icon { width: 26px; height: 26px; stroke-width: 2; }
 .has-store-dialog { overflow: hidden; overscroll-behavior: none; }

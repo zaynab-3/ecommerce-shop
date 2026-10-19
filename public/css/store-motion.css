@@ -1,0 +1,9 @@
+/* Animate the content while ordinary Blade navigation keeps native history. */
+#main { animation: store-page-in .24s cubic-bezier(.22, 1, .36, 1); }
+html, .cart-dialog-body, .drawer-content, .catalog-category-nav, .carousel-track { scroll-behavior: smooth; }
+.cart-dialog-body, .drawer-content, .catalog-category-nav, .carousel-track { -webkit-overflow-scrolling: touch; }
+@keyframes store-page-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+    #main { animation: none; }
+    html, .cart-dialog-body, .drawer-content, .catalog-category-nav, .carousel-track { scroll-behavior: auto; }
+}

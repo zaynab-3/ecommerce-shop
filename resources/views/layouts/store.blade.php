@@ -8,6 +8,7 @@
     <meta name="description"
         content="Shop products, check stock and delivery availability, and order with cash on delivery.">
     <title>@yield('title', 'Shop') — {{ \App\Models\StoreSetting::current()->store_name }}</title>
+    <link rel="stylesheet" href="{{ asset('css/store-motion.css') }}?v={{ filemtime(public_path('css/store-motion.css')) }}">
     <link rel="icon" href="{{ asset('images/favicon.svg') }}" type="image/svg+xml">
     <link rel="preload" href="{{ asset('fonts/space-grotesk.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{{ asset('css/store.css') }}?v={{ filemtime(public_path('css/store.css')) }}">

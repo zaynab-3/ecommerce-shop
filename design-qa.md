@@ -67,3 +67,12 @@ Native Windows, iOS Safari, and Android devices are not available in the cloud e
 - Visual QA found and corrected an initially blank status badge on the immediate JSON receipt: new orders now refresh database defaults before rendering. Receipt coverage asserts the Pending label.
 
 Current captures: [cart and checkout, phone](docs/screenshots/cart-modal-mobile.png), [desktop](docs/screenshots/cart-modal-desktop.png), [checkout fields](docs/screenshots/checkout-modal-mobile.png), [confirmation](docs/screenshots/confirmation-modal-mobile.png), [soft drawer](docs/screenshots/mobile-navigation.png). Five modal widths and the 111-page viewport pass completed without overflow or JavaScript errors. A real checkout was exercised and its temporary QA order deleted.
+
+
+## Navigation and header icons
+
+The header search/cart actions now use accent-colored icons without filled backgrounds, including hover and the count. Ordinary page/category links fade the content out briefly and fade the destination in with a small vertical easing; header actions retain their layout. GET search and filter forms follow the same navigation, drawer links finish closing, and cart/favorite requests remain asynchronous. Native history, same-page anchors, modified clicks, and reduced-motion preferences are preserved. Scrollable shopping surfaces use CSS smooth scrolling without wheel/touch interception.
+
+Evidence: [phone header](docs/screenshots/header-icons-mobile.png), [desktop header](docs/screenshots/header-icons-desktop.png).
+
+The navigation/browser checks and full cart/checkout regression flow passed without JavaScript errors. Smooth scroll was measured inside consecutive animation frames, and reduced-motion restored immediate scrolling. MySQL: 62 tests / 492 assertions passed.
