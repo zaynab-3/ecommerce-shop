@@ -495,4 +495,54 @@ class ShopTest extends TestCase
         $this->withHeaders(['Origin' => 'https://untrusted.example'])->getJson('/stock?ids[]='.$product->id)
             ->assertOk()->assertHeaderMissing('Access-Control-Allow-Origin');
     }
+
+    public function test_a_customer_can_place_two_distinct_orders_in_the_same_session(): void
+    {
+        $p = $this->product();
+        $data = $this->data();
+        $this->withSession(['cart' => $this->cart($p), 'checkout_key' => $data['idempotency_key']])->post('/checkout', $data)->assertRedirect();
+        $firstKey = $data['idempotency_key'];
+        $this->post(route('cart.add', $p), ['quantity' => '2'])->assertRedirect();
+        $this->get('/checkout')->assertOk();
+        $data['idempotency_key'] = session('checkout_key');
+        $this->assertNotSame($firstKey, $data['idempotency_key']);
+        $this->post('/checkout', $data)->assertRedirect();
+        $this->assertSame(2, Order::count());
+        $this->assertSame(7, $p->fresh()->quantity);
+        $this->assertSame(2, Order::latest('id')->first()->items()->first()->quantity);
+    }
+
+    public function test_the_remove_button_accepts_a_browser_form_zero(): void
+    {
+        $p = $this->product();
+        $cart = $this->cart($p);
+        $this->withSession(['cart' => $cart])->patch(route('cart.update', array_key_first($cart)), ['quantity' => '0'])
+            ->assertRedirect()->assertSessionHas('cart', []);
+        $this->get('/checkout')->assertRedirect(route('cart.index'));
+    }
+
+    public function test_checkout_rejects_zero_quantity_from_an_existing_cart(): void
+    {
+        $p = $this->product();
+        $this->expectException(ValidationException::class);
+        app(CheckoutService::class)->place($this->data(), $this->cart($p, 0));
+    }
+
+    public function test_checkout_requires_a_color_if_options_were_added_after_the_cart(): void
+    {
+        $p = $this->product();
+        $cart = $this->cart($p);
+        $p->colors()->create(['name' => 'New color']);
+        $this->expectException(ValidationException::class);
+        app(CheckoutService::class)->place($this->data(), $cart);
+    }
+
+    public function test_catalog_search_treats_sql_wildcards_as_literal_text(): void
+    {
+        $special = $this->product(['name' => '100% Cotton_A!']);
+        $other = $this->product(['name' => '100 percent Cotton AA']);
+        foreach (['100%', 'Cotton_A', 'A!'] as $term) {
+            $this->get('/shop?q='.urlencode($term))->assertOk()->assertSee($special->name)->assertDontSee($other->name);
+        }
+    }
 }

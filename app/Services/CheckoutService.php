@@ -21,6 +21,11 @@ class CheckoutService
             if (! $cart) {
                 throw ValidationException::withMessages(['cart' => 'Your bag is empty.']);
             }
+            foreach ($cart as $line) {
+                if (! is_numeric($line['quantity']) || $line['quantity'] < 1 || $line['quantity'] > 99 || (int) $line['quantity'] != $line['quantity']) {
+                    throw ValidationException::withMessages(['cart' => 'Please update the quantities in your bag before checking out.']);
+                }
+            }
             $setting = StoreSetting::firstOrCreate(['id' => 1]);
             $zone = null;
             $fee = 0;
@@ -43,6 +48,9 @@ class CheckoutService
             foreach ($cart as $line) {
                 $p = $products[$line['product_id']];
                 $color = $line['color_id'] ? $p->colors->firstWhere('id', $line['color_id']) : null;
+                if ($p->colors->isNotEmpty() && ! $color) {
+                    throw ValidationException::withMessages(['cart' => 'Please select a currently available color for '.$p->name.'.']);
+                }
                 if ($line['color_id'] && ! $color) {
                     throw ValidationException::withMessages(['cart' => 'A selected color is no longer available.']);
                 }$subtotal += $p->price_cents * $line['quantity'];

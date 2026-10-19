@@ -16,8 +16,8 @@ class StorefrontController extends Controller
         $categories = Cache::remember('catalog.categories', 60, fn () => Category::visible()->whereNull('parent_id')->with(['children' => fn ($q) => $q->visible()])->withCount(['products' => fn ($q) => $q->visible()])->orderBy('position')->get());
         $query = Product::visible()->with(['images', 'colors', 'category']);
         if ($r->filled('q')) {
-            $term = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $filters['q']);
-            $query->where('name', 'like', '%'.$term.'%');
+            $term = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $filters['q']);
+            $query->whereRaw("name LIKE ? ESCAPE '!'", ['%'.$term.'%']);
         }
         $selected = null;
         if ($r->filled('category')) {

@@ -22,7 +22,9 @@ class CartController extends Controller
         $zones = $settings->delivery_enabled ? DeliveryZone::where('is_active', true)->orderBy('governorate')->orderBy('name')->get() : collect();
         $selectedZone = $zones->firstWhere('id', (int) session('delivery_zone_id'));
 
-        return view('store.cart', ['lines' => $cart->lines(), 'subtotal' => $cart->subtotal(), 'settings' => $settings, 'zones' => $zones, 'selectedZone' => $selectedZone]);
+        $lines = $cart->lines();
+
+        return view('store.cart', ['lines' => $lines, 'subtotal' => $lines->sum('total'), 'settings' => $settings, 'zones' => $zones, 'selectedZone' => $selectedZone]);
     }
 
     public function add(Request $r, Product $product)
@@ -55,6 +57,7 @@ class CartController extends Controller
     public function update(Request $r, string $key)
     {
         $data = $r->validate(['quantity' => 'required|integer|min:0|max:99']);
+        $data['quantity'] = (int) $data['quantity'];
         $cart = session('cart', []);
         abort_unless(isset($cart[$key]), 404);
         if ($data['quantity'] === 0) {

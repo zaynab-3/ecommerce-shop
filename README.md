@@ -6,6 +6,8 @@ Screenshots: [desktop storefront](docs/screenshots/storefront-desktop.png) · [m
 
 ## Start here
 
+On Windows, follow the [PowerShell installation and manual test guide](docs/WINDOWS-SETUP.md). With PHP 8.2+ and Composer already installed, the portable setup command is `php scripts/setup.php`.
+
 ```bash
 cd /workspace/ecommerce-shop
 bash scripts/setup.sh
