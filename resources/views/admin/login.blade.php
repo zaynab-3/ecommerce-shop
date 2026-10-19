@@ -9,14 +9,14 @@
     <link rel="preload" href="{{ asset('fonts/space-grotesk.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{{ asset('css/store.css') }}?v={{ filemtime(public_path('css/store.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ filemtime(public_path('css/admin.css')) }}">
-    <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1)]) }}">
+    <link rel="stylesheet" href="{{ asset('css/identity.css') }}?v={{ filemtime(public_path('css/identity.css')) }}">
+    <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1), 'v' => \App\Services\StoreTheme::VERSION]) }}">
 </head>
 
 <body class="login-body">
-    <main class="login-card"><a href="{{ route('home') }}" class="logo">MESH<span class="logo-dot">.</span></a><span
-            class="eyebrow muted">STORE STUDIO</span>
+    <main class="login-card"><a href="{{ route('home') }}" class="logo">MESH<span class="logo-dot">.</span></a>
         <h1>Admin sign in</h1>
-        <p>Sign in to manage your store.</p><x-flash />
+        <x-flash />
         <form method="post" action="{{ route('admin.login.store') }}">@csrf<label class="field">Email address<input
                     name="email" type="email" autocomplete="username" value="{{ old('email') }}" required
                     autofocus></label><label class="field">Password<input name="password" type="password"

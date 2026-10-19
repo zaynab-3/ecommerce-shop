@@ -10,14 +10,15 @@
     <link rel="preload" href="{{ asset('fonts/space-grotesk.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{{ asset('css/store.css') }}?v={{ filemtime(public_path('css/store.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ filemtime(public_path('css/admin.css')) }}">
-    <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1)]) }}">
+    <link rel="stylesheet" href="{{ asset('css/identity.css') }}?v={{ filemtime(public_path('css/identity.css')) }}">
+    <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1), 'v' => \App\Services\StoreTheme::VERSION]) }}">
     <script src="{{ asset('js/admin.js') }}" type="module"></script>
 </head>
 
 <body class="admin-body"><a class="skip-link" href="#main">Skip to content</a>
     <aside class="admin-sidebar"><a class="logo" href="{{ route('admin.dashboard') }}">MESH<span
-                class="logo-dot">.</span></a><span class="studio-label">STORE STUDIO</span>
-        <nav aria-label="Admin navigation"><span class="nav-label">YOUR WORKSPACE</span><a
+                class="logo-dot">.</span></a>
+        <nav aria-label="Admin navigation"><a
                 href="{{ route('admin.dashboard') }}"
                 class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><x-icon name="grid" />Overview</a><a
                 href="{{ route('admin.orders.index') }}"
@@ -31,7 +32,7 @@
                     class="{{ request()->routeIs('admin.delivery.*') ? 'active' : '' }}"><x-icon name="truck" />Delivery
                     areas</a>
                 @endif @if (auth()->user()->role === 'owner')
-                    <span class="nav-label second-label">STORE MANAGEMENT</span><a
+                    <a
                         href="{{ route('admin.team.index') }}"
                         class="{{ request()->routeIs('admin.team.*') ? 'active' : '' }}"><x-icon name="users" />Team &
                         access</a><a href="{{ route('admin.settings.index') }}"
@@ -54,10 +55,8 @@
         <header class="admin-topbar"><button class="icon-button admin-menu-toggle" type="button" data-admin-menu
                 aria-expanded="false" aria-label="Toggle admin navigation"><x-icon
                     name="menu" /></button><span>Workspace <span>/</span> @yield('title', 'Overview')</span>
-            <div class="workspace-status"><span class="stock-dot"></span> Your store, at a glance</div>
         </header>
         <main id="main" class="admin-main"><x-flash />@yield('content')</main>
-        <footer class="admin-footer"><span>MESH Store Studio</span><span>Store administration</span></footer>
     </div>
 </body>
 

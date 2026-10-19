@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 @section('title', $product->exists ? 'Edit product' : 'New product')
-@section('content')<x-admin-heading :title="$product->exists ? 'Edit product' : 'Add product'" description="Manage product details, images, colors, and stock."
-        eyebrow="YOUR COLLECTION"><a href="{{ route('admin.products.index') }}" class="text-link">← All
+@section('content')<x-admin-heading :title="$product->exists ? 'Edit product' : 'Add product'"><a href="{{ route('admin.products.index') }}" class="text-link">← All
             products</a></x-admin-heading>
     <form method="post" enctype="multipart/form-data"
         action="{{ $product->exists ? route('admin.products.update', $product) : route('admin.products.store') }}"
@@ -63,14 +62,10 @@
             </section>
             <section class="admin-panel form-panel">
                 <h2>Product images</h2>
-                <p class="panel-description">Up to 10 images · JPEG, PNG or WebP · 12 MB each. Images are resized to 1,600
-                    px and converted to quality-84 WebP. File size depends on the image.</p><label
+                <p class="panel-description">Up to 10 images · JPEG, PNG or WebP · 12 MB each.</p><label
                     class="upload-area"><x-icon name="plus" width="28" /><strong>Add your product
                         images</strong><span>Choose images to upload</span><input name="images[]" type="file"
                         accept="image/jpeg,image/png,image/webp" multiple></label>
-                @if ($product->exists && $product->images->isNotEmpty())
-                    <p class="form-hint">Use the image controls below to assign colors and set gallery order.</p>
-                @endif
             </section>
         </div>
         <aside class="admin-form-secondary">
@@ -87,15 +82,13 @@
                             data-stock-mode>
                             <option value="tracked" @selected(old('stock_mode', $product->stock_mode) === 'tracked')>Tracked quantity</option>
                             <option value="open" @selected(old('stock_mode', $product->stock_mode) === 'open')>Open quantity</option>
-                        </select></label><label class="field">Quantity <span class="muted">For tracked
-                            stock</span><input name="quantity" type="number" min="0" max="10000000"
+                        </select></label><div data-tracked-stock @if(old('stock_mode', $product->stock_mode) === 'open') hidden @endif>
+                        <label class="field">Quantity<input name="quantity" type="number" min="0" max="10000000"
                             value="{{ old('quantity', $product->quantity) }}" data-stock-quantity></label><label
                         class="field">Low stock at <span class="muted">Blank uses the default rule</span><input
                             name="low_stock_threshold" type="number" min="0" max="10000000"
                             value="{{ old('low_stock_threshold', $product->exists ? $product->low_stock_threshold : '') }}"></label>
-                    <p class="form-hint">Default thresholds: up to 10 → 5; up to 30 → 10; up to 100 → 15; above 100 → 15%.
-                        The threshold stays fixed as items sell.</p><label class="field">Manual stock status <span
-                            class="muted">Used for open quantity only</span><select name="manual_stock_status">
+</div><label class="field" data-open-stock @if(old('stock_mode', $product->stock_mode) !== 'open') hidden @endif>Stock status<select name="manual_stock_status">
                             @foreach (['available' => 'Available', 'low' => 'Low stock', 'out' => 'Out of stock'] as $value => $label)
                                 <option value="{{ $value }}" @selected(old('manual_stock_status', $product->manual_stock_status ?? 'available') === $value)>{{ $label }}
                                 </option>

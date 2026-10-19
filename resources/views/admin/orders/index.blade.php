@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Orders')
-@section('content')<x-admin-heading title="Orders"
-        description="Manage orders, assignments, and fulfillment." eyebrow="ORDER DESK" />
+@section('content')<x-admin-heading title="Orders" />
     <section class="admin-panel">
         <form method="get" class="order-filters"><label class="admin-search"><x-icon name="search" /><input name="q"
                     value="{{ request('q') }}" placeholder="Order number or customer" maxlength="100"
@@ -46,7 +45,7 @@
                     </tr>@empty<tr>
                             <td colspan="7">
                                 <div class="table-empty"><x-icon name="bag" />
-                                    <h3>No orders here just yet.</h3>
+                                    <h3>No orders</h3>
                                     <p>New orders will appear here after checkout.</p>
                                 </div>
                             </td>

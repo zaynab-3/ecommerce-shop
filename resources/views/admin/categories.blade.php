@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Categories')
-@section('content')<x-admin-heading title="Categories"
-        description="Organize, reorder, and show or hide whole collections." eyebrow="CATEGORIES & SUBCATEGORIES" />
+@section('content')<x-admin-heading title="Categories" />
     <div class="admin-form-layout">
         <div class="admin-form-primary">
             @forelse($categories as $category)
@@ -47,8 +46,8 @@
                     @endforeach
                 </section>
             @empty<div class="admin-panel table-empty">
-                    <h3>A fresh start.</h3>
-                    <p>Add a category to organize your collection.</p>
+                    <h3>No categories yet</h3>
+                    <p>Add your first category.</p>
                 </div>
             @endforelse
         </div>

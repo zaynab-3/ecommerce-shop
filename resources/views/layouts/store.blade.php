@@ -10,9 +10,10 @@
     <title>@yield('title', 'Shop') — {{ \App\Models\StoreSetting::current()->store_name }}</title>
     <link rel="icon" href="{{ asset('images/favicon.svg') }}" type="image/svg+xml">
     <link rel="preload" href="{{ asset('fonts/space-grotesk.woff2') }}" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="{{ asset('fonts/teko.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{{ asset('css/store.css') }}?v={{ filemtime(public_path('css/store.css')) }}">
-    <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1)]) }}">
+    <link rel="stylesheet" href="{{ asset('css/store-navigation.css') }}?v={{ filemtime(public_path('css/store-navigation.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/identity.css') }}?v={{ filemtime(public_path('css/identity.css')) }}">
+    <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1), 'v' => \App\Services\StoreTheme::VERSION]) }}">
     <script src="{{ asset('js/store.js') }}" type="module"></script>@stack('head')
 </head>
 
@@ -26,7 +27,7 @@
     <header class="site-header">
         <div class="container header-inner">
             <button class="icon-button mobile-menu-toggle" type="button" data-menu-toggle aria-label="Open navigation"
-                aria-expanded="false"><x-icon name="menu" /></button>
+                aria-expanded="false" aria-controls="mobile-navigation" aria-haspopup="dialog"><x-icon name="menu" /></button>
             <a class="logo" href="{{ route('home') }}">{{ \App\Models\StoreSetting::current()->store_name }}<span
                     class="logo-dot">.</span></a>
             <form id="store-search" class="search-form" method="get" action="{{ route('shop') }}" role="search"><x-icon
@@ -42,18 +43,11 @@
         </div>
         <nav class="main-nav" aria-label="Main navigation">
             <div class="container nav-inner" data-mobile-nav>
-                <a class="all-categories" href="{{ route('shop') }}"><x-icon name="grid" /> All categories</a>
-                <div class="nav-links"><a class="{{ request()->routeIs('home') ? 'active' : '' }}"
-                        href="{{ route('home') }}">Discover</a><a
-                        class="{{ request()->routeIs('shop') && !request('saved') ? 'active' : '' }}"
-                        href="{{ route('shop') }}">Shop all</a><a href="{{ route('shop', ['sort' => 'newest']) }}">New
-                        arrivals <span class="new-pill">NEW</span></a><a
-                        href="{{ route('shop', ['sort' => 'price_asc']) }}">Everyday value</a></div><a
-                    class="nav-delivery" href="{{ route('help') }}"><x-icon name="truck" /> Delivery across
-                    Lebanon</a>
+                <x-store-navigation-links />
             </div>
         </nav>
     </header>
+    <x-mobile-navigation />
     <main id="main">
         @if (session('success') || $errors->any())
             <div class="container flash-container"><x-flash /></div>

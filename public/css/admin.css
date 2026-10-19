@@ -1,5 +1,5 @@
 .admin-body {
-    background: #f6f7f3;
+    background: #fff;
     font-size: 15px;
 }
 .admin-sidebar {
@@ -7,7 +7,7 @@
     inset: 0 auto 0 0;
     width: 225px;
     background: #fff;
-    border-right: 1px solid #e7ebdf;
+    border-right: 1px solid #fff;
     padding: 30px 21px;
     display: flex;
     flex-direction: column;
@@ -23,7 +23,7 @@
 .studio-label {
     font-size: 12px;
     letter-spacing: 2px;
-    color: #717768;
+    color: #000;
     margin: 9px 0 39px 15px;
 }
 .admin-sidebar nav {
@@ -34,7 +34,7 @@
 .nav-label {
     font-size: 12px;
     letter-spacing: 1.5px;
-    color: #727869;
+    color: #000;
     padding-left: 15px;
     margin-bottom: 10px;
 }
@@ -43,7 +43,7 @@
     align-items: center;
     gap: 12px;
     padding: 12px 15px;
-    color: #6c7663;
+    color: #000;
     font-size: 14px;
     border-radius: 5px;
 }
@@ -52,11 +52,11 @@
     height: 18px;
 }
 .admin-sidebar nav > a:hover {
-    background: #f5f8ef;
+    background: #fff;
 }
 .admin-sidebar nav > a.active {
-    background: #edf2e5;
-    color: #536d3a;
+    background: #fff;
+    color: #000;
     font-weight: 600;
 }
 .second-label {
@@ -70,9 +70,9 @@
     align-items: center;
     justify-content: space-between;
     font-size: 14px;
-    color: #6c775e;
+    color: #000;
     padding: 15px;
-    border: 1px solid #e4eadb;
+    border: 1px solid #fff;
     border-radius: 5px;
     margin-bottom: 20px;
 }
@@ -81,7 +81,7 @@
     gap: 10px;
     align-items: center;
     padding-top: 20px;
-    border-top: 1px solid #e7ecdf;
+    border-top: 1px solid #fff;
 }
 .avatar {
     width: 34px;
@@ -89,8 +89,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #e9efdf;
-    color: #6a7a56;
+    background: #fff;
+    color: #000;
     border-radius: 50%;
     font-size: 14px;
     flex-shrink: 0;
@@ -106,7 +106,7 @@
 }
 .admin-profile small {
     font-size: 12px;
-    color: #6c7562;
+    color: #000;
 }
 .admin-profile form {
     margin-left: auto;
@@ -122,28 +122,28 @@
 }
 .admin-topbar {
     height: 70px;
-    border-bottom: 1px solid #e4ead9;
+    border-bottom: 1px solid #fff;
     background: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 40px;
     font-size: 14px;
-    color: #6e7961;
+    color: #000;
 }
 .admin-topbar > span > span {
     margin: 0 12px;
-    color: #717769;
+    color: #000;
 }
 .workspace-status {
     display: flex;
     gap: 7px;
     align-items: center;
     font-size: 13px;
-    color: #6b7561;
+    color: #000;
 }
 .workspace-status .stock-dot {
-    background: #94ab78;
+    background: #000;
     width: 5px;
     height: 5px;
 }
@@ -173,11 +173,11 @@
     margin-bottom: 11px;
 }
 .admin-page-heading h1 > span {
-    color: #9a6542;
+    color: #000;
 }
 .admin-page-heading p {
     font-size: 14px;
-    color: #6e7765;
+    color: #000;
     margin: 0;
 }
 .admin-page-heading .button {
@@ -197,7 +197,7 @@
     margin-bottom: 30px;
 }
 .stat-card {
-    border: 1px solid #e0e8d5;
+    border: 1px solid #fff;
     border-radius: 6px;
     background: #fff;
     padding: 22px;
@@ -205,7 +205,7 @@
 }
 .stat-card > span {
     font-size: 13px;
-    color: #6e7765;
+    color: #000;
     display: block;
     padding-right: 24px;
 }
@@ -213,7 +213,7 @@
     position: absolute;
     top: 21px;
     right: 19px;
-    color: #6b755b;
+    color: #000;
     width: 18px;
     height: 18px;
 }
@@ -226,11 +226,11 @@
 }
 .stat-card > small {
     font-size: 12px;
-    color: #717967;
+    color: #000;
 }
 .admin-panel {
     background: #fff;
-    border: 1px solid #e0e8d5;
+    border: 1px solid #fff;
     border-radius: 6px;
     overflow: hidden;
 }
@@ -240,7 +240,7 @@
     justify-content: space-between;
     gap: 20px;
     padding: 23px 25px;
-    border-bottom: 1px solid #e7eddf;
+    border-bottom: 1px solid #fff;
 }
 .panel-heading h2 {
     font-size: 18px;
@@ -250,12 +250,12 @@
 }
 .panel-heading p {
     font-size: 13px;
-    color: #6f7766;
+    color: #000;
     margin: 7px 0 0;
 }
 .panel-heading .text-link {
     font-size: 13px;
-    color: #6a7757;
+    color: #000;
     gap: 9px;
 }
 .panel-heading .text-link .icon {
@@ -271,34 +271,34 @@ table {
     text-align: left;
 }
 thead {
-    background: #fafbf7;
+    background: #fff;
 }
 th {
     font-weight: 400;
-    color: #6e7862;
+    color: #000;
     font-size: 12px;
     padding: 14px 21px;
     white-space: nowrap;
 }
 td {
     padding: 16px 21px;
-    border-top: 1px solid #edf1e7;
-    color: #667655;
+    border-top: 1px solid #fff;
+    color: #000;
 }
 td > strong {
     font-size: 14px;
     font-weight: 500;
-    color: #4d633b;
+    color: #000;
 }
 td small {
     display: block;
     font-size: 12px;
-    color: #6c7562;
+    color: #000;
     margin-top: 4px;
 }
 .table-link {
     font-size: 14px;
-    color: #526c3d;
+    color: #000;
     font-weight: 500;
     white-space: nowrap;
 }
@@ -310,7 +310,7 @@ td small {
     padding: 40px 20px;
 }
 .table-empty > .icon {
-    color: #6a755b;
+    color: #000;
     margin-bottom: 18px;
     width: 31px;
     height: 31px;
@@ -318,13 +318,13 @@ td small {
 .table-empty h3 {
     font-size: 20px;
     font-weight: 500;
-    color: #667c50;
+    color: #000;
     margin-bottom: 10px;
     letter-spacing: -0.5px;
 }
 .table-empty p {
     font-size: 14px;
-    color: #6d7760;
+    color: #000;
     margin-bottom: 0;
 }
 .admin-shortcuts {
@@ -338,19 +338,19 @@ td small {
     align-items: center;
     gap: 17px;
     padding: 24px;
-    border: 1px solid #e0e8d5;
+    border: 1px solid #fff;
     border-radius: 6px;
-    background: #f0f3e9;
+    background: #fff;
 }
 .admin-shortcuts > a > .icon:first-child {
     width: 27px;
     height: 27px;
-    color: #697857;
+    color: #000;
 }
 .admin-shortcuts > a > .icon:last-child {
     margin-left: auto;
     width: 17px;
-    color: #697857;
+    color: #000;
 }
 .admin-shortcuts h3 {
     font-size: 16px;
@@ -360,13 +360,13 @@ td small {
 }
 .admin-shortcuts p {
     font-size: 13px;
-    color: #6b755d;
+    color: #000;
     margin: 0;
 }
 .admin-footer {
-    border-top: 1px solid #e3ead9;
+    border-top: 1px solid #fff;
     padding: 18px 40px;
-    color: #6e7665;
+    color: #000;
     font-size: 12px;
     display: flex;
     justify-content: space-between;
@@ -375,14 +375,14 @@ td small {
     display: flex;
     gap: 10px;
     align-items: center;
-    border: 1px solid #e1e9d6;
+    border: 1px solid #fff;
     border-radius: 4px;
     padding: 6px 8px;
-    background: #fcfdf9;
+    background: #fff;
 }
 .admin-search .icon {
     width: 15px;
-    color: #6c765f;
+    color: #000;
 }
 .admin-search input {
     border: 0;
@@ -391,18 +391,18 @@ td small {
     width: 150px;
     outline-offset: 0;
     font-size: 13px;
-    color: #677d51;
+    color: #000;
 }
 .admin-search input::placeholder {
-    color: #6b7561;
+    color: #000;
 }
 .admin-search button {
     border: 0;
-    background: #eef3e5;
+    background: #fff;
     padding: 5px 9px;
     border-radius: 3px;
     font-size: 12px;
-    color: #677952;
+    color: #000;
 }
 .products-table td {
     padding: 14px;
@@ -421,14 +421,14 @@ td small {
     height: 48px;
     object-fit: contain;
     mix-blend-mode: multiply;
-    background: #f8faf4;
+    background: #fff;
     border-radius: 3px;
     padding: 4px;
 }
 .table-product strong {
     font-size: 14px;
     font-weight: 500;
-    color: #536c3d;
+    color: #000;
     display: block;
     max-width: 240px;
 }
@@ -442,18 +442,18 @@ td small {
     width: 22px;
 }
 .reorder-buttons button {
-    border: 1px solid #e0e8d4;
+    border: 1px solid #fff;
     width: 22px;
     height: 20px;
     border-radius: 3px;
-    background: #fbfcf8;
-    color: #69795a;
+    background: #fff;
+    color: #000;
     font-size: 15px;
     line-height: 1;
     padding: 0;
 }
 .reorder-buttons button:hover {
-    background: #edf4e2;
+    background: #fff;
 }
 .stock-quick {
     display: grid;
@@ -479,7 +479,7 @@ td small {
 }
 .quantity-quick > span {
     font-size: 12px;
-    color: #6b7460;
+    color: #000;
 }
 .quantity-quick form {
     display: flex;
@@ -492,16 +492,16 @@ td small {
     font-size: 13px;
     padding: 3px 5px;
     height: 25px;
-    border: 1px solid #e0e8d4;
+    border: 1px solid #fff;
     border-radius: 3px;
-    color: #667b53;
+    color: #000;
 }
 .quantity-quick button,
 .inline-form button {
     border: 0;
-    background: #eef4e4;
+    background: #fff;
     border-radius: 3px;
-    color: #677a54;
+    color: #000;
     font-size: 12px;
     padding: 5px 7px;
 }
@@ -511,12 +511,12 @@ td small {
 }
 .inline-form select {
     max-width: 100px;
-    border: 1px solid #e0e8d4;
+    border: 1px solid #fff;
     border-radius: 3px;
     background: #fff;
     font-size: 13px;
     padding: 4px 5px;
-    color: #687b55;
+    color: #000;
 }
 .visibility-toggle {
     border: 0;
@@ -525,14 +525,14 @@ td small {
     align-items: center;
     gap: 7px;
     padding: 0;
-    color: #6f7966;
+    color: #000;
     font-size: 12px;
     white-space: nowrap;
 }
 .visibility-toggle > span {
     width: 25px;
     height: 14px;
-    background: #e3e9dc;
+    background: #fff;
     border-radius: 20px;
     position: relative;
     display: block;
@@ -548,13 +548,13 @@ td small {
     background: #fff;
 }
 .visibility-toggle.on > span {
-    background: #9aac83;
+    background: #000;
 }
 .visibility-toggle.on > span:after {
     left: 13px;
 }
 .visibility-toggle.on {
-    color: #687b55;
+    color: #000;
 }
 .admin-form-layout {
     display: grid;
@@ -588,25 +588,25 @@ td small {
 }
 .admin-main .field {
     font-size: 14px;
-    color: #6a7957;
+    color: #000;
 }
 .admin-main .field input,
 .admin-main .field select,
 .admin-main .field textarea {
-    border-color: #e0e9d5;
-    color: #617f46;
+    border-color: #fff;
+    color: #000;
     font-size: 14px;
     min-height: 40px;
     padding: 10px 11px;
 }
 .admin-main .field input::placeholder {
     font-size: 14px;
-    color: #6b7560;
+    color: #000;
 }
 .form-panel .panel-heading {
     padding: 0 0 20px;
     margin-bottom: 18px;
-    border-bottom: 1px solid #e9efdf;
+    border-bottom: 1px solid #fff;
 }
 .panel-heading.compact h2 {
     font-size: 18px;
@@ -625,7 +625,7 @@ td small {
 .form-hint {
     font-size: 13px;
     line-height: 1.9;
-    color: #6e7a63;
+    color: #000;
     margin: 0;
 }
 .checkbox-field {
@@ -633,18 +633,18 @@ td small {
     gap: 10px;
     align-items: center;
     font-size: 14px;
-    color: #677757;
+    color: #000;
     margin: 0;
 }
 .checkbox-field input {
     width: 14px;
     height: 14px;
-    accent-color: #90a975;
+    accent-color: #000;
 }
 .checkbox-field small {
     display: block;
     font-size: 12px;
-    color: #707a65;
+    color: #000;
     line-height: 1.8;
     margin-top: 4px;
 }
@@ -668,7 +668,7 @@ td small {
     margin-bottom: 3px;
     width: 26px;
     height: 34px;
-    color: #6e7764;
+    color: #000;
 }
 .upload-area {
     display: flex;
@@ -676,12 +676,12 @@ td small {
     align-items: center;
     text-align: center;
     gap: 8px;
-    border: 1.5px dashed #cfddbe;
-    background: #fafcf6;
+    border: 1.5px dashed #fff;
+    background: #fff;
     border-radius: 5px;
     padding: 30px 15px;
     cursor: pointer;
-    color: #6b7b5c;
+    color: #000;
 }
 .upload-area > .icon {
     margin-bottom: 7px;
@@ -689,22 +689,22 @@ td small {
 .upload-area strong {
     font-size: 14px;
     font-weight: 500;
-    color: #677b54;
+    color: #000;
 }
 .upload-area > span {
     font-size: 13px;
-    color: #6f7963;
+    color: #000;
 }
 .upload-area input {
     max-width: 100%;
     font-size: 13px;
     margin-top: 8px;
-    color: #6f7963;
+    color: #000;
 }
 .panel-description {
     font-size: 14px;
     line-height: 1.9;
-    color: #6d795f;
+    color: #000;
     margin-bottom: 20px;
 }
 .form-panel > .form-hint {
@@ -719,7 +719,7 @@ td small {
     gap: 20px;
 }
 .image-admin-card {
-    border: 1px solid #e4ecd9;
+    border: 1px solid #fff;
     padding: 15px;
     border-radius: 5px;
     min-width: 0;
@@ -729,7 +729,7 @@ td small {
     width: 100%;
     object-fit: contain;
     mix-blend-mode: multiply;
-    background: #fafbf7;
+    background: #fff;
     border-radius: 3px;
     margin-bottom: 20px;
 }
@@ -741,7 +741,7 @@ td small {
     text-align: center;
 }
 .danger-link {
-    color: #896c5e;
+    color: #000;
     font-size: 13px;
 }
 .category-admin-panel {
@@ -755,7 +755,7 @@ td small {
 }
 .category-admin-row > .icon {
     width: 20px;
-    color: #6b765d;
+    color: #000;
 }
 .category-name-form {
     flex: 1;
@@ -771,17 +771,17 @@ td small {
     padding: 7px 0;
     min-width: 0;
     width: 100%;
-    color: #657c50;
+    color: #000;
 }
 .category-name-form button {
     font-size: 12px;
-    color: #6d7a60;
+    color: #000;
 }
 .category-admin-row > .icon-button {
     width: 23px;
 }
 .child-row {
-    border-top: 1px solid #edf3e5;
+    border-top: 1px solid #fff;
     padding-left: 25px;
 }
 .child-row .category-name-form input {
@@ -789,7 +789,7 @@ td small {
 }
 .category-count {
     font-size: 12px;
-    color: #6c7762;
+    color: #000;
     white-space: nowrap;
 }
 .order-filters {
@@ -797,7 +797,7 @@ td small {
     align-items: center;
     gap: 18px;
     padding: 20px 24px;
-    border-bottom: 1px solid #e7eddf;
+    border-bottom: 1px solid #fff;
 }
 .order-filters .admin-search {
     flex: 1;
@@ -810,10 +810,10 @@ td small {
     height: 33px;
     font-size: 13px;
     padding: 6px 9px;
-    border: 1px solid #e1e9d6;
+    border: 1px solid #fff;
     border-radius: 4px;
     background: #fff;
-    color: #6a795c;
+    color: #000;
 }
 .order-filters .checkbox-field {
     font-size: 13px;
@@ -843,13 +843,13 @@ td small {
     font-size: 12px;
     letter-spacing: 1.3px;
     display: block;
-    color: #69755d;
+    color: #000;
     margin-bottom: 12px;
 }
 .customer-details strong {
     font-size: 15px;
     font-weight: 500;
-    color: #657a50;
+    color: #000;
     display: block;
     margin-bottom: 9px;
 }
@@ -858,25 +858,25 @@ td small {
     display: block;
     font-size: 14px;
     line-height: 1.9;
-    color: #6c7a60;
+    color: #000;
     margin: 0;
 }
 .order-notes {
     margin-top: 25px;
     padding-top: 20px;
-    border-top: 1px solid #e8efdf;
+    border-top: 1px solid #fff;
 }
 .order-notes p {
     font-size: 14px;
     white-space: pre-line;
-    color: #6a765d;
+    color: #000;
 }
 .bulk-delivery-controls {
     display: flex;
     align-items: flex-end;
     gap: 15px;
-    background: #f6f9f0;
-    border: 1px solid #e3ecd5;
+    background: #fff;
+    border: 1px solid #fff;
     border-radius: 5px;
     padding: 16px;
     margin-bottom: 27px;
@@ -907,13 +907,13 @@ td small {
 .zone-heading h3 {
     font-size: 16px;
     font-weight: 500;
-    color: #687b57;
+    color: #000;
     letter-spacing: -0.2px;
     margin: 0;
 }
 .zone-heading .text-link {
     font-size: 12px;
-    color: #6b775e;
+    color: #000;
 }
 .zone-grid {
     display: grid;
@@ -925,14 +925,14 @@ td small {
     align-items: center;
     gap: 8px;
     padding: 12px 9px;
-    border: 1px solid #e3ecd5;
+    border: 1px solid #fff;
     border-radius: 4px;
     cursor: pointer;
 }
 .zone-card input {
     width: 13px;
     height: 13px;
-    accent-color: #9cb986;
+    accent-color: #000;
     flex-shrink: 0;
 }
 .zone-card > span:nth-child(2) {
@@ -942,23 +942,23 @@ td small {
 .zone-card strong {
     font-size: 13px;
     font-weight: 500;
-    color: #6b7c5b;
+    color: #000;
     display: block;
 }
 .zone-card small {
     font-size: 12px;
     display: block;
-    color: #6b7660;
+    color: #000;
     margin-top: 3px;
 }
 .zone-dot {
     width: 5px;
     height: 5px;
-    background: #dce6d2;
+    background: #fff;
     border-radius: 50%;
 }
 .zone-dot.enabled {
-    background: #a8c58d;
+    background: #000;
 }
 .spaced-title {
     margin-top: 20px;
@@ -978,7 +978,7 @@ td small {
 .setting-toggle-row .icon {
     width: 24px;
     height: 24px;
-    color: #68755a;
+    color: #000;
     margin-bottom: 15px;
 }
 .setting-toggle-row h2 {
@@ -988,7 +988,7 @@ td small {
 }
 .setting-toggle-row p {
     font-size: 14px;
-    color: #6b795d;
+    color: #000;
     margin-bottom: 0;
 }
 .switch {
@@ -1007,7 +1007,7 @@ td small {
 .switch > span:not(.sr-only) {
     display: block;
     border-radius: 30px;
-    background: #e4eddc;
+    background: #fff;
     width: 42px;
     height: 24px;
     cursor: pointer;
@@ -1021,17 +1021,17 @@ td small {
     position: absolute;
     top: 3px;
     left: 3px;
-    box-shadow: 0 1px 3px #849a6c20;
+    box-shadow: 0 1px 3px #000;
     transition: transform 0.15s;
 }
 .switch input:checked + span {
-    background: #a0b989;
+    background: #000;
 }
 .switch input:checked + span:after {
     transform: translateX(18px);
 }
 .switch input:focus-visible + span {
-    outline: 2px solid #d55d36;
+    outline: 2px solid #000;
     outline-offset: 4px;
 }
 .integration-status {
@@ -1039,15 +1039,15 @@ td small {
     display: flex;
     gap: 8px;
     align-items: center;
-    color: #7f7154;
-    background: #fbf7e9;
+    color: #000;
+    background: #fff;
     border-radius: 4px;
     padding: 12px;
     margin-top: 18px;
 }
 .integration-status.configured {
-    background: #f2f8e9;
-    color: #657653;
+    background: #fff;
+    color: #000;
 }
 .settings-form .form-hint {
     margin-top: 17px;
@@ -1068,7 +1068,7 @@ td small {
 }
 .team-profile p {
     font-size: 13px;
-    color: #69785a;
+    color: #000;
     margin-bottom: 0;
 }
 .team-profile > .status-badge {
@@ -1090,14 +1090,14 @@ td small {
 .access-guide p {
     font-size: 14px;
     line-height: 1.9;
-    color: #6e7b60;
+    color: #000;
 }
 .access-guide strong {
     font-weight: 500;
-    color: #667955;
+    color: #000;
 }
 .login-body {
-    background: #edf1e5;
+    background: #fff;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -1106,12 +1106,12 @@ td small {
 }
 .login-card {
     background: #fff;
-    border: 1px solid #dae5cc;
+    border: 1px solid #fff;
     border-radius: 10px;
     padding: 42px;
     width: 100%;
     max-width: 440px;
-    box-shadow: 0 20px 80px #5d75431a;
+    box-shadow: 0 20px 80px #000;
 }
 .login-card > .logo {
     display: block;
@@ -1129,11 +1129,11 @@ td small {
     margin-block: 34px 16px;
 }
 .login-card h1 > span {
-    color: #926847;
+    color: #000;
 }
 .login-card > p {
     font-size: 14px;
-    color: #6b775e;
+    color: #000;
     margin-bottom: 28px;
 }
 .login-card form > .field {
@@ -1141,7 +1141,7 @@ td small {
 }
 .login-card .field {
     font-size: 14px;
-    color: #657753;
+    color: #000;
 }
 .login-card .field input {
     font-size: 16px;
@@ -1462,7 +1462,7 @@ td small {
         transform: translateX(-100%);
         width: 230px;
         transition: transform 0.2s;
-        box-shadow: 8px 0 30px #3a4e2824;
+        box-shadow: 8px 0 30px #000;
     }
     .admin-sidebar.is-open {
         transform: translateX(0);
@@ -1932,7 +1932,7 @@ td small {
 }
 
 /* Comfortable control sizes for store owners on desktop and phones. */
-.admin-body { font-size: 15px; background: #f5f7fa; }
+.admin-body { font-size: 15px; background: #fff; }
 .admin-page-heading { gap: 18px; flex-wrap: wrap; align-items: center; margin-bottom: 24px; }
 .admin-page-heading h1 { font-size: 28px; line-height: 1.25; letter-spacing: -.03em; }
 .admin-page-heading p { font-size: 14px; max-width: 640px; line-height: 1.6; }

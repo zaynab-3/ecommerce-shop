@@ -119,6 +119,9 @@ class ShopTest extends TestCase
         $this->get('/theme/not-a-color.css')->assertNotFound();
         foreach (['#ffff00', '#ffffff', '#000000', '#3868e9', '#ff77ff'] as $color) {
             $vars = StoreTheme::variables($color);
+            foreach ($vars as $value) {
+                $this->assertContains($value, [$color, '#000000', '#ffffff', 'transparent']);
+            }
             $luminance = static function ($hex) {
                 $rgb = array_map(fn ($c) => hexdec($c) / 255, str_split(substr($hex, 1), 2));
                 $rgb = array_map(fn ($c) => $c <= .04045 ? $c / 12.92 : (($c + .055) / 1.055) ** 2.4, $rgb);

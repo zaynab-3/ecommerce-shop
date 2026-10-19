@@ -2,45 +2,44 @@
 
 final result: passed
 
-## Target and evidence
+## Current target
 
-Adaptation of https://jabergames.com/ and the user's desktop/phone references: condensed retail headings, prominent accent-colored prices/actions, pale image panels, bordered product cards, horizontal home collections, a four-column desktop/two-column phone catalog, and a thumbnail product gallery. MESH retains its own general merchandise, branding, color options, stock behavior, and Laravel checkout.
+The user approved the page layouts from the Jaber Games references, then requested a distinct MESH identity: **one configurable accent, black, and white**, no decorative borders or pastel surfaces, and no condensed uppercase typography. Product photography and genuine product-color swatches retain their colors. The home carousel, four-column desktop/two-column phone catalog, and responsive product gallery remain.
 
-The user's explicit changes take priority over a pixel clone: remove decorative introductions such as “The whole collection”; increase readable text sizes; make the main color editable in admin settings; keep white backgrounds, dark primary text, and gray secondary text. Marketing banners, invented brands/warranties, and the reference's merchandise were not copied.
+MESH now uses locally hosted Space Grotesk throughout, sentence-case headings, black prices, rounded primary/secondary actions, and spacing rather than framed cards. Owner settings still control the single accent; light accents receive black button labels without introducing another shade. Versioned theme URLs invalidate the previous cached tinted palette.
 
-Real Chromium captures use 1 device pixel per CSS pixel, excluding browser chrome. Catalog/product captures are 1440 × 1000 and 390 × 844. The home comparison places the Top picks section near the top of each viewport. Content, product aspect ratios, cart counts, and accent hues differ intentionally.
+## Evidence
 
-| Compared surface | Combined source/implementation evidence |
+Real Chromium captures use one image pixel per CSS pixel, excluding browser chrome. Catalog/product captures are 1440 × 1000 and 390 × 844. The mobile navigation before/after captures are both 393 × 851. Source/reference merchandise and brand assets differ intentionally; comparisons demonstrate layout structure, not a pixel-clone objective.
+
+| Surface | Evidence |
 |---|---|
-| Home carousel, desktop | [Comparison](docs/screenshots/home-comparison-desktop.png) |
-| Catalog, desktop | [Comparison](docs/screenshots/catalog-comparison-desktop.png) |
-| Catalog, phone | [Comparison](docs/screenshots/catalog-comparison-mobile.png) |
-| Product, desktop | [Comparison](docs/screenshots/product-comparison-desktop.png) |
-| Product, phone | [Comparison](docs/screenshots/product-comparison-mobile.png) |
-
-Separate implementation captures: [home desktop](docs/screenshots/storefront-desktop.png), [home phone](docs/screenshots/storefront-mobile.png), [admin desktop](docs/screenshots/admin-desktop.png), [admin phone](docs/screenshots/admin-mobile.png).
+| Home, desktop / phone | [Desktop](docs/screenshots/storefront-desktop.png), [phone](docs/screenshots/storefront-mobile.png) |
+| Catalog, desktop / phone | [Desktop](docs/screenshots/catalog-desktop.png), [phone](docs/screenshots/catalog-mobile.png) |
+| Product, desktop / phone | [Desktop](docs/screenshots/product-desktop.png), [phone](docs/screenshots/product-mobile.png) |
+| Mobile side drawer | [Before/after comparison](docs/screenshots/navigation-comparison-mobile.png) |
+| Admin product list | [Desktop](docs/screenshots/admin-desktop.png), [phone](docs/screenshots/admin-mobile.png) |
+| Open-stock editor | [Phone](docs/screenshots/admin-open-stock-mobile.png) |
+| Reference layout comparison | [Home](docs/screenshots/home-comparison-desktop.png), [catalog desktop](docs/screenshots/catalog-comparison-desktop.png), [catalog phone](docs/screenshots/catalog-comparison-mobile.png), [product desktop](docs/screenshots/product-comparison-desktop.png), [product phone](docs/screenshots/product-comparison-mobile.png) |
 
 ## Findings and fixes
 
-- P1 resolved: Tiny storefront/admin text. Added locally hosted Space Grotesk for body text and Teko for retail headings/prices. Product names are 20px on phones and 24px on desktop; card prices are 27/30px; native form controls use 16px. Metadata is at least 12px. Admin keeps readable sans-serif typography.
-- P1 resolved: Decorative introductions pushed products down. Removed those introductions and sidebar/footer promotional panels; retained functional section names, breadcrumbs, and product information.
-- P1 resolved: Reference layouts were missing. Added a touch/keyboard-scrollable Top picks carousel with working arrows and Shop all; four-column desktop catalog and two-column phone grid; desktop vertical thumbnail rail switching to a horizontal row under the main image on phones; stacked purchase actions.
-- P1 resolved: Mobile category access disappeared with the sidebar. Added category/subcategory selection preserving search, sort, and stock filters. Desktop category navigation remains sticky, with internal scrolling when needed.
-- P1 resolved: Expired admin login showed a raw 419 page. Stale login submissions are rejected and redirected to a fresh form with an error. Only email is preserved. Fresh login succeeds; other state changes retain CSRF protection. This does not establish the original cause of a user-machine cookie problem.
-- P1 resolved: Fixed blue did not meet the requested editable palette. Owner settings now control the main accent, with neutral primary/secondary text and light accent tints. Very light choices receive contrasting button labels and darker price/link text. Color-keyed CSS is same-origin and cacheable; CSP remains strict. Invalid CSS-like input is rejected.
-- P2 resolved: Card footers moved with varying content. Flex card bodies align price/action areas. Direct Add to cart works for products with zero/one color; products with multiple colors lead to Choose options. Quantity, color ownership, and stock are validated on the server.
-- P2 resolved: Duplicate carousel/catalog products needed all stock actions updated. Polling now updates every matching button, including Buy it now, and restores each button's own label when available.
-- P2 resolved: Phone search and navigation consumed too much space. A compact header exposes search/menu controls, with Escape-to-close and accessible expanded states. Search remains visible on desktop.
-- P2 resolved: Short admin screens clipped account navigation. The sidebar now scrolls; sign-out stays reachable. Tables scroll internally, with a visible phone hint and reachable stock controls.
+- P1 resolved: The previous identity resembled the reference too closely. Replaced condensed uppercase display text, accent prices, framed cards, gradients, shadows, and pastel surfaces with MESH's borderless, three-color identity. Kept the approved layouts and merchandise functionality.
+- P1 resolved: Mobile menu expanded inline and crowded navigation links. Replaced it with a native modal side drawer, separate close control, backdrop dismissal, Escape dismissal, background scroll locking, inert background controls, focus restoration, and desktop-resize cleanup. Links are stacked with comfortable touch spacing. Shared Blade links keep mobile and desktop destinations consistent.
+- P1 resolved: Open quantity showed irrelevant tracked-stock fields. Quantity and threshold are hidden and disabled in open mode; the manual status is visible. Tracked mode shows numeric fields and hides manual status. Values survive switching modes, and the required manual value remains submitted for backend compatibility. Existing open-stock products render correctly before JS initialization.
+- P1 resolved: Old colors leaked into quick stock and visibility controls. Reworked the controls with the same accent/black/white palette and explicit text labels. Theme tokens cannot introduce lighter/darker accent shades. A real saved purple accent was checked across the shop and admin product list, then restored.
+- P1 resolved during visual QA: Some admin inputs inherited black text on their new black surface. Added explicit white input/select/textarea text and verified the selected mode and entered values are visible.
+- P2 resolved: The role explainer and decorative admin introductions added clutter. Removed them, shortened empty states and shortcuts, and retained actual order metadata, essential constraints, and validation errors. Role permissions are unchanged.
+- P2 resolved: Tinting selected gallery thumbnails changed the appearance of product colors. Selection now uses a small accent marker under a white thumbnail; product colors remain intact.
+- Prior fixes retained: readable typography, aligned card actions, mobile category/subcategory filtering, sticky desktop categories, duplicate stock-action updates, short-screen admin navigation, and safe expired-login recovery with CSRF still enforced.
 
 ## Verification
 
 - 111 public/admin page-and-viewport checks at widths 320, 360, 390, 768, 1024, 1440, and 1920: no horizontal document overflow or JavaScript errors.
-- Real-browser interactions passed: mobile search, carousel arrows, color-linked images, Buy it now with the selected color, duplicate stock updates, mobile category/filter preservation, sticky desktop categories, stale/fresh login, short-screen admin navigation, and access to stock controls.
-- An owner changed the main color through the actual settings form; buttons and prices changed while the white background and dark text remained. The original color was restored.
-- MySQL feature suite: 54 tests / 334 assertions passed, including color validation/contrast, quick add, Buy it now validation, WhatsApp product enquiries, and expired-login rejection/recovery.
-- MySQL stock race: ten simultaneous checkouts for three units produced exactly three orders and seven sold-out responses, with zero stock remaining.
-- Blade/route compilation, PHP/JavaScript syntax checks, Composer validation, and whitespace checks passed.
-- Source/coded images were inspected together after the final storefront styling pass. No unresolved P0, P1, or P2 findings remain within this adaptation's scope.
+- Drawer checks at 320, 393, and 600px widths and a 320px-high window: no page layout shift; keyboard focus cannot enter background page controls; close button, Escape, backdrop, link navigation, search interaction, and desktop resize all passed. Native browser chrome remains accessible with the keyboard.
+- Tracked/open stock checks on create and existing-product forms: visibility, required state, disabled state, FormData omission, manual-status submission, and readable selected values passed.
+- Actual authenticated owner color save: the visible shop/admin product-list CSS palette contained only accent, black, white, and transparent. Original settings were restored.
+- MySQL feature suite: **54 tests / 379 assertions**, including palette constraints, contrast, color validation, role authorization, stock behavior, and stale-login recovery.
+- Blade and route compilation, PHP/JavaScript syntax, and whitespace checks passed. Final rendered comparisons were visually inspected together. No unresolved P0, P1, or P2 findings remain within this scope.
 
-Native Windows, iOS Safari, and Android devices are not available in the cloud environment; responsive checks use real Chromium at the listed viewport sizes. Data-heavy admin tables intentionally retain horizontal scrolling within their own region. No WhatsApp message was sent during verification. See [validation notes](docs/VALIDATION.md) for infrastructure and production limits.
+Native Windows, iOS Safari, and Android devices are not available in the cloud environment; responsive checks use Chromium at the stated sizes. Data-heavy admin tables retain horizontal scrolling within their own region. No WhatsApp message was sent during verification. See [validation notes](docs/VALIDATION.md) for infrastructure limits and earlier MySQL checkout-race results.

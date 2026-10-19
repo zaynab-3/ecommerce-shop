@@ -20,11 +20,17 @@ colors?.addEventListener("click", (event) => {
 });
 const stockMode = document.querySelector("[data-stock-mode]");
 function updateStockInput() {
-    const input = document.querySelector("[data-stock-quantity]");
-    if (input && stockMode) {
-        input.required = stockMode.value === "tracked";
-        input.disabled = stockMode.value === "open";
+    if (!stockMode) return;
+    const tracked = stockMode.value === "tracked";
+    const trackedFields = document.querySelector("[data-tracked-stock]");
+    const openFields = document.querySelector("[data-open-stock]");
+    if (trackedFields) {
+        trackedFields.hidden = !tracked;
+        trackedFields.querySelectorAll("input").forEach((input) => { input.disabled = !tracked; });
     }
+    if (openFields) openFields.hidden = tracked;
+    const input = document.querySelector("[data-stock-quantity]");
+    if (input) input.required = tracked;
 }
 stockMode?.addEventListener("change", updateStockInput);
 updateStockInput();

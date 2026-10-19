@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title', $order->number)
-@section('content')<x-admin-heading :title="$order->number" :description="'Placed ' . $order->created_at->format('d M Y \a\t H:i') . ' · Cash on delivery'" eyebrow="ORDER DETAILS"><a class="text-link"
+@section('content')<x-admin-heading :title="$order->number" :description="'Placed ' . $order->created_at->format('d M Y \a\t H:i') . ' · Cash on delivery'"><a class="text-link"
             href="{{ route('admin.orders.index') }}">← All orders</a></x-admin-heading>
     <div class="admin-form-layout">
         <div class="admin-form-primary">
@@ -86,10 +86,6 @@
                         order <x-icon name="check" /></button>
                 </div>
             </form>
-            <section class="admin-panel form-panel">
-                <h2>WhatsApp checkout</h2>
-                <p class="panel-description">When enabled, checkout opens the customer’s WhatsApp with their order ready to send to your store number. This order is saved here independently.</p>
-                <p class="form-hint">The customer must tap Send in WhatsApp. Message delivery is not tracked by the store.</p>
-            </section>
+
         </aside>
 </div>@endsection

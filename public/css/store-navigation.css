@@ -1,0 +1,34 @@
+/* A native modal keeps keyboard focus in the drawer and the page underneath still. */
+.mobile-navigation {
+    position: fixed;
+    inset: 0 auto 0 0;
+    margin: 0;
+    width: min(360px, calc(100% - 32px));
+    height: 100%;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 0;
+    border-radius: 0 22px 22px 0;
+    background: #fff;
+    color: var(--store-text);
+    overflow: hidden;
+}
+.mobile-navigation[open] { display: flex; flex-direction: column; animation: drawer-enter .22s ease-out; }
+.mobile-navigation::backdrop { background: #000; }
+html.has-mobile-navigation { overflow: hidden; overscroll-behavior: none; }
+.drawer-header { display: flex; align-items: center; justify-content: space-between; flex: 0 0 auto; gap: 16px; padding: 24px 20px 20px; }
+.drawer-header .logo { min-width: 0; font-size: 31px; overflow-wrap: anywhere; }
+.drawer-close { flex-shrink: 0; border: 0; border-radius: 50%; background: #000; color: #fff; }
+.drawer-content { display: flex; flex-direction: column; gap: 24px; padding: 16px 20px max(24px, env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
+.drawer-content a { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 12px; border-radius: 12px; font-size: 16px; line-height: 1.5; }
+.drawer-category-link { background: var(--store-accent); color: var(--store-on-accent); font-weight: 600; }
+.drawer-category-link > .icon:last-child { margin-left: auto; }
+.drawer-links, .drawer-utilities { display: grid; gap: 6px; }
+.drawer-links a.active { color: #fff; background: #000; font-weight: 600; }
+.drawer-links a:hover, .drawer-utilities a:hover, .drawer-help:hover { text-decoration: underline; text-underline-offset: 5px; }
+.drawer-cart-count { margin-left: auto; color: #fff; background: #000; padding: 0 8px; border-radius: 20px; font-size: 13px; }
+.drawer-help { color: #000; }
+@keyframes drawer-enter { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) { .mobile-navigation[open] { animation: none; } }

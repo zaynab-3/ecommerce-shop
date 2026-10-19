@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Team & access')
-@section('content')<x-admin-heading title="Team & access"
-        description="Manage admin accounts and permissions." eyebrow="TEAM & ACCESS" />
+@section('content')<x-admin-heading title="Team & access" />
     <div class="admin-form-layout">
         <div class="admin-form-primary">
             @foreach ($admins as $admin)
@@ -15,7 +14,7 @@
                             class="status-badge {{ $admin->is_active ? 'status-delivered' : 'status-cancelled' }}">{{ $admin->is_active ? 'Active' : 'Inactive' }}</span>
                     </div>
                     <div class="field-grid"><label class="field">Role<select name="role">
-                                @foreach (['owner' => 'Owner · full access', 'manager' => 'Manager · catalog & orders', 'orders' => 'Order agent · orders only'] as $value => $label)
+                                @foreach (['owner' => 'Owner', 'manager' => 'Manager', 'orders' => 'Order agent'] as $value => $label)
                                     <option value="{{ $value }}" @selected($admin->role === $value)>{{ $label }}
                                     </option>
                                 @endforeach
@@ -34,8 +33,7 @@
             @endforeach
         </div>
         <aside class="admin-form-secondary">
-            <form method="post" action="{{ route('admin.team.store') }}" class="admin-panel form-panel">@csrf<h2>Make room
-                    for someone</h2>
+            <form method="post" action="{{ route('admin.team.store') }}" class="admin-panel form-panel">@csrf<h2>Add team member</h2>
                 <div class="field-grid single"><label class="field">Name<input name="name" value="{{ old('name') }}"
                             maxlength="120" required></label><label class="field">Email<input name="email" type="email"
                             value="{{ old('email') }}" maxlength="190" required></label><label class="field">Role<select
@@ -51,12 +49,5 @@
                         symbols.</p><button class="button button-dark">Add team member <x-icon name="plus" /></button>
                 </div>
             </form>
-            <section class="access-guide">
-                <h3>Every role, a clear purpose.</h3>
-                <p><strong>Owner</strong> · Full access, settings, and team management.</p>
-                <p><strong>Manager</strong> · Catalog, delivery, and all orders.</p>
-                <p><strong>Order agent</strong> · View orders, claim unassigned orders, and update their own assigned
-                    orders.</p>
-            </section>
         </aside>
 </div>@endsection

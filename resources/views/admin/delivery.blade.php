@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Delivery areas')
-@section('content')<x-admin-heading title="Delivery areas"
-        description="Set delivery areas and fees." eyebrow="DELIVERY" />
+@section('content')<x-admin-heading title="Delivery areas" />
     <div class="admin-form-layout">
         <div class="admin-form-primary">
             <form method="post" action="{{ route('admin.delivery.update') }}" class="admin-panel form-panel">@csrf

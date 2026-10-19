@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Overview')
-@section('content')<x-admin-heading title="Store overview" description="Orders, revenue, and stock."
-        eyebrow="WELCOME BACK">
+@section('content')<x-admin-heading title="Store overview">
         <a class="button button-light" href="{{ route('home') }}" target="_blank" rel="noopener">Visit your store <x-icon
                 name="arrow" /></a></x-admin-heading>
     <div class="stat-grid">
@@ -10,9 +9,9 @@
         </div>
         <div class="stat-card"><span>Pending orders</span><x-icon
                 name="box" /><strong>{{ $pending }}</strong><small>Pending orders</small></div>
-        <div class="stat-card"><span>In your collection</span><x-icon
+        <div class="stat-card"><span>Products</span><x-icon
                 name="grid" /><strong>{{ $productCount }}</strong><small>Total products</small></div>
-        <div class="stat-card"><span>Time for a restock</span><x-icon
+        <div class="stat-card"><span>Low stock</span><x-icon
                 name="refresh" /><strong>{{ $lowStock }}</strong><small>Tracked items at or below threshold</small>
         </div>
     </div>
@@ -20,7 +19,6 @@
         <div class="panel-heading">
             <div>
                 <h2>Recent orders</h2>
-                <p>Your latest orders, ready for their next step.</p>
             </div><a class="text-link" href="{{ route('admin.orders.index') }}">All orders <x-icon name="arrow" /></a>
         </div>
         <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table">
@@ -53,7 +51,7 @@
                     </tr>@empty<tr>
                             <td colspan="6">
                                 <div class="table-empty"><x-icon name="bag" />
-                                    <h3>Your next chapter starts with an order.</h3>
+                                    <h3>No orders yet</h3>
                                     <p>New orders will appear here as customers check out.</p>
                                 </div>
                             </td>
@@ -66,13 +64,11 @@
     @if (auth()->user()->canManageCatalog())
         <div class="admin-shortcuts"><a href="{{ route('admin.products.create') }}"><x-icon name="plus" />
                 <div>
-                    <h3>Make room for something new</h3>
-                    <p>Add a product to your collection.</p>
+                    <h3>Add product</h3>
                 </div><x-icon name="arrow" />
             </a><a href="{{ route('admin.delivery.index') }}"><x-icon name="truck" />
                 <div>
                     <h3>Manage delivery</h3>
-                    <p>Manage areas and delivery prices.</p>
                 </div><x-icon name="arrow" />
             </a></div>
     @endif

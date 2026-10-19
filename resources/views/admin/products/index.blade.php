@@ -1,14 +1,13 @@
 @extends('layouts.admin')
 @section('title', 'Products')
-@section('content')<x-admin-heading title="Products"
-        description="Manage products, stock, and visibility." eyebrow="CATALOG">
+@section('content')<x-admin-heading title="Products">
         <a class="button button-dark" href="{{ route('admin.products.create') }}"><x-icon name="plus" /> Add
             product</a></x-admin-heading>
     <section class="admin-panel">
         <div class="panel-heading">
             <div>
                 <h2>All products</h2>
-                <p>{{ $products->total() }} items · Quick controls save without opening the editor.</p>
+                <p>{{ $products->total() }} products</p>
             </div>
             <form class="admin-search" method="get"><x-icon name="search" /><input name="q"
                     value="{{ request('q') }}" placeholder="Find a product" maxlength="100"
@@ -77,7 +76,7 @@
                     </tr>@empty<tr>
                             <td colspan="6">
                                 <div class="table-empty"><x-icon name="box" />
-                                    <h3>A world of possibilities.</h3>
+                                    <h3>No products yet</h3>
                                     <p>Add your first product to get started.</p>
                                 </div>
                             </td>
