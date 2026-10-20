@@ -23,15 +23,15 @@
 html.has-mobile-navigation { overflow: hidden; overscroll-behavior: none; }
 .drawer-header { display: flex; align-items: center; justify-content: space-between; flex: 0 0 auto; gap: 16px; padding: 24px 20px 20px; }
 .drawer-header .logo { min-width: 0; font-size: 31px; overflow-wrap: anywhere; }
-.drawer-close { flex-shrink: 0; border: 0; border-radius: 50%; background: #000; color: #fff; }
+.drawer-close, .drawer-close:hover { flex-shrink: 0; border: 0; border-radius: 0; background: transparent; color: var(--store-accent-ink); }
 .drawer-content { display: flex; flex-direction: column; gap: 24px; padding: 16px 20px max(24px, env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
 .drawer-content a { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 12px; border-radius: 12px; font-size: 16px; line-height: 1.5; }
-.drawer-category-link { background: var(--store-accent); color: var(--store-on-accent); font-weight: 600; }
+.drawer-category-link { background: transparent; color: var(--store-accent-ink); font-weight: 700; }
 .drawer-category-link > .icon:last-child { margin-left: auto; }
 .drawer-links, .drawer-utilities { display: grid; gap: 6px; }
-.drawer-links a.active { color: #fff; background: #000; font-weight: 600; }
+.drawer-links a.active { color: var(--store-accent-ink); background: transparent; font-weight: 700; }
 .drawer-links a:hover, .drawer-utilities a:hover, .drawer-help:hover { text-decoration: underline; text-underline-offset: 5px; }
-.drawer-cart-count { margin-left: auto; color: #fff; background: #000; padding: 0 8px; border-radius: 20px; font-size: 13px; }
+.drawer-cart-count { margin-left: auto; color: var(--store-accent-ink); background: transparent; padding: 0 8px; font-size: 13px; font-weight: 700; }
 .drawer-help { color: #000; }
 @keyframes drawer-enter { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 @media (prefers-reduced-motion: reduce) { .mobile-navigation[open], .mobile-navigation::backdrop, .mobile-navigation.is-closing::backdrop { animation: none; } }

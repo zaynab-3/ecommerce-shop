@@ -24,6 +24,14 @@
             <path d="M5 12h14" />
         @break
 
+        @case('pause')
+            <path d="M9 5v14M15 5v14" />
+        @break
+
+        @case('play')
+            <path d="m8 4 12 8-12 8V4Z" />
+        @break
+
         @case('plus')
             <path d="M5 12h14m-7-7v14" />
         @break

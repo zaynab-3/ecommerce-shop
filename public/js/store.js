@@ -16,3 +16,4 @@ import "./store/card-colors.js";
 import "./store/category-navigation.js";
 
 import "./store/search.js";
+import "./store/cookies.js";

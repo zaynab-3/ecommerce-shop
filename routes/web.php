@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryIconController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CookieNoticeController;
 use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\SearchSuggestionController;
 use App\Http\Controllers\StorefrontController;
@@ -33,6 +34,9 @@ Route::get('/checkout', [CheckoutController::class, 'index'])->block(10, 10)->na
 Route::post('/checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->block(15, 15)->name('checkout.store');
 Route::get('/orders/{order:public_id}', [CheckoutController::class, 'confirmation'])->name('orders.confirmation');
 Route::view('/help', 'store.help')->name('help');
+Route::view('/privacy-policy', 'store.privacy')->name('privacy');
+Route::view('/terms-and-conditions', 'store.terms')->name('terms');
+Route::post('/cookie-notice', CookieNoticeController::class)->block(10, 10)->name('cookies.acknowledge');
 Route::prefix(config('shop.admin_path'))->name('admin.')->group(function () {
     Route::get('/login', [Admin\AuthController::class, 'create'])->name('login');
     Route::post('/login', [Admin\AuthController::class, 'store'])->middleware('throttle:admin-login')->name('login.store');

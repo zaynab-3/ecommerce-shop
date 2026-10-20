@@ -35,7 +35,7 @@
         <div class="summary-row total"><strong>Total</strong><strong id="checkout-total">${{ number_format(($subtotal + ($selectedZone?->fee_cents ?? 0)) / 100, 2) }}</strong></div>
     </div>
     <button type="submit" class="button button-dark full-width" @disabled($settings->delivery_enabled && $zones->isEmpty())><span>{{ $settings->whatsapp_enabled ? 'Place order & open WhatsApp' : 'Place order' }}</span><x-icon name="arrow" /></button>
-    <p class="summary-note">By placing your order, you agree to our <a href="{{ route('help') }}#privacy">terms & privacy policy</a>.@if($settings->whatsapp_enabled) Your order is saved before WhatsApp opens. Tap Send there to share it.@endif</p>
+    <p class="summary-note">By placing your order, you agree to our <a href="{{ route('terms') }}">terms & conditions</a>. Read how we use your information in our <a href="{{ route('privacy') }}">privacy policy</a>.@if($settings->whatsapp_enabled) Your order is saved before WhatsApp opens. Tap Send there to share it.@endif</p>
     </aside>
     </div>
 </form>

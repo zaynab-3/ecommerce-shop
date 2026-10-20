@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\CookieNoticeController;
 use App\Models\Category;
 use App\Models\DeliveryZone;
 use App\Models\Order;
@@ -62,10 +63,52 @@ class ShopTest extends TestCase
     public function test_storefront_and_all_public_pages_render(): void
     {
         $p = $this->product();
-        foreach (['home', 'shop', 'cart.index', 'help'] as $route) {
+        foreach (['home', 'shop', 'cart.index', 'help', 'privacy', 'terms'] as $route) {
             $this->get(route($route))->assertOk();
         }$this->get(route('products.show', $p))->assertOk()->assertSee($p->name);
         $this->get('/checkout')->assertRedirect(route('cart.index'));
+    }
+
+    public function test_legal_pages_are_linked_from_the_footer_and_checkout_review(): void
+    {
+        $this->get(route('shop'))->assertSee(route('privacy'))->assertSee(route('terms'))->assertSee('Cookie settings');
+        $this->get(route('privacy'))->assertOk()->assertSee('180 days')->assertSee('advertising or analytics cookies');
+        $this->get(route('terms'))->assertOk()->assertSee('cash on delivery')->assertSee('consumer law');
+        $p = $this->product();
+        $this->withSession(['cart' => $this->cart($p)])->get(route('checkout'))
+            ->assertOk()->assertSee(route('privacy'))->assertSee(route('terms'));
+    }
+
+    public function test_cookie_acknowledgement_is_persistent_secure_and_preserves_the_cart(): void
+    {
+        $p = $this->product();
+        $response = $this->withSession(['cart' => $this->cart($p), 'saved' => [$p->id]])
+            ->postJson('https://localhost/cookie-notice', ['version' => CookieNoticeController::VERSION])
+            ->assertOk()->assertJson(['acknowledged' => true])
+            ->assertCookie(CookieNoticeController::COOKIE, CookieNoticeController::VERSION)
+            ->assertSessionHas('cart.'.$p->id.'-none.quantity', 1)->assertSessionHas('saved', [$p->id]);
+        $cookie = collect($response->headers->getCookies())->first(fn ($cookie) => $cookie->getName() === CookieNoticeController::COOKIE);
+        $this->assertTrue($cookie->isHttpOnly());
+        $this->assertTrue($cookie->isSecure());
+        $this->assertSame('lax', $cookie->getSameSite());
+        $this->assertSame('/', $cookie->getPath());
+        $this->assertEqualsWithDelta(now()->addDays(180)->timestamp, $cookie->getExpiresTime(), 5);
+        $this->assertNotSame(CookieNoticeController::VERSION, $cookie->getValue());
+        $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
+
+        $page = $this->withCookie(CookieNoticeController::COOKIE, CookieNoticeController::VERSION)->get(route('shop'))->assertOk();
+        $this->assertMatchesRegularExpression('/data-cookie-notice[^>]*\bhidden\b/', $page->getContent());
+    }
+
+    public function test_cookie_notice_rejects_unknown_versions_and_works_without_javascript(): void
+    {
+        $this->postJson(route('cookies.acknowledge'), ['version' => 'unknown'])
+            ->assertUnprocessable()->assertCookieMissing(CookieNoticeController::COOKIE);
+        $this->postJson(route('cookies.acknowledge'), [])->assertUnprocessable();
+        $this->from(route('privacy'))->post(route('cookies.acknowledge'), ['version' => CookieNoticeController::VERSION])
+            ->assertRedirect(route('privacy'))->assertCookie(CookieNoticeController::COOKIE, CookieNoticeController::VERSION);
+        $page = $this->withCookie(CookieNoticeController::COOKIE, 'old')->get(route('shop'))->assertOk();
+        $this->assertDoesNotMatchRegularExpression('/data-cookie-notice[^>]*\bhidden\b/', $page->getContent());
     }
 
     public function test_buy_now_preserves_existing_cart_and_validates_color_and_stock(): void

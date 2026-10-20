@@ -21,7 +21,7 @@ class SecurityHeaders
         if ($request->isSecure()) {
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
-        if ($request->is(trim(config('shop.admin_path'), '/').'*') || $request->is('cart', 'cart/*', 'saved/*', 'checkout', 'orders/*')) {
+        if ($request->is(trim(config('shop.admin_path'), '/').'*') || $request->is('cart', 'cart/*', 'saved/*', 'checkout', 'orders/*', 'cookie-notice')) {
             $response->headers->set('Cache-Control', 'no-store, private');
         }
 

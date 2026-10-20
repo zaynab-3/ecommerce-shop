@@ -21,11 +21,7 @@
         </section>
         <section id="privacy">
             <h2>Privacy & shopping terms</h2>
-            <p>We use your name, contact details, address, and order information to process and deliver your purchase. Store
-                staff can access this information for order fulfillment. If WhatsApp checkout is enabled, WhatsApp opens with your order details addressed to the store. Review the message and tap Send to share it through WhatsApp. Your order is saved in our system even if you do not send the message.</p>
-            <p>Your shopping cart, saved items, and order confirmation access use a session cookie. Prices are in USD. Stock
-                and delivery fees are checked again when your order is placed. An order is a request to purchase, subject to
-                confirmation by our team. These operational terms should be reviewed and completed with the business’s legal
-                identity, contact details, return periods, and local legal requirements before launch.</p>
+            <p>Read our <a href="{{ route('privacy') }}">privacy policy</a> for details about your information and cookies,
+                and our <a href="{{ route('terms') }}">terms & conditions</a> for ordering, delivery, and returns.</p>
         </section><a class="button button-dark" href="{{ route('shop') }}">Back to shop <x-icon name="arrow" /></a>
 </div>@endsection

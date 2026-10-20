@@ -54,6 +54,7 @@
         <x-flash />@yield('content')
     </main>
     @unless(View::hasSection('hide-footer'))
+    <div class="store-footer-area">
     <section class="benefits">
         <div class="container benefits-grid">
             <div><x-icon name="truck" /><span><strong>Delivery in Lebanon</strong><small>Delivery to selected
@@ -68,7 +69,7 @@
             <div class="footer-brand"><a class="logo"
                     href="{{ route('home') }}">{{ \App\Models\StoreSetting::current()->store_name }}<span
                         class="logo-dot">.</span></a>
-                <p>Products, prices, and stock in one place.</p><span class="made-in">Shopping in Lebanon <span>↗</span></span>
+                <p>Products, prices, and stock in one place.</p><span class="made-in">Shopping in Lebanon <x-icon name="arrow" /></span>
             </div>
             <div>
                 <h3>Explore</h3><a href="{{ route('shop') }}">All products</a><a
@@ -82,10 +83,13 @@
             </div>
         </div>
         <div class="container footer-bottom"><span>© {{ date('Y') }}
-                {{ \App\Models\StoreSetting::current()->store_name }}. All rights reserved.</span><a
-                href="{{ route('help') }}#privacy">Privacy & terms</a><span>Lebanon · USD $</span></div>
+                {{ \App\Models\StoreSetting::current()->store_name }}. All rights reserved.</span>
+            <div class="footer-policy-links"><a href="{{ route('privacy') }}">Privacy policy</a><a href="{{ route('terms') }}">Terms & conditions</a><a href="{{ route('privacy') }}#cookies" data-cookie-settings>Cookie settings</a></div>
+            <span>Lebanon · USD $</span></div>
     </footer>
+    </div>
     @endunless
+    <x-cookie-notice />
 </body>
 
 </html>
