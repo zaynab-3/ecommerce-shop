@@ -35,7 +35,7 @@ $initialImage = ($firstColor ? $product->images->firstWhere('product_color_id', 
 
     <div class="product-purchase-row">
     <div class="product-bottom">
-        <div class="price">${{ number_format($product->price_cents / 100, 2) }} @if ($product->compare_price_cents > $product->price_cents)
+        <div class="price"><span>${{ number_format($product->price_cents / 100, 2) }}</span> @if ($product->compare_price_cents > $product->price_cents)
                 <del>${{ number_format($product->compare_price_cents / 100, 2) }}</del>
             @endif
         </div>

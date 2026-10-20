@@ -54,7 +54,6 @@
         <x-flash />@yield('content')
     </main>
     @unless(View::hasSection('hide-footer'))
-    <div class="store-footer-area">
     <section class="benefits">
         <div class="container benefits-grid">
             <div><x-icon name="truck" /><span><strong>Delivery in Lebanon</strong><small>Delivery to selected
@@ -64,6 +63,7 @@
             <div><x-icon name="sparkles" /><span><strong>Stock checked at checkout</strong><small>Order quantities are confirmed when you buy</small></span></div>
         </div>
     </section>
+    <div class="store-footer-area">
     <footer class="site-footer">
         <div class="container footer-top">
             <div class="footer-brand"><a class="logo"

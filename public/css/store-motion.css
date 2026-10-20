@@ -1,7 +1,12 @@
-/* Page content stays visible during navigation; only scrolling is smoothed. */
-#main { opacity: 1 !important; transform: none !important; animation: none !important; }
+/* Arrival movement keeps content opaque and leaves navigation to the browser. */
+#main { opacity: 1 !important; animation: page-arrive .22s ease-out; }
+.product-detail .product-gallery { animation: product-arrive .32s cubic-bezier(.22,1,.36,1) both; }
+.product-detail .product-info { animation: product-arrive .36s .04s cubic-bezier(.22,1,.36,1) both; }
+@keyframes page-arrive { from { transform: translateY(8px); } to { transform: translateY(0); } }
+@keyframes product-arrive { from { transform: translateY(10px); } to { transform: translateY(0); } }
 html, .cart-dialog-body, .drawer-content, .catalog-category-nav, .category-nav-track, .carousel-track { scroll-behavior: smooth; }
 .cart-dialog-body, .drawer-content, .category-nav-track, .carousel-track { -webkit-overflow-scrolling: touch; }
 @media (prefers-reduced-motion: reduce) {
+    #main, .product-detail .product-gallery, .product-detail .product-info { animation: none; }
     html, .cart-dialog-body, .drawer-content, .catalog-category-nav, .category-nav-track, .carousel-track { scroll-behavior: auto; }
 }

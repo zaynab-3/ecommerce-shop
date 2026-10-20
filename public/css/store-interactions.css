@@ -46,7 +46,7 @@
 .mobile-navigation.is-closing { animation: drawer-leave .32s cubic-bezier(.4,0,.2,1) forwards; }
 .card-colors { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 2px; min-height: 44px; padding-bottom: 6px; margin-bottom: 12px; scrollbar-width: thin; }
 .card-colors button { flex: 0 0 34px; min-height: 38px; display: grid; place-items: center; position: relative; padding: 4px; border: 0; background: #fff; color: #000; }
-.card-colors button[aria-pressed=true]::after { content: ''; position: absolute; width: 14px; height: 3px; border-radius: 3px; left: calc(50% - 7px); bottom: 0; background: #000; }
+.card-colors button[aria-pressed=true] svg { outline: 2px solid var(--store-accent-ink); outline-offset: 2px; border-radius: 50%; }
 .product-bottom { align-items: flex-start; margin-bottom: 4px; }
 .save-button, .save-button.is-saved, .save-button:hover { border: 0; background: transparent; color: #000; border-radius: 0; }
 .save-button.is-saved, .save-button.is-saved:hover, .save-detail.is-saved { color: var(--store-accent-ink); background: transparent; }
@@ -175,31 +175,43 @@
 .product-card .product-visual { aspect-ratio: 1.2; max-height: 240px; flex-shrink: 0; }
 .product-card .product-image-link { padding: 16px; }
 .product-card .product-card-body { padding: 12px; }
-.product-card .card-colors { margin: 0 0 2px; padding-bottom: 4px; min-height: 40px; }
+.product-card .card-colors { margin: 0; padding-bottom: 0; min-height: 36px; }
 .product-card .card-colors button { min-height: 36px; }
-.product-card .card-colors button[aria-pressed=true]::after { background: var(--store-accent-ink); }
-.product-purchase-row { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 4px 0; margin-top: auto; min-height: 56px; }
+.product-purchase-row { display: flex; align-items: center; justify-content: space-between; gap: 0; margin-top: auto; min-height: 44px; }
 .product-purchase-row .product-bottom { min-height: 0; margin: 0; }
-.product-purchase-row .price del { display: block; margin: 3px 0 0; font-size: 12px; }
+.product-purchase-row .price { display: flex; align-items: baseline; gap: 6px; font-size: 23px; white-space: nowrap; }
+.product-purchase-row .price del { display: inline; margin: 0; font-size: 11px; font-weight: 400; }
 .product-card .product-card-action { position: static; margin: 0 0 0 auto; padding: 0; width: 44px; flex: 0 0 44px; }
 .product-card .card-cart-button { color: var(--store-accent-ink); }
 .product-card .card-cart-button .icon { stroke-width: 2; }
 @media (max-width: 600px) {
  .product-card .product-card-body { padding: 10px; }
- .product-purchase-row .price { font-size: 22px; }
- .product-purchase-row { min-height: 48px; }
+ .product-purchase-row .price { font-size: 18px; gap: 4px; letter-spacing: -.7px; }
+ .product-purchase-row .price del { font-size: 10px; }
+ .product-carousel .product-purchase-row .price { font-size: 16px; gap: 3px; letter-spacing: -1px; }
+ .product-carousel .product-purchase-row .price del { font-size: 9px; }
+ .product-card .product-card-action { margin-inline: -6px -8px; }
  .product-grid { gap: 18px 12px; }
 }
-@media (max-width: 359px) { .product-purchase-row .price { font-size: 20px; letter-spacing: -1.2px; } }
-/* The same saved accent covers the benefits and footer, with readable foregrounds. */
-.store-footer-area { background: var(--store-accent); color: var(--store-on-accent); margin-top: 24px; }
-.store-footer-area .benefits, .store-footer-area .site-footer { background: transparent; color: inherit; }
-.store-footer-area .benefits { margin-top: 0; }
-.store-footer-area .site-footer { padding-top: 0; }
+@media (max-width: 359px) {
+ .product-card .product-card-body { padding: 8px; }
+ .product-card .product-card-action { margin-inline: -6px; }
+ .product-purchase-row .price, .product-carousel .product-purchase-row .price { font-size: 15px; gap: 2px; letter-spacing: -.7px; }
+ .product-purchase-row .price del, .product-carousel .product-purchase-row .price del { font-size: 9px; }
+ .carousel-track { grid-auto-columns: max(138px, calc((100% - 20px) / 2.15)); }
+}
+.product-info .buy-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.product-info .buy-row .quantity-label, .product-info .buy-row .quantity-control { grid-column: 1 / -1; }
+.product-info .buy-row .quantity-control { justify-self: start; }
+.product-info .buy-row .add-bag, .product-info .buy-row .buy-now { min-width: 0; padding-inline: 12px; justify-content: center; gap: 6px; }
+/* Benefits stay white; only the footer takes the saved accent. */
+.benefits { background: #fff; color: #000; }
+.benefits-grid .icon { color: var(--store-accent-ink); }
+.store-footer-area { background: var(--store-accent); color: var(--store-on-accent); }
+.store-footer-area .site-footer { background: transparent; color: inherit; padding-top: 0; }
 .store-footer-area .made-in { display: inline-flex; align-items: center; gap: 8px; }
 .store-footer-area .made-in .icon { width: 14px; height: 14px; transform: rotate(-45deg); }
 .store-footer-area .logo, .store-footer-area .logo-dot,
-.store-footer-area .benefits-grid .icon, .store-footer-area .benefits-grid small,
 .store-footer-area .footer-brand p, .store-footer-area .made-in, .store-footer-area .made-in > span,
 .store-footer-area .footer-top > div > a:not(.logo), .store-footer-area .footer-bottom { color: inherit; }
 .footer-policy-links { display: flex; flex-wrap: wrap; gap: 4px 20px; }
