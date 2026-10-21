@@ -32,6 +32,20 @@ curl --fail --silent --show-error "$preview_url/shop" --output "$RUNNER_TEMP/mes
 grep -q "$preview_url/css/store-scrollbars.css" "$RUNNER_TEMP/mesh-preview-shop.html"
 if grep -q 'http://127.0.0.1:8000' "$RUNNER_TEMP/mesh-preview-shop.html"; then echo 'Preview contains a local URL.' >&2; exit 1; fi
 printf '{"url":"%s","commit":"%s","run_id":"%s"}\n' "$preview_url" "$GITHUB_SHA" "$GITHUB_RUN_ID" > "$RUNNER_TEMP/mesh-preview-link.json"
+python3 - <<'PY'
+import json, os
+from pathlib import Path
+payload = {"ref": os.environ["GITHUB_SHA"], "environment": "owner-preview", "auto_merge": False,
+           "required_contexts": [], "transient_environment": True, "production_environment": False,
+           "description": "Temporary owner demonstration with isolated demo data"}
+(Path(os.environ["RUNNER_TEMP"]) / "mesh-preview-deployment.json").write_text(json.dumps(payload))
+PY
+preview_deployment=$(gh api --method POST "repos/$GITHUB_REPOSITORY/deployments" --input "$RUNNER_TEMP/mesh-preview-deployment.json" --jq .id)
+printf '%s\n' "$preview_deployment" > "$RUNNER_TEMP/mesh-preview-deployment-id"
+gh api --method POST "repos/$GITHUB_REPOSITORY/deployments/$preview_deployment/statuses" \
+    --field state=success --field environment_url="$preview_url" \
+    --field log_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+    --field auto_inactive=true > /dev/null
 printf 'url=%s\n' "$preview_url" >> "$GITHUB_OUTPUT"
 printf '### Owner preview\n\n[%s](%s)\n\nTemporary demo; expires after the configured lifetime or when this run is cancelled. Starting a new preview stops the previous one.\n' "$preview_url" "$preview_url" >> "$GITHUB_STEP_SUMMARY"
 printf '::notice title=Owner preview::%s\n' "$preview_url"
