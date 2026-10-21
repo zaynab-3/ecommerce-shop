@@ -1,0 +1,85 @@
+name: Owner preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: 'Preview lifetime in minutes (5–300)'
+        required: true
+        default: '300'
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: owner-preview
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo_mysql, gd, exif, fileinfo
+          coverage: none
+
+      - name: Prepare isolated demonstration database
+        run: bash scripts/prepare-owner-preview.sh
+
+      - name: Start HTTPS preview
+        id: preview
+        run: bash scripts/start-owner-preview.sh
+
+      - name: Publish preview link
+        uses: actions/upload-artifact@v4
+        with:
+          name: owner-preview-link
+          path: ${{ runner.temp }}/mesh-preview-link.json
+          retention-days: 1
+
+      - name: Verify mobile Chrome and WebKit
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+        run: |
+          python3 -m venv "$RUNNER_TEMP/mesh-preview-browser"
+          "$RUNNER_TEMP/mesh-preview-browser/bin/pip" install --quiet playwright==1.62.0
+          "$RUNNER_TEMP/mesh-preview-browser/bin/python" -m playwright install --with-deps chromium webkit
+          "$RUNNER_TEMP/mesh-preview-browser/bin/python" scripts/test-owner-preview.py "$PREVIEW_URL"
+
+      - name: Save browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: owner-preview-browser
+          path: ${{ runner.temp }}/mesh-preview-browser-results
+          if-no-files-found: ignore
+          retention-days: 1
+
+      - name: Keep preview available
+        env:
+          PREVIEW_MINUTES: ${{ inputs.minutes }}
+        run: |
+          if ! [[ "$PREVIEW_MINUTES" =~ ^[0-9]+$ ]] || (( PREVIEW_MINUTES < 5 || PREVIEW_MINUTES > 300 )); then
+            echo 'Preview duration must be 5–300 minutes.' >&2
+            exit 1
+          fi
+          deadline=$((SECONDS + PREVIEW_MINUTES * 60))
+          while (( SECONDS < deadline )); do
+            kill -0 "$(cat "$RUNNER_TEMP/mesh-preview-php.pid")"
+            kill -0 "$(cat "$RUNNER_TEMP/mesh-preview-tunnel.pid")"
+            sleep 30
+          done
+
+      - name: Stop preview
+        if: always()
+        run: |
+          for pid_file in "$RUNNER_TEMP"/mesh-preview-{php,tunnel}.pid; do
+            if [ -f "$pid_file" ]; then kill "$(cat "$pid_file")" 2>/dev/null || true; fi
+          done
+          docker rm -f mesh-owner-preview-db 2>/dev/null || true

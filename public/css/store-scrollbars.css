@@ -1,31 +1,38 @@
-/* The saved theme color styles visible vertical desktop scrollbars. */
+/* Hidden by default, including WebKit's transient overlay thumb and track. */
+:root, * { scrollbar-width: none; scrollbar-color: transparent transparent; -ms-overflow-style: none; }
+::-webkit-scrollbar { display: none; width: 0; height: 0; background: transparent; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-corner { background: transparent; border: 0; }
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+
+/* Opt in to a vertical rail only on a desktop with a mouse. */
 @media (min-width: 851px) and (hover: hover) and (pointer: fine) {
-    :root, * { scrollbar-width: thin; scrollbar-color: var(--store-accent) transparent; }
-    .carousel-track { scrollbar-color: var(--store-accent) transparent; }
+    :root:not(.touch-device), :root:not(.touch-device) * { scrollbar-width: thin; scrollbar-color: var(--store-accent) transparent; }
 
     /* Use rounded, inset thumbs where custom scrollbar parts are available. */
     @supports selector(::-webkit-scrollbar) {
-        :root, *, .catalog-sidebar, .carousel-track { scrollbar-width: auto; scrollbar-color: auto; }
-        ::-webkit-scrollbar { width: 8px; height: 0; }
-        ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
-        ::-webkit-scrollbar-thumb {
+        :root:not(.touch-device), :root:not(.touch-device) * { scrollbar-width: auto; scrollbar-color: auto; }
+        :root:not(.touch-device)::-webkit-scrollbar, :root:not(.touch-device) *::-webkit-scrollbar { display: block; width: 8px; height: 0; }
+        :root:not(.touch-device)::-webkit-scrollbar-thumb, :root:not(.touch-device) *::-webkit-scrollbar-thumb {
             background-color: var(--store-accent);
             background-clip: padding-box;
             border: 2px solid transparent;
             border-radius: 999px;
             min-height: 40px;
         }
-        ::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:active { border-width: 1px; }
-        ::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+        :root:not(.touch-device)::-webkit-scrollbar-thumb:hover, :root:not(.touch-device) *::-webkit-scrollbar-thumb:hover,
+        :root:not(.touch-device)::-webkit-scrollbar-thumb:active, :root:not(.touch-device) *::-webkit-scrollbar-thumb:active { border-width: 1px; }
     }
 }
 /* Hide both axes on every phone, including emulators with a mouse pointer. */
 @media (max-width: 850px), (hover: none), (any-pointer: coarse) {
     html, body, * { scrollbar-width: none !important; scrollbar-color: transparent transparent !important; scrollbar-gutter: auto !important; -ms-overflow-style: none; }
     ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+    ::-webkit-scrollbar-track, ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-corner { background: transparent !important; border: 0 !important; }
 }
 html.touch-device, html.touch-device * { scrollbar-width: none !important; scrollbar-color: transparent transparent !important; scrollbar-gutter: auto !important; }
 html.touch-device::-webkit-scrollbar, html.touch-device *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+html.touch-device::-webkit-scrollbar-thumb, html.touch-device *::-webkit-scrollbar-thumb,
+html.touch-device::-webkit-scrollbar-track, html.touch-device *::-webkit-scrollbar-track { background: transparent !important; border: 0 !important; }
 
 /* Horizontal content still scrolls with touch, keyboard, wheel, and controls. */
 ::-webkit-scrollbar:horizontal { display: none; height: 0; }

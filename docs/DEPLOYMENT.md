@@ -1,5 +1,11 @@
 # Production deployment
 
+## Temporary owner preview
+
+For a short storefront demonstration, run **Actions → Owner preview → Run workflow** on `main`, or `gh workflow run owner-preview.yml --ref main --field minutes=300`. The manual workflow starts a fresh MySQL 8.4 database with the bundled demo catalog and a random application key/database passwords. It never copies existing users, customer details, orders, local credentials, or private `.env` files. Admin URLs are unavailable through the preview origin; cart, favorites, and checkout use the disposable database. Debug is disabled and cookies are secure over HTTPS.
+
+The public HTTPS link appears in the **Start HTTPS preview** step summary and the `owner-preview-link` artifact as soon as the server is ready. Chromium and WebKit verify scrolling and hidden phone scrollbar parts before the keep-alive phase. Screenshot evidence is retained for one day. The link expires after the selected 5–300 minute lifetime, if the workflow is cancelled, or if a new preview starts. The GitHub-hosted runner and Cloudflare Quick Tunnel provide no uptime guarantee. This is a temporary review environment; use the production setup below for a permanent shop. Downloaded tunnel binaries are version-pinned and SHA-256 verified.
+
 ## Runtime
 
 Use a maintained PHP 8.2+ release with Composer and these extensions: PDO plus your database driver, mbstring, OpenSSL, tokenizer, XML/DOM, cURL, GD with WebP, fileinfo, ZIP, EXIF, and the normal Laravel prerequisites. The cloud-local runtime is for this Debian 13 development machine; it is not a replacement for a managed production PHP installation.
