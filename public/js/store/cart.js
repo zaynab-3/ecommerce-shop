@@ -20,6 +20,7 @@ function setPhase(next, focus = false) {
     content.querySelectorAll('[data-cart-phase]').forEach((panel) => panel.hidden = panel.dataset.cartPhase !== phase);
     dialog.querySelector('[data-cart-title]').textContent = phase === 'checkout' ? 'Checkout' : 'Your cart';
     dialog.querySelector('#cart-title [data-cart-count]').hidden = false;
+    document.dispatchEvent(new CustomEvent('store:layout-updated'));
     if (focus) {
         content.scrollTo({ top: 0, behavior: 'instant' });
         const heading = dialog.querySelector('#cart-title');
@@ -132,6 +133,7 @@ document.addEventListener("submit", (event) => {
                 content.scrollTop = 0;
                 content.querySelector('h1')?.setAttribute('tabindex', '-1');
                 content.querySelector('h1')?.focus({ preventScroll: true });
+                document.dispatchEvent(new CustomEvent('store:layout-updated'));
                 history.replaceState(null, '', data.confirmation_url);
                 if (data.whatsapp_url) location.assign(data.whatsapp_url);
             } else {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\CatalogRevision;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -16,7 +17,7 @@ class SearchSuggestionController extends Controller
             return response()->json(['products' => []])->header('Cache-Control', 'no-store');
         }
         $pattern = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $term).'%';
-        $ids = Cache::remember('search.suggestions.'.hash('sha256', mb_strtolower($term)), 10, fn () => Product::visible()
+        $ids = Cache::remember('search.suggestions.'.CatalogRevision::current().'.'.hash('sha256', mb_strtolower($term)), 10, fn () => Product::visible()
             ->whereRaw("name LIKE ? ESCAPE '!'", [$pattern])->orderBy('name')->orderBy('id')->limit(6)->pluck('id')->all());
         // Recheck visibility and prices on every response; only the candidate IDs
         // are cached. The three bounded eager-load queries avoid N+1 reads.

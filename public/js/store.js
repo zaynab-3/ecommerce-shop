@@ -1,4 +1,5 @@
 // Each interaction lives in its own small module.
+import "./shared/smooth-scroll.js";
 import "./shared/notices.js";
 import "./store/filters.js";
 import "./store/navigation.js";
@@ -19,3 +20,4 @@ import "./store/search.js";
 import "./store/cookies.js";
 import "./store/page-motion.js";
 import "./store/page-navigation.js";
+import "./store/catalog-sync.js";

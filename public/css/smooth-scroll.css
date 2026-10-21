@@ -1,0 +1,6 @@
+@import url('../vendor/lenis/lenis.css');
+/* Lenis owns vertical easing; native horizontal rails and touch stay independent. */
+html.lenis, .lenis { scroll-behavior: auto !important; }
+@media (prefers-reduced-motion: reduce) {
+    html, .lenis { scroll-behavior: auto !important; }
+}

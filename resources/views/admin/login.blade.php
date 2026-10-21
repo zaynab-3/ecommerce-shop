@@ -11,8 +11,11 @@
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ filemtime(public_path('css/admin.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/identity.css') }}?v={{ filemtime(public_path('css/identity.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/store-interactions.css') }}?v={{ filemtime(public_path('css/store-interactions.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/store-scrollbars.css') }}?v={{ filemtime(public_path('css/store-scrollbars.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/smooth-scroll.css') }}?v={{ filemtime(public_path('css/smooth-scroll.css')) }}">
     <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1), 'v' => \App\Services\StoreTheme::VERSION]) }}">
 <script src="{{ asset('js/shared/notices.js') }}" type="module"></script>
+<script src="{{ asset('js/shared/smooth-scroll.js') }}?v={{ filemtime(public_path('js/shared/smooth-scroll.js')) }}" type="module"></script>
 </head>
 
 <body class="login-body">

@@ -96,19 +96,6 @@
                 </details>
             </div>
         </div>
-        @if ($related->isNotEmpty())
-            <section class="related">
-                <div class="section-heading">
-                    <h2>Related products</h2><a class="text-link"
-                        href="{{ route('shop', ['category' => $product->category->slug]) }}">Explore more <x-icon
-                            name="arrow" /></a>
-                </div>
-                <div class="product-grid related-grid">
-                    @foreach ($related as $item)
-                        <x-product-card :product="$item" />
-                    @endforeach
-                </div>
-            </section>
-        @endif
+        <x-product-carousel class="related" :products="$related" title="Related products" :href="route('shop', ['category' => $product->category->slug])" :autoplay="false" link-label="Explore more" />
     </div>
 @endsection

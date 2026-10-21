@@ -19,7 +19,7 @@ function initCarousels() {
         const overflowing = () => track.scrollWidth > track.clientWidth + 2;
         const schedule = () => {
             clearTimeout(timer);
-            if (!carousel.isConnected || paused || hovered || focused || touching || !visible || document.hidden || reducedMotion.matches || !overflowing() || document.querySelector("dialog[open]")) return;
+            if (!playback || !carousel.isConnected || paused || hovered || focused || touching || !visible || document.hidden || reducedMotion.matches || !overflowing() || document.querySelector("dialog[open]")) return;
             timer = setTimeout(() => {
                 const first = track.firstElementChild;
                 const step = first.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap);
@@ -31,14 +31,15 @@ function initCarousels() {
         const update = () => {
             previous.disabled = track.scrollLeft <= 2;
             next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
-            playback.hidden = reducedMotion.matches || !overflowing();
+            if (!playback) { previous.hidden = !overflowing(); next.hidden = !overflowing(); }
+            if (playback) playback.hidden = reducedMotion.matches || !overflowing();
             schedule();
         };
         const move = (direction) => track.scrollBy({
             left: direction * track.clientWidth * .8,
             behavior: reducedMotion.matches ? "instant" : "smooth",
         });
-        playback.addEventListener("click", () => {
+        playback?.addEventListener("click", () => {
             paused = !paused;
             if (!paused) focused = false; // Explicit resume also works from the keyboard.
             const label = paused ? "Resume automatic scrolling" : "Pause automatic scrolling";

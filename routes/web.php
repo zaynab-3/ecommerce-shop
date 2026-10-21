@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CatalogRevisionController;
 use App\Http\Controllers\CategoryIconController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CookieNoticeController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\SearchSuggestionController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\StoreThemeController;
+use App\Http\Middleware\PublishCatalogRevision;
 use Illuminate\Support\Facades\Route;
 
 // Used when the web server cannot serve public/storage (for example, exFAT).
@@ -22,6 +24,7 @@ Route::get('/category-icons/{filename}', CategoryIconController::class)->without
 Route::get('/', [StorefrontController::class, 'index'])->name('home');
 Route::get('/theme/{color}.css', StoreThemeController::class)->where('color', '[0-9a-fA-F]{6}')->withoutMiddleware('web')->name('store.theme');
 Route::get('/shop', [StorefrontController::class, 'index'])->name('shop');
+Route::get('/catalog/version', CatalogRevisionController::class)->withoutMiddleware('web')->middleware('throttle:catalog-sync')->name('catalog.version');
 Route::get('/search/suggestions', SearchSuggestionController::class)->withoutMiddleware('web')->middleware('throttle:search')->name('search.suggestions');
 Route::get('/products/{product:slug}', [StorefrontController::class, 'show'])->name('products.show');
 Route::get('/stock', [StorefrontController::class, 'stock'])->withoutMiddleware('web')->middleware('throttle:stock')->name('stock');
@@ -46,7 +49,7 @@ Route::prefix(config('shop.admin_path'))->name('admin.')->group(function () {
         Route::get('/orders', [Admin\OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [Admin\OrderController::class, 'show'])->name('orders.show');
         Route::patch('/orders/{order}', [Admin\OrderController::class, 'update'])->name('orders.update');
-        Route::middleware('admin:catalog')->group(function () {
+        Route::middleware(['admin:catalog', PublishCatalogRevision::class])->group(function () {
             Route::resource('products', Admin\ProductController::class)->except(['show', 'destroy']);
             Route::patch('/products/{product}/quick', [Admin\ProductController::class, 'quick'])->name('products.quick');
             Route::patch('/products/{product}/images/{image}', [Admin\ProductController::class, 'image'])->name('products.image');

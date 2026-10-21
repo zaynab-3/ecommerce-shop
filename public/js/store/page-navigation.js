@@ -1,6 +1,8 @@
 import { closeDialog } from './dialogs.js';
 import { serial } from '../shared/http.js';
 import { toast } from '../shared/notices.js';
+import { scrollPageTo } from '../shared/smooth-scroll.js';
+import { capturePageState } from './page-state.js';
 
 const main = document.getElementById('main');
 const stateKey = 'meshPage';
@@ -34,10 +36,9 @@ function focusSource(source, url) {
 function scrollPage(url, position) {
     let anchor;
     try { anchor = url.hash && document.getElementById(decodeURIComponent(url.hash.slice(1))); } catch { /* Ignore malformed fragment escapes. */ }
-    if (anchor) anchor.scrollIntoView({ behavior: 'instant', block: 'start' });
-    else window.scrollTo({ left: position.x, top: position.y, behavior: 'instant' });
+    scrollPageTo(anchor || position.y, { immediate: true });
 }
-function updateChrome(url, page) {
+function updateChrome(url, page, refresh = false) {
     let after = main;
     for (const selector of ['.benefits', '.store-footer-area']) {
         let section = document.querySelector(selector);
@@ -46,6 +47,8 @@ function updateChrome(url, page) {
         if (section) after = section;
     }
     const csrf = page.querySelector('meta[name="csrf-token"]')?.content;
+    const revision = page.querySelector('meta[name="catalog-version"]')?.content;
+    if (revision) document.querySelector('meta[name="catalog-version"]').content = revision;
     if (csrf) {
         document.querySelector('meta[name="csrf-token"]').content = csrf;
         document.querySelectorAll('input[name="_token"]').forEach((input) => { input.value = csrf; });
@@ -56,14 +59,14 @@ function updateChrome(url, page) {
         link.classList.toggle('active', active);
         if (active) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current');
     });
-    document.querySelector('[data-store-header]')?.classList.remove('is-hidden');
+    if (!refresh) document.querySelector('[data-store-header]')?.classList.remove('is-hidden');
 }
 export async function navigate(value, options = {}) {
     const url = new URL(value, location.href);
     if (!main || !isStorePage(url)) return false;
     controller?.abort();
     const version = ++generation;
-    if (url.href === current.href && options.history !== 'pop') {
+    if (url.href === current.href && options.history !== 'pop' && !options.refresh) {
         pending = false; main.removeAttribute('aria-busy'); return true;
     }
     const requestController = new AbortController();
@@ -71,33 +74,40 @@ export async function navigate(value, options = {}) {
     const position = options.scroll || { x: 0, y: 0 };
     if (options.history !== 'pop') rememberScroll();
     pending = true;
+    if (!options.refresh) scrollPageTo(scrollY, { immediate: true });
     main.setAttribute('aria-busy', 'true');
     try {
         await serial(async () => {
             if (requestController.signal.aborted) return;
             const response = await fetch(url, { signal: requestController.signal, credentials: 'same-origin', headers: { Accept: 'text/html', 'X-Store-Navigation': '1' } });
+            if (response.status === 404 && options.refresh) { const error = new Error('This product or category is no longer available.'); error.status = 404; throw error; }
             if (!response.ok || !isStorePage(response.url)) throw new Error('Could not open this page. Please try again.');
             const page = new DOMParser().parseFromString(await response.text(), 'text/html');
             const content = page.getElementById('main');
             if (!content) throw new Error('Could not open this page. Please try again.');
             if (version !== generation) return;
-            document.dispatchEvent(new CustomEvent('store:page-leave'));
+            if (options.refresh && (document.querySelector('dialog[open]') || main.contains(document.activeElement) && document.activeElement.matches('input,select,textarea'))) return;
+            const restore = options.refresh ? capturePageState(main) : null;
+            if (options.refresh) { position.x = scrollX; position.y = scrollY; }
+            document.dispatchEvent(new CustomEvent('store:page-leave', { detail: { refresh: !!options.refresh } }));
             await Promise.all([...document.querySelectorAll('dialog[open]')].map(closeDialog));
             if (version !== generation) return;
             // Page scripts bootstrap once; replacement content contains only markup.
             content.querySelectorAll('script').forEach((script) => script.remove());
+            main.classList.toggle('is-catalog-refresh', !!options.refresh);
             main.replaceChildren(...[...content.childNodes].map((node) => document.importNode(node, true)));
             document.title = page.title;
-            updateChrome(url, page);
+            updateChrome(url, page, !!options.refresh);
             history.scrollRestoration = 'manual';
             // A directly opened cart/checkout has no public-page content to restore.
-            if (options.history === 'replace' || !isStorePage(current)) history.replaceState({ [stateKey]: position }, '', url);
+            if (options.refresh || options.history === 'replace' || !isStorePage(current)) history.replaceState({ [stateKey]: position }, '', url);
             else if (options.history !== 'pop') history.pushState({ [stateKey]: position }, '', url);
             current = url;
-            document.dispatchEvent(new CustomEvent('store:page-updated', { detail: { url: url.href } }));
+            document.dispatchEvent(new CustomEvent('store:page-updated', { detail: { url: url.href, refresh: !!options.refresh } }));
+            restore?.();
             scrollPage(url, position);
-            focusSource(options.source, url);
-            if (!reducedMotion.matches) main.animate([{ transform: 'translateY(4px)' }, { transform: 'translateY(0)' }], { duration: 160, easing: 'ease-out' });
+            if (!options.refresh) focusSource(options.source, url);
+            if (!options.refresh && !reducedMotion.matches) main.animate([{ transform: 'translateY(4px)' }, { transform: 'translateY(0)' }], { duration: 160, easing: 'ease-out' });
             let status = document.querySelector('[data-page-status]');
             if (!status) {
                 status = document.createElement('p'); status.className = 'sr-only'; status.dataset.pageStatus = ''; status.setAttribute('role', 'status'); document.body.append(status);
@@ -106,8 +116,15 @@ export async function navigate(value, options = {}) {
         });
     } catch (error) {
         if (version !== generation || error.name === 'AbortError') return true;
+        if (error.status === 404 && options.refresh) {
+            const fallback = new URL('/shop', location.origin);
+            if (url.pathname === '/shop') { fallback.search = url.search; fallback.searchParams.delete('category'); fallback.searchParams.delete('page'); }
+            await navigate(fallback, { history: 'replace' });
+            toast(error.message);
+            return true;
+        }
         if (options.history === 'pop') history.replaceState({ [stateKey]: { x: scrollX, y: scrollY } }, '', current);
-        toast(error.message || 'Could not open this page. Please try again.', 'error');
+        if (!options.silent) toast(error.message || 'Could not open this page. Please try again.', 'error');
     } finally {
         if (version === generation) { pending = false; main.removeAttribute('aria-busy'); rememberScroll(); }
     }

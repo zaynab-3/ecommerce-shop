@@ -1,5 +1,5 @@
 /* The saved theme color styles visible vertical desktop scrollbars. */
-@media (min-width: 601px) and (hover: hover) and (pointer: fine) {
+@media (min-width: 851px) and (hover: hover) and (pointer: fine) {
     :root, * { scrollbar-width: thin; scrollbar-color: var(--store-accent) transparent; }
     .carousel-track { scrollbar-color: var(--store-accent) transparent; }
 
@@ -18,6 +18,11 @@
         ::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:active { border-width: 1px; }
         ::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
     }
+}
+/* Hide both axes on every phone, including emulators with a mouse pointer. */
+@media (max-width: 850px), (hover: none), (pointer: coarse) {
+    html, body, * { scrollbar-width: none !important; -ms-overflow-style: none; }
+    ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 }
 
 /* Horizontal content still scrolls with touch, keyboard, wheel, and controls. */

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\DeliveryZone;
 use App\Models\Product;
+use App\Services\CatalogRevision;
 use App\Services\WhatsAppOrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -13,8 +14,9 @@ class StorefrontController extends Controller
 {
     public function index(Request $r)
     {
+        $catalogRevision = CatalogRevision::current();
         $filters = $r->validate(['q' => 'nullable|string|max:100', 'category' => 'nullable|string|max:100', 'sort' => 'nullable|in:featured,newest,price_asc,price_desc', 'available' => 'nullable|boolean', 'saved' => 'nullable|boolean']);
-        $categories = Cache::remember('catalog.categories', 60, fn () => Category::visible()->whereNull('parent_id')->with(['children' => fn ($q) => $q->visible()])->withCount(['products' => fn ($q) => $q->visible()])->orderBy('position')->get());
+        $categories = Cache::remember('catalog.categories.'.$catalogRevision, 60, fn () => Category::visible()->whereNull('parent_id')->with(['children' => fn ($q) => $q->visible()])->withCount(['products' => fn ($q) => $q->visible()])->orderBy('position')->get());
         $query = Product::visible()->with(['images', 'colors', 'category']);
         if ($r->filled('q')) {
             $term = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $filters['q']);
@@ -36,18 +38,19 @@ class StorefrontController extends Controller
         };
         $products = $query->orderBy('id')->paginate(12)->withQueryString();
 
-        return view('store.index', compact('categories', 'products', 'selected'));
+        return view('store.index', compact('categories', 'products', 'selected', 'catalogRevision'));
     }
 
     public function show(Product $product, WhatsAppOrderService $whatsapp)
     {
+        $catalogRevision = CatalogRevision::current();
         abort_unless(Product::visible()->whereKey($product->id)->exists(), 404);
         $product->load(['images', 'colors', 'category.parent']);
         $related = Product::visible()->with(['images', 'colors', 'category'])->where('category_id', $product->category_id)->whereKeyNot($product->id)->limit(4)->get();
 
         $whatsappUrl = $whatsapp->productUrl($product);
 
-        return view('store.product', compact('product', 'related', 'whatsappUrl'));
+        return view('store.product', compact('product', 'related', 'whatsappUrl', 'catalogRevision'));
     }
 
     public function stock(Request $r)
@@ -55,7 +58,7 @@ class StorefrontController extends Controller
         $data = $r->validate(['ids' => 'required|array|max:48', 'ids.*' => 'required|integer|distinct|min:1']);
         $ids = $data['ids'];
         sort($ids);
-        $rows = Cache::remember('stock.'.hash('sha256', json_encode($ids)), 5, fn () => Product::visible()->whereIn('id', $ids)->get(['id', 'stock_mode', 'quantity', 'manual_stock_status', 'low_stock_threshold'])->map(fn ($p) => ['id' => $p->id, 'status' => $p->stock_status, 'quantity' => $p->stock_mode === 'tracked' ? $p->quantity : null]));
+        $rows = Cache::remember('stock.'.CatalogRevision::current().'.'.hash('sha256', json_encode($ids)), 5, fn () => Product::visible()->whereIn('id', $ids)->get(['id', 'stock_mode', 'quantity', 'manual_stock_status', 'low_stock_threshold'])->map(fn ($p) => ['id' => $p->id, 'status' => $p->stock_status, 'quantity' => $p->stock_mode === 'tracked' ? $p->quantity : null]));
 
         return response()->json($rows)->header('Cache-Control', 'no-store');
     }

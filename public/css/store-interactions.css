@@ -230,7 +230,10 @@
 .main-product-image > img { max-width: 320px; max-height: 312px; }
 .gallery-thumbs { max-height: 360px; }
 .gallery-thumb { width: 60px; height: 60px; min-height: 60px; padding: 8px; }
-.related-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 220px)); gap: 16px; }
+.related.product-carousel { width: 100%; padding: 24px 0 8px; margin-top: 24px; }
+.related .carousel-track { grid-auto-columns: 220px; }
+.related .section-heading { flex-wrap: wrap; gap: 12px; }
+.related .carousel-arrow { background: transparent; color: var(--store-accent-ink); border: 0; }
 @media (max-width: 850px) {
  .product-detail { grid-template-columns: minmax(0, 1fr); }
  .product-gallery { max-width: 420px; margin-inline: auto; }
@@ -243,7 +246,11 @@
  .product-gallery { max-width: 360px; }
  .main-product-image { height: 260px; padding: 20px; }
  .main-product-image > img { max-height: 220px; }
- .related-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+ .related .carousel-track { grid-auto-columns: min(220px, 68vw); }
+ .related .carousel-arrow { display: none; }
+ .related .retail-section-heading h2 { font-size: clamp(22px, 6vw, 24px); }
+ .related .carousel-actions { gap: 0; }
+ .related .carousel-actions .text-link { font-size: 13px; }
 }
 /* Benefits stay white; only the footer takes the saved accent. */
 .benefits { background: #fff; color: #000; }
@@ -259,6 +266,23 @@
 .footer-policy-links a { display: inline-flex; align-items: center; min-height: 44px; }
 .store-footer-area a:hover { font-weight: 700; text-decoration: none; }
 .store-footer-area a:focus-visible { outline-color: var(--store-on-accent); }
+@media (max-width: 850px) {
+ .store-footer-area .footer-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px; padding-block: 28px 20px; }
+ .store-footer-area .footer-brand { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+ .store-footer-area .footer-brand .logo { min-height: 0; font-size: 30px; }
+ .store-footer-area .footer-brand p { max-width: 30ch; margin: 0; font-size: 13px; line-height: 1.6; }
+ .store-footer-area .footer-brand .made-in { margin: 0; font-size: 11px; }
+ .store-footer-area .made-in .icon { display: none; }
+ .store-footer-area .footer-top h3 { margin: 0 0 6px; font-size: 14px; font-weight: 700; }
+ .store-footer-area .footer-top > div > a:not(.logo) { display: flex; align-items: center; min-height: 44px; margin: 0; font-size: 13px; line-height: 1.5; }
+ .store-footer-area .footer-bottom { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding-block: 16px 20px; border-top: 1px solid currentColor !important; }
+ .store-footer-area .footer-bottom > span:first-child { white-space: normal; font-size: 11px; }
+ .store-footer-area .footer-policy-links { order: -1; display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+ .store-footer-area .footer-policy-links a { min-width: 0; font-size: 12px; line-height: 1.5; }
+ .store-footer-area .footer-bottom > span:last-child { margin: 0; font-size: 11px; }
+}
+.catalog-toolbar .sort-select select:focus { outline: none; box-shadow: none; border-color: transparent; }
+.catalog-toolbar .sort-select:focus-within { color: var(--store-accent-ink); font-weight: 700; }
 .legal-page > .eyebrow { color: var(--store-accent-ink); }
 .legal-page section { scroll-margin-top: 180px; }
 .legal-page section a, .legal-page > p a, .help-page #privacy a { text-decoration: underline; text-underline-offset: 4px; }

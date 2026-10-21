@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="catalog-version" content="{{ $catalogRevision ?? \App\Services\CatalogRevision::current() }}" data-url="{{ route('catalog.version') }}">
     <meta name="description"
         content="Shop products, check stock and delivery availability, and order with cash on delivery.">
     <title>@yield('title', 'Shop') — {{ \App\Models\StoreSetting::current()->store_name }}</title>
@@ -16,6 +17,7 @@
     <link rel="stylesheet" href="{{ asset('css/identity.css') }}?v={{ filemtime(public_path('css/identity.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/store-interactions.css') }}?v={{ filemtime(public_path('css/store-interactions.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/store-scrollbars.css') }}?v={{ filemtime(public_path('css/store-scrollbars.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/smooth-scroll.css') }}?v={{ filemtime(public_path('css/smooth-scroll.css')) }}">
     <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1), 'v' => \App\Services\StoreTheme::VERSION]) }}">
     <script src="{{ asset('js/store.js') }}?v={{ filemtime(public_path('js/store.js')) }}" type="module"></script>@stack('head')
 </head>

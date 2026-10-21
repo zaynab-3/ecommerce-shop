@@ -2,6 +2,7 @@
 #main { opacity: 1 !important; animation: page-arrive .22s ease-out; }
 .product-detail .product-gallery { animation: product-arrive .32s cubic-bezier(.22,1,.36,1) both; }
 .product-detail .product-info { animation: product-arrive .36s .04s cubic-bezier(.22,1,.36,1) both; }
+#main.is-catalog-refresh .product-detail :is(.product-gallery, .product-info) { animation: none; }
 @keyframes page-arrive { from { transform: translateY(8px); } to { transform: translateY(0); } }
 @keyframes product-arrive { from { transform: translateY(10px); } to { transform: translateY(0); } }
 html, .cart-dialog-body, .drawer-content, .catalog-category-nav, .category-nav-track, .carousel-track { scroll-behavior: smooth; }
