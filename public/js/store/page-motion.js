@@ -1,5 +1,5 @@
 // Kept for previously cached entry modules; navigation must never hide content.
-export function navigate(url) { location.assign(url); }
+export { navigate } from './page-navigation.js';
 
 // Restored documents do not replay CSS entry animations, so give Back/Forward
 // the same small movement without changing scroll position or delaying links.

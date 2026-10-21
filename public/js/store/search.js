@@ -83,7 +83,7 @@ input?.addEventListener('keydown', (event) => {
     if (!options.length || !['ArrowDown', 'ArrowUp', 'Enter'].includes(event.key)) return;
     if (event.key === 'Enter' && selected < 0) return;
     event.preventDefault();
-    if (event.key === 'Enter') location.assign(options[selected].href);
+    if (event.key === 'Enter') options[selected].click();
     else select(selected < 0 ? (event.key === 'ArrowDown' ? 0 : options.length - 1) : (selected + (event.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length);
 });
 form?.addEventListener('submit', async (event) => {

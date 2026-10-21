@@ -1,7 +1,8 @@
 @extends('layouts.store')
 @section('title', request('saved') ? 'Saved items' : ($selected?->name ?? (request('q') ? 'Search results' : 'Shop')))
 @section('content')
-    @if (request()->routeIs('home') && !request()->hasAny(['q', 'category', 'saved', 'sort']))
+    @php($discover = request()->routeIs('home') && !request()->hasAny(['q', 'category', 'saved', 'sort', 'available']))
+    @if ($discover)
         <x-product-carousel :products="$products->getCollection()->take(8)" title="Top picks" :href="route('shop')" />
         <section class="container categories-section">
             <div class="section-heading retail-section-heading"><h2>Shop by category</h2><a href="{{ route('shop') }}" class="text-link">View all products</a></div>
@@ -15,9 +16,10 @@
     <section class="container catalog-section" id="collection">
         <h1 class="sr-only">{{ request('saved') ? 'Saved items' : ($selected?->name ?? (request('q') ? 'Search results for '.request('q') : 'Products')) }}</h1>
         <div class="catalog-layout">
-            @unless (request()->routeIs('home') && !request()->hasAny(['q', 'category', 'saved', 'sort']))
+            @unless ($discover)
                 <div class="breadcrumb"><a href="{{ route('home') }}">Home</a><x-icon name="chevron" width="14" /><span>{{ request('saved') ? 'Saved items' : ($selected?->name ?? (request('q') ? 'Search results' : 'Shop')) }}</span></div>
             @endunless
+            @unless ($discover)
             <nav class="catalog-category-nav" aria-label="Product categories">
                 <a class="category-all" href="{{ route('shop', request()->except(['category', 'page'])) }}" @if(!request('category')) aria-current="page" @endif>All</a>
                 <div class="category-nav-track">
@@ -27,6 +29,7 @@
                 @endforeach
                 </div>
             </nav>
+            @endunless
             <form class="catalog-toolbar" method="get" action="{{ route('shop') }}">
                 @foreach (request()->except(['sort', 'available', 'page']) as $k => $v)
                     @if (is_scalar($v))

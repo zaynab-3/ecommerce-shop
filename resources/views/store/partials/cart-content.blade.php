@@ -1,14 +1,13 @@
 @if ($lines->isEmpty())
     <div class="empty-state"><x-icon name="bag" width="56" height="56" />
         <h2>Your cart is empty</h2>
-        <a class="button button-dark" data-continue-shopping href="{{ route('shop') }}">Shop products <x-icon name="arrow" /></a>
+        <a class="button button-dark" data-continue-shopping href="{{ route('shop') }}">Shop products</a>
     </div>
 @else
 @php($checkoutPhase = request()->routeIs('checkout'))
 <div data-cart-phase="cart" @if($checkoutPhase) hidden @endif>
 <div class="cart-stage-layout">
-    <section class="cart-review" aria-labelledby="cart-items-heading">
-        <h2 id="cart-items-heading">Your items</h2>
+    <section class="cart-review" aria-label="Cart items">
         <div class="cart-lines">
         @foreach ($lines as $line)
             @php($image = ($line['color'] ? $line['product']->images->firstWhere('product_color_id', $line['color']->id) : null) ?? $line['product']->images->firstWhere('product_color_id', null) ?? $line['product']->images->first())
@@ -34,18 +33,17 @@
             </article>
         @endforeach
         </div>
-        <a class="icon-button continue-shopping" data-continue-shopping href="{{ route('shop') }}" aria-label="Continue shopping" title="Continue shopping"><x-icon name="arrow" /></a>
     </section>
     <aside class="cart-stage-summary">
         <h2>Summary</h2>
         <div class="summary-row total"><strong>Subtotal</strong><strong>${{ number_format($subtotal / 100, 2) }}</strong></div>
         <p class="summary-note">Delivery is calculated at checkout.</p>
-        <a class="button button-dark full-width" data-proceed-checkout href="{{ route('checkout') }}">Proceed to checkout <x-icon name="arrow" /></a>
+        <a class="button button-dark full-width" data-proceed-checkout href="{{ route('checkout') }}">Proceed to checkout</a>
     </aside>
 </div>
 </div>
 <div data-cart-phase="checkout" @unless($checkoutPhase) hidden @endunless>
-    <a class="text-link checkout-back" data-cart-back href="{{ route('cart.index') }}"><x-icon name="chevron" />Back to cart</a>
+    <a class="text-link checkout-back" data-cart-back href="{{ route('cart.index') }}">Back to cart</a>
     @include('store.partials.checkout-form')
 </div>
 @endif

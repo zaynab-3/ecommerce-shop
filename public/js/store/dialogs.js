@@ -26,12 +26,18 @@ export async function openDialog(dialog) {
     document.dispatchEvent(new CustomEvent("store:dialog-open", { detail: dialog }));
 }
 document.querySelectorAll("dialog").forEach((dialog) => {
+    let outsidePress = false;
+    const outside = (event) => {
+        const b = dialog.getBoundingClientRect();
+        return event.clientX < b.left || event.clientX > b.right || event.clientY < b.top || event.clientY > b.bottom;
+    };
+    dialog.addEventListener('pointerdown', (event) => { outsidePress = event.target === dialog && outside(event); });
     dialog.addEventListener("cancel", (event) => { event.preventDefault(); closeDialog(dialog); });
     dialog.addEventListener("close", syncLock);
     dialog.addEventListener("click", (event) => {
         if (event.target.closest("[data-dialog-close],[data-menu-close]")) closeDialog(dialog);
         if (event.target !== dialog) return;
-        const b = dialog.getBoundingClientRect();
-        if (event.clientX < b.left || event.clientX > b.right || event.clientY < b.top || event.clientY > b.bottom) closeDialog(dialog);
+        if (outsidePress && outside(event)) closeDialog(dialog);
+        outsidePress = false;
     });
 });

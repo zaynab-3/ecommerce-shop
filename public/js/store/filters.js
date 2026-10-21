@@ -1,5 +1,3 @@
-document
-    .querySelectorAll("[data-submit]")
-    .forEach((input) =>
-        input.addEventListener("change", () => input.form.requestSubmit()),
-    );
+document.addEventListener('change', (event) => {
+    if (event.target.matches('[data-submit]')) event.target.form.requestSubmit();
+});

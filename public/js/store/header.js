@@ -18,3 +18,4 @@ function updateHeader() {
 }
 addEventListener("scroll", () => { if (!scheduled) { scheduled = true; requestAnimationFrame(updateHeader); } }, { passive: true });
 document.addEventListener("store:dialog-open", () => chrome?.classList.remove("is-hidden"));
+document.addEventListener('store:page-updated', () => { last = scrollY; travel = 0; direction = 0; chrome?.classList.remove('is-hidden'); });

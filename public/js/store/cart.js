@@ -3,9 +3,10 @@ import { request, serial } from "../shared/http.js";
 import { toast } from "../shared/notices.js";
 import { initCheckout, validatePhone } from "./checkout.js";
 import { nationalNumber } from "./lebanese-phone.js";
+import { navigate } from './page-navigation.js';
 const dialog = document.getElementById("cart-dialog");
 const content = dialog?.querySelector("[data-cart-content]");
-const originalUrl = location.href;
+let originalUrl = location.href;
 let directCart = false;
 let receipt = false;
 let draft = {};
@@ -62,6 +63,7 @@ async function loadCart(nextPhase = 'cart') {
 }
 async function openCart(nextPhase = 'cart') {
     if (!dialog) return;
+    if (!dialog.open) originalUrl = location.href;
     await openDialog(dialog);
     try { await serial(() => loadCart(nextPhase)); }
     catch (error) { toast(error.message, "error"); }
@@ -80,8 +82,14 @@ document.addEventListener("click", (event) => {
     if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || link.target === "_blank") return;
     if (link.matches('[data-proceed-checkout]') && dialog?.open) { event.preventDefault(); setPhase('checkout', true); return; }
     if (link.matches('[data-cart-back]') && dialog?.open) { event.preventDefault(); setPhase('cart', true); return; }
-    if (link.matches("[data-continue-shopping]") && dialog?.open && !directCart) { event.preventDefault(); closeDialog(dialog); return; }
     if (dialog && [dialog.dataset.cartUrl, dialog.dataset.checkoutUrl].filter(Boolean).some((url) => new URL(link.href).pathname === new URL(url).pathname)) { event.preventDefault(); openCart(new URL(link.href).pathname === new URL(dialog.dataset.checkoutUrl).pathname ? 'checkout' : 'cart'); }
+});
+// Handle sheet dismissal before the document's public-link navigation handler.
+dialog?.addEventListener('click', (event) => {
+    const link = event.target.closest('a[data-continue-shopping]');
+    if (!link || directCart || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || (link.target && link.target !== '_self')) return;
+    event.preventDefault();
+    closeDialog(dialog);
 });
 function showCheckoutError(form, error) {
     const box = form.querySelector('[data-checkout-errors]');
@@ -129,7 +137,7 @@ document.addEventListener("submit", (event) => {
             } else {
                 if (data.html !== undefined) render(data); else updateCount(data.count);
                 toast(data.message);
-                if (data.redirect) { await openDialog(dialog); await loadCart('checkout'); }
+                if (data.redirect) { originalUrl = location.href; await openDialog(dialog); await loadCart('checkout'); }
             }
         } catch (error) {
             if (checkout) showCheckoutError(form, error);
@@ -145,9 +153,10 @@ document.addEventListener("change", (event) => {
 });
 dialog?.addEventListener('close', () => {
     rememberDetails();
-    if (directCart) location.assign(dialog.dataset.shopUrl);
-    else if (receipt) history.replaceState(null, '', originalUrl);
+    if (directCart) { directCart = false; navigate(dialog.dataset.shopUrl, { history: 'replace' }); }
+    else if (receipt && location.pathname.startsWith('/orders/')) history.replaceState(history.state, '', originalUrl);
 });
+document.addEventListener('store:page-leave', () => { directCart = false; });
 const fallback = document.querySelector("[data-cart-fallback]");
 if (fallback && dialog) {
     directCart = true;

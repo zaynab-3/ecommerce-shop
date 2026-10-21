@@ -1,4 +1,5 @@
 import { openDialog, closeDialog } from "./dialogs.js";
+import { isStorePage, navigate } from "./page-navigation.js";
 const menuButton = document.querySelector("[data-menu-toggle]");
 const drawer = document.getElementById("mobile-navigation");
 const search = document.getElementById("search-dialog");
@@ -15,7 +16,7 @@ drawer?.addEventListener("click", async (event) => {
     if (cartUrl && new URL(link.href).pathname === new URL(cartUrl).pathname) return;
     event.preventDefault();
     await closeDialog(drawer);
-    location.assign(link.href);
+    if (isStorePage(link.href)) navigate(link.href); else location.assign(link.href);
 });
 searchButtons.forEach((button) => button.addEventListener("click", () => openDialog(search)));
 search?.addEventListener("close", () => searchButtons.forEach((button) => button.setAttribute("aria-expanded", "false")));

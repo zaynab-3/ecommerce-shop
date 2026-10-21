@@ -13,7 +13,10 @@ export function initCheckout(root = document) {
     });
 }
 document.addEventListener('change', (event) => {
-    if (event.target.matches('[data-checkout] select')) refreshTotal(event.target.form);
+    if (event.target.matches('[data-checkout] select')) {
+        refreshTotal(event.target.form);
+        if (matchMedia('(max-width: 850px), (pointer: coarse)').matches) event.target.blur();
+    }
 });
 document.addEventListener('input', (event) => {
     const input = event.target;

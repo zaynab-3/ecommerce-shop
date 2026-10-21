@@ -1,4 +1,4 @@
-/* Arrival movement keeps content opaque and leaves navigation to the browser. */
+/* Initial arrival and product movement keep content fully opaque. */
 #main { opacity: 1 !important; animation: page-arrive .22s ease-out; }
 .product-detail .product-gallery { animation: product-arrive .32s cubic-bezier(.22,1,.36,1) both; }
 .product-detail .product-info { animation: product-arrive .36s .04s cubic-bezier(.22,1,.36,1) both; }
