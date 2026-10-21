@@ -50,5 +50,11 @@ composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
 php artisan migrate --force
 # Demo seeding is deliberately allowed only before switching this fresh app to production.
 php artisan db:seed --class=DemoCatalogSeeder --force
+if [[ -n "${PREVIEW_ADMIN_PUBLIC_KEY:-}" ]]; then
+    php scripts/create-preview-owner.php
+    openssl pkeyutl -encrypt -pubin -inkey "$RUNNER_TEMP/mesh-preview-admin-public.pem" \
+        -in "$RUNNER_TEMP/mesh-preview-admin.json" -out "$RUNNER_TEMP/mesh-preview-admin.enc" \
+        -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 -pkeyopt rsa_mgf1_md:sha256
+fi
 sed -i 's/^APP_ENV=local$/APP_ENV=production/' .env
 php artisan view:cache

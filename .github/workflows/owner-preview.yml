@@ -8,6 +8,11 @@ on:
         required: true
         default: '300'
         type: string
+      admin_public_key:
+        description: 'Optional base64 RSA public key for encrypted demo-owner credentials'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: read
@@ -31,6 +36,8 @@ jobs:
           coverage: none
 
       - name: Prepare isolated demonstration database
+        env:
+          PREVIEW_ADMIN_PUBLIC_KEY: ${{ inputs.admin_public_key }}
         run: bash scripts/prepare-owner-preview.sh
 
       - name: Start HTTPS preview
@@ -54,6 +61,7 @@ jobs:
           "$RUNNER_TEMP/mesh-preview-browser/bin/pip" install --quiet playwright==1.62.0
           "$RUNNER_TEMP/mesh-preview-browser/bin/python" -m playwright install --with-deps chromium webkit
           "$RUNNER_TEMP/mesh-preview-browser/bin/python" scripts/test-owner-preview.py "$PREVIEW_URL"
+          php artisan cache:clear
 
       - name: Save browser evidence
         if: always()

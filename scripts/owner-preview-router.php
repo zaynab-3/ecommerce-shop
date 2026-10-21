@@ -18,7 +18,8 @@ $_SERVER['HTTP_HOST'] = $host;
 header('X-Robots-Tag: noindex, nofollow, noarchive');
 $path = rawurldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/');
 $routePath = preg_replace('~^/index\.php(?=/|$)~i', '', preg_replace('~/+~', '/', $path));
-if (preg_match('~(?:^|/)\.~', $path) || preg_match('~^/manage-store(?:/|$)~i', $routePath)) {
+if (preg_match('~(?:^|/)\.~', $path)
+    || (getenv('MESH_PREVIEW_ADMIN_ENABLED') !== '1' && preg_match('~^/manage-store(?:/|$)~i', $routePath))) {
     http_response_code(404);
     exit;
 }

@@ -1,16 +1,20 @@
 """Smoke-test the temporary storefront using real Chromium and WebKit."""
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 base = sys.argv[1].rstrip("/")
 output = Path(os.environ.get("RUNNER_TEMP", "/tmp")) / "mesh-preview-browser-results"
 output.mkdir(parents=True, exist_ok=True)
 results = []
 errors = []
+admin_results = []
+credentials_file = Path(os.environ.get("RUNNER_TEMP", "/tmp")) / "mesh-preview-admin.json"
+credentials = json.loads(credentials_file.read_text()) if credentials_file.exists() else None
 with sync_playwright() as playwright:
     for engine in (playwright.chromium, playwright.webkit):
         with engine.launch() as browser:
@@ -57,6 +61,38 @@ with sync_playwright() as playwright:
                     page.screenshot(path=str(output / f"{engine.name}-{width}-{'touch' if touch else 'mouse'}-{path.strip('/').replace('/', '-') or 'discover'}.png"))
                     results.append({"engine": engine.name, "width": width, "touch": touch, "path": path, **style})
                 context.close()
+            if credentials:
+                for width in (390, 1440):
+                    context = browser.new_context(viewport={"width": width, "height": 915}, has_touch=width == 390)
+                    page = context.new_page()
+                    page.on("pageerror", lambda error: errors.append(str(error)))
+                    page.goto(base + "/manage-store", wait_until="networkidle")
+                    assert page.url == base + "/manage-store/login", "Unauthenticated admin access must require login"
+                    page.locator('input[name="email"]').fill(credentials["email"])
+                    page.locator('input[name="password"]').fill(credentials["password"])
+                    page.get_by_role("button", name="Sign in", exact=True).click()
+                    page.wait_for_url(re.compile(re.escape(base) + r"/manage-store/?$"))
+                    expect(page.locator(".admin-profile strong")).to_have_text("Owner preview")
+                    session = next(cookie for cookie in context.cookies() if cookie["name"] == "mesh_owner_preview")
+                    assert session["secure"] and session["httpOnly"], "Admin session must use a secure, HttpOnly cookie"
+                    for path in ("", "/products", "/products/create", "/products/1/edit", "/categories", "/delivery", "/settings", "/team", "/orders"):
+                        response = page.goto(base + "/manage-store" + path, wait_until="networkidle")
+                        assert response.status == 200 and page.locator(".admin-main").is_visible(), (engine.name, width, path)
+                        assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), (engine.name, width, path)
+                        if width == 390:
+                            assert page.locator("html").evaluate("e => getComputedStyle(e).scrollbarWidth") == "none"
+                        admin_results.append({"engine": engine.name, "width": width, "path": "/manage-store" + path})
+                    page.screenshot(path=str(output / f"{engine.name}-{width}-admin-orders.png"))
+                    if page.locator("[data-admin-menu]").is_visible():
+                        page.locator("[data-admin-menu]").click()
+                    page.get_by_role("button", name="Sign out", exact=True).click()
+                    page.wait_for_url(base + "/manage-store/login")
+                    page.goto(base + "/manage-store/settings", wait_until="networkidle")
+                    assert page.url == base + "/manage-store/login", "Logout must revoke access"
+                    context.close()
 assert not errors, errors
 (output / "results.json").write_text(json.dumps(results, indent=2))
+(output / "admin-results.json").write_text(json.dumps(admin_results, indent=2))
 print(f"{len(results)} Chromium/WebKit scroll, scrollbar, history and layout checks passed.")
+if credentials:
+    print(f"{len(admin_results)} authenticated admin page checks plus login/logout and secure cookies passed.")

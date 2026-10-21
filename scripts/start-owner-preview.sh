@@ -24,6 +24,7 @@ done
 if [[ -z "$preview_url" ]]; then cat "$RUNNER_TEMP/mesh-preview-tunnel.log"; exit 1; fi
 sed -i "s|^APP_URL=.*|APP_URL=$preview_url|" .env
 export MESH_PREVIEW_HOST="${preview_url#https://}" PHP_CLI_SERVER_WORKERS=4
+if [[ -f "$RUNNER_TEMP/mesh-preview-admin.enc" ]]; then export MESH_PREVIEW_ADMIN_ENABLED=1; fi
 nohup php -S 127.0.0.1:8000 -t public scripts/owner-preview-router.php \
     > "$RUNNER_TEMP/mesh-preview-php.log" 2>&1 < /dev/null &
 echo "$!" > "$RUNNER_TEMP/mesh-preview-php.pid"
@@ -33,11 +34,14 @@ grep -q "$preview_url/css/store-scrollbars.css" "$RUNNER_TEMP/mesh-preview-shop.
 if grep -q 'http://127.0.0.1:8000' "$RUNNER_TEMP/mesh-preview-shop.html"; then echo 'Preview contains a local URL.' >&2; exit 1; fi
 printf '{"url":"%s","commit":"%s","run_id":"%s"}\n' "$preview_url" "$GITHUB_SHA" "$GITHUB_RUN_ID" > "$RUNNER_TEMP/mesh-preview-link.json"
 python3 - <<'PY'
-import json, os
+import base64, json, os
 from pathlib import Path
 payload = {"ref": os.environ["GITHUB_SHA"], "environment": "owner-preview", "auto_merge": False,
            "required_contexts": [], "transient_environment": True, "production_environment": False,
            "description": "Temporary owner demonstration with isolated demo data"}
+encrypted = Path(os.environ["RUNNER_TEMP"]) / "mesh-preview-admin.enc"
+if encrypted.exists():
+    payload["payload"] = {"admin_credentials": base64.b64encode(encrypted.read_bytes()).decode(), "encryption": "RSA-OAEP-SHA256"}
 (Path(os.environ["RUNNER_TEMP"]) / "mesh-preview-deployment.json").write_text(json.dumps(payload))
 PY
 preview_deployment=$(gh api --method POST "repos/$GITHUB_REPOSITORY/deployments" --input "$RUNNER_TEMP/mesh-preview-deployment.json" --jq .id)
