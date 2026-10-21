@@ -3,6 +3,7 @@ import json
 import os
 import re
 import sys
+import traceback
 from pathlib import Path
 
 from playwright.sync_api import expect, sync_playwright
@@ -15,6 +16,21 @@ errors = []
 admin_results = []
 credentials_file = Path(os.environ.get("RUNNER_TEMP", "/tmp")) / "mesh-preview-admin.json"
 credentials = json.loads(credentials_file.read_text()) if credentials_file.exists() else None
+stage = "initialization"
+
+
+def report_failure(kind, error, trace):
+    message = f"{stage}: {kind.__name__}: {error}"
+    if credentials:
+        message = message.replace(credentials["password"], "***")
+    frames = [frame for frame in traceback.extract_tb(trace) if frame.filename.endswith("test-owner-preview.py")]
+    line = frames[-1].lineno if frames else 1
+    message = message[:2500].replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+    print(f"::error file=scripts/test-owner-preview.py,line={line}::{message}", flush=True)
+    sys.__excepthook__(kind, error, trace)
+
+
+sys.excepthook = report_failure
 with sync_playwright() as playwright:
     for engine in (playwright.chromium, playwright.webkit):
         with engine.launch() as browser:
@@ -30,6 +46,7 @@ with sync_playwright() as playwright:
                     }
                 })()""")
                 for path in ("/", "/shop", "/products/the-everyday-backpack"):
+                    stage = f"{engine.name}/{width}/{path}"
                     page.goto(base + path, wait_until="networkidle")
                     page.wait_for_function("() => !!window.lenisVersion")
                     if page.get_by_role("button", name="Got it", exact=True).is_visible():
@@ -63,6 +80,7 @@ with sync_playwright() as playwright:
                 context.close()
             if credentials:
                 for width in (390, 1440):
+                    stage = f"{engine.name}/{width}/admin login"
                     context = browser.new_context(viewport={"width": width, "height": 915}, has_touch=width == 390)
                     page = context.new_page()
                     page.on("pageerror", lambda error: errors.append(str(error)))
@@ -76,6 +94,7 @@ with sync_playwright() as playwright:
                     session = next(cookie for cookie in context.cookies() if cookie["name"] == "mesh_owner_preview")
                     assert session["secure"] and session["httpOnly"], "Admin session must use a secure, HttpOnly cookie"
                     for path in ("", "/products", "/products/create", "/products/1/edit", "/categories", "/delivery", "/settings", "/team", "/orders"):
+                        stage = f"{engine.name}/{width}/manage-store{path}"
                         response = page.goto(base + "/manage-store" + path, wait_until="networkidle")
                         assert response.status == 200 and page.locator(".admin-main").is_visible(), (engine.name, width, path)
                         assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), (engine.name, width, path)
@@ -83,6 +102,7 @@ with sync_playwright() as playwright:
                             assert page.locator("html").evaluate("e => getComputedStyle(e).scrollbarWidth") == "none"
                         admin_results.append({"engine": engine.name, "width": width, "path": "/manage-store" + path})
                     page.screenshot(path=str(output / f"{engine.name}-{width}-admin-orders.png"))
+                    stage = f"{engine.name}/{width}/admin logout"
                     if page.locator("[data-admin-menu]").is_visible():
                         page.locator("[data-admin-menu]").click()
                     page.get_by_role("button", name="Sign out", exact=True).click()
