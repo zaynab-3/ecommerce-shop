@@ -36,7 +36,7 @@ with sync_playwright() as playwright:
                     style = page.evaluate("""() => {
                         const root = document.documentElement;
                         return {
-                            width: getComputedStyle(root).scrollbarWidth,
+                            scrollbarWidth: getComputedStyle(root).scrollbarWidth,
                             bar: getComputedStyle(root, '::-webkit-scrollbar').display,
                             thumb: getComputedStyle(root, '::-webkit-scrollbar-thumb').backgroundColor,
                             overflow: root.scrollWidth - root.clientWidth,
@@ -48,9 +48,12 @@ with sync_playwright() as playwright:
                     assert style["writes"] == before, (engine.name, "scroll changed history", style)
                     assert style["overflow"] <= 1, (engine.name, width, path, style)
                     if width <= 850 or touch:
-                        assert style["width"] == "none", (engine.name, width, path, style)
+                        assert style["scrollbarWidth"] == "none", (engine.name, width, path, style)
                         assert style["bar"] == "none", (engine.name, width, path, style)
                         assert style["thumb"] == "rgba(0, 0, 0, 0)", (engine.name, width, path, style)
+                    assert page.locator('[data-carousel-track], .category-nav-track').evaluate_all(
+                        '(elements) => elements.every(e => getComputedStyle(e).scrollbarWidth === "none")'
+                    ), (engine.name, "horizontal scrollbar", path)
                     page.screenshot(path=str(output / f"{engine.name}-{width}-{'touch' if touch else 'mouse'}-{path.strip('/').replace('/', '-') or 'discover'}.png"))
                     results.append({"engine": engine.name, "width": width, "touch": touch, "path": path, **style})
                 context.close()

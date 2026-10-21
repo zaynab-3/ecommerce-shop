@@ -1,26 +1,26 @@
 /* Hidden by default, including WebKit's transient overlay thumb and track. */
-:root, * { scrollbar-width: none; scrollbar-color: transparent transparent; -ms-overflow-style: none; }
+:where(:root, *) { scrollbar-width: none; scrollbar-color: transparent transparent; -ms-overflow-style: none; }
 ::-webkit-scrollbar { display: none; width: 0; height: 0; background: transparent; }
 ::-webkit-scrollbar-track, ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-corner { background: transparent; border: 0; }
 ::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
 
 /* Opt in to a vertical rail only on a desktop with a mouse. */
 @media (min-width: 851px) and (hover: hover) and (pointer: fine) {
-    :root:not(.touch-device), :root:not(.touch-device) * { scrollbar-width: thin; scrollbar-color: var(--store-accent) transparent; }
+    :where(:root:not(.touch-device), :root:not(.touch-device) *) { scrollbar-width: thin; scrollbar-color: var(--store-accent) transparent; }
 
     /* Use rounded, inset thumbs where custom scrollbar parts are available. */
     @supports selector(::-webkit-scrollbar) {
-        :root:not(.touch-device), :root:not(.touch-device) * { scrollbar-width: auto; scrollbar-color: auto; }
-        :root:not(.touch-device)::-webkit-scrollbar, :root:not(.touch-device) *::-webkit-scrollbar { display: block; width: 8px; height: 0; }
-        :root:not(.touch-device)::-webkit-scrollbar-thumb, :root:not(.touch-device) *::-webkit-scrollbar-thumb {
+        :where(:root:not(.touch-device), :root:not(.touch-device) *) { scrollbar-width: auto; scrollbar-color: auto; }
+        :where(:root:not(.touch-device), :root:not(.touch-device) *)::-webkit-scrollbar { display: block; width: 8px; height: 0; }
+        :where(:root:not(.touch-device), :root:not(.touch-device) *)::-webkit-scrollbar-thumb {
             background-color: var(--store-accent);
             background-clip: padding-box;
             border: 2px solid transparent;
             border-radius: 999px;
             min-height: 40px;
         }
-        :root:not(.touch-device)::-webkit-scrollbar-thumb:hover, :root:not(.touch-device) *::-webkit-scrollbar-thumb:hover,
-        :root:not(.touch-device)::-webkit-scrollbar-thumb:active, :root:not(.touch-device) *::-webkit-scrollbar-thumb:active { border-width: 1px; }
+        :where(:root:not(.touch-device), :root:not(.touch-device) *)::-webkit-scrollbar-thumb:hover,
+        :where(:root:not(.touch-device), :root:not(.touch-device) *)::-webkit-scrollbar-thumb:active { border-width: 1px; }
     }
 }
 /* Hide both axes on every phone, including emulators with a mouse pointer. */
