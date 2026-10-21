@@ -48,9 +48,11 @@ a, button, summary { touch-action: manipulation; }
 .retail-section-heading h2, .related .section-heading h2 { font-family: StoreSans, Arial, sans-serif; font-size: 32px; line-height: 1.2; font-weight: 700; letter-spacing: -1.3px; text-transform: none; }
 .carousel-arrow { border: 0; background: #000; color: #fff; border-radius: 50%; }
 .carousel-arrow:disabled { visibility: hidden; }
-.category-tile { border: 0; border-radius: 0; padding: 16px 8px; }
-.category-icon { background: #000; color: #fff; border-radius: 50%; }
-.category-tile:hover, .sidebar-category:hover { background: #fff; color: var(--store-accent-ink); font-weight: 700; text-decoration: none; }
+.category-tile { border: 0; border-radius: 0; padding: 12px 8px; background: transparent; color: #000; font-weight: 400; }
+.category-icon { width: 28px; height: 28px; background: transparent; color: var(--store-accent-ink); border-radius: 0; }
+.category-icon .icon, .category-icon .category-custom-icon { width: 26px; height: 26px; }
+.category-tile:hover, .category-tile[aria-current=page] { background: transparent; color: #000; font-weight: 700; text-decoration: none; }
+.sidebar-category:hover { background: transparent; color: var(--store-accent-ink); font-weight: 700; text-decoration: none; }
 .sidebar-category.selected, .sidebar-child.selected { background: transparent; color: var(--store-accent-ink); font-weight: 700; text-decoration: none; }
 .catalog-toolbar, .catalog-sidebar, .sort-select { border: 0; }
 .main-product-image, .gallery-thumb { background: #fff; border: 0; border-radius: 0; }

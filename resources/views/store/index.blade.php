@@ -4,10 +4,10 @@
     @if (request()->routeIs('home') && !request()->hasAny(['q', 'category', 'saved', 'sort']))
         <x-product-carousel :products="$products->getCollection()->take(8)" title="Top picks" :href="route('shop')" />
         <section class="container categories-section">
-            <div class="section-heading retail-section-heading"><h2>Shop by category</h2><a href="{{ route('shop') }}" class="text-link">View all products <x-icon name="arrow" /></a></div>
+            <div class="section-heading retail-section-heading"><h2>Shop by category</h2><a href="{{ route('shop') }}" class="text-link">View all products</a></div>
             <div class="category-grid">
                 @foreach ($categories as $category)
-                    <a class="category-tile" href="{{ route('shop', ['category' => $category->slug]) }}"><span class="category-icon category-{{ $loop->index % 6 }}"><x-category-icon :category="$category" width="28" height="28" /></span><span>{{ $category->name }}</span><x-icon name="chevron" width="16" height="16" /></a>
+                    <a class="category-tile" href="{{ route('shop', ['category' => $category->slug]) }}"><span class="category-icon"><x-category-icon :category="$category" width="28" height="28" /></span><span>{{ $category->name }}</span></a>
                 @endforeach
             </div>
         </section>

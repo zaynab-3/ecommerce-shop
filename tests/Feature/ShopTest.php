@@ -233,7 +233,9 @@ class ShopTest extends TestCase
             ->assertSee('Saved items, 2 items')->assertSee('Shopping cart, 3 items')
             ->assertSee('data-saved-count aria-hidden="true">2</span>', false)
             ->assertSee('data-cart-count aria-hidden="true">3</span>', false)
-            ->assertSeeInOrder(['class="nav-links"', '>Discover</a>', '>Shop</a>'], false)
+            ->assertSeeInOrder(['class="drawer-links"', '>Discover</a>', '>Shop</a>'], false)
+            ->assertSee('class="announcement-delivery" href="'.route('help').'"', false)
+            ->assertDontSee('class="main-nav"', false)->assertDontSee('Delivery areas at checkout')
             ->assertDontSee('class="bag-label"', false)->assertDontSee('All categories')
             ->assertDontSee('Shop all')->assertDontSee('New arrivals')->assertDontSee('Everyday value');
     }

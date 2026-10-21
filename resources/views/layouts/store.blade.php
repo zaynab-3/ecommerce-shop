@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{{ asset('css/store-navigation.css') }}?v={{ filemtime(public_path('css/store-navigation.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/identity.css') }}?v={{ filemtime(public_path('css/identity.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/store-interactions.css') }}?v={{ filemtime(public_path('css/store-interactions.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/store-scrollbars.css') }}?v={{ filemtime(public_path('css/store-scrollbars.css')) }}">
     <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1), 'v' => \App\Services\StoreTheme::VERSION]) }}">
     <script src="{{ asset('js/store.js') }}?v={{ filemtime(public_path('js/store.js')) }}" type="module"></script>@stack('head')
 </head>
@@ -23,7 +24,7 @@
     <a href="#main" class="skip-link">Skip to content</a>
     <div class="store-chrome" data-store-header>
     <div class="announcement">
-        <div class="container announcement-inner"><span>Delivery areas at checkout</span><span
+        <div class="container announcement-inner"><a class="announcement-delivery" href="{{ route('help') }}"><x-icon name="truck" width="16" height="16" />Delivery across Lebanon</a><span
                 class="announcement-center">Cash on delivery</span><a href="{{ route('help') }}">Help & support</a></div>
     </div>
     <header class="site-header">
@@ -40,11 +41,6 @@
                         name="bag" /><span
                         class="bag-count header-count" data-cart-count aria-hidden="true">{{ collect(session('cart', []))->sum('quantity') }}</span></a></div>
         </div>
-        <nav class="main-nav" aria-label="Main navigation">
-            <div class="container nav-inner" data-mobile-nav>
-                <x-store-navigation-links />
-            </div>
-        </nav>
     </header>
     </div>
     <x-mobile-navigation />

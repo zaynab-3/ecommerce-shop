@@ -1,0 +1,21 @@
+/* The saved theme color also styles visible desktop scrollbars. */
+@media (min-width: 601px) and (hover: hover) and (pointer: fine) {
+    :root, * { scrollbar-width: thin; scrollbar-color: var(--store-accent) transparent; }
+    .carousel-track { scrollbar-color: var(--store-accent) transparent; }
+
+    /* Use rounded, inset thumbs where custom scrollbar parts are available. */
+    @supports selector(::-webkit-scrollbar) {
+        :root, *, .catalog-sidebar, .carousel-track { scrollbar-width: auto; scrollbar-color: auto; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--store-accent);
+            background-clip: padding-box;
+            border: 2px solid transparent;
+            border-radius: 999px;
+            min-height: 40px;
+        }
+        ::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:active { border-width: 1px; }
+        ::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+    }
+}
