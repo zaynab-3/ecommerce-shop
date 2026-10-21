@@ -93,10 +93,16 @@ with sync_playwright() as playwright:
                     expect(page.locator(".admin-profile strong")).to_have_text("Owner preview")
                     session = next(cookie for cookie in context.cookies() if cookie["name"] == "mesh_owner_preview")
                     assert session["secure"] and session["httpOnly"], "Admin session must use a secure, HttpOnly cookie"
-                    for path in ("", "/products", "/products/create", "/products/1/edit", "/categories", "/delivery", "/settings", "/team", "/orders"):
+                    edit_path = None
+                    for path in ("", "/products", "/products/create", "@edit", "/categories", "/delivery", "/settings", "/team", "/orders"):
+                        if path == "@edit":
+                            assert edit_path, "The demo product must have an edit link"
+                            path = edit_path
                         stage = f"{engine.name}/{width}/manage-store{path}"
                         response = page.goto(base + "/manage-store" + path, wait_until="networkidle")
                         assert response.status == 200 and page.locator(".admin-main").is_visible(), (engine.name, width, path)
+                        if path == "/products":
+                            edit_path = page.locator(".table-product").first.get_attribute("href").removeprefix(base + "/manage-store")
                         assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), (engine.name, width, path)
                         if width == 390:
                             assert page.locator("html").evaluate("e => getComputedStyle(e).scrollbarWidth") == "none"
