@@ -86,6 +86,7 @@ Eager loading and pagination bound product-list queries; local/test environments
 ```bash
 source scripts/cloud-php.sh
 php artisan test
+node --test tests/javascript/scroll-history.test.mjs
 python3 scripts/test-stock-race.py
 php artisan view:cache
 composer validate --strict
@@ -93,6 +94,8 @@ composer audit
 ```
 
 The feature suite exercises stock thresholds, oversell rejection, color ownership, duplicate checkout, cancellation, private order access, admin role restrictions, image processing, escaping, delivery pricing, polling, and WhatsApp message generation and handoff behavior. Tests verify the recipient, complete encoded order text, the enabled/disabled switch, and one-time automatic opening. Browser checks intercept the external WhatsApp navigation; no message is sent during testing.
+
+The optional Node tests need no npm packages. They verify that 10,000 scroll events make no History API writes, Back/Forward use cached per-entry positions, background updates leave history alone, a browser history refusal preserves the current URL, and older entries receive independent IDs once. IDs also work on plain-HTTP LAN phone URLs.
 
 The suite uses the separate MySQL database in `.env.testing` (`ecommerce_shop_test` by default); the race check uses `ecommerce_shop_race_test`. The local Docker initialization creates both and grants the application user access. Tests refuse non-MySQL databases, cached configuration, or names without a `_test` suffix before resetting tables. The race releases ten PHP processes together for three units: exactly three orders should succeed and seven should report sold out. It drops its test tables afterward and leaves the shop database untouched. Do not run two test suites/races against the same test database concurrently.
 
@@ -123,6 +126,8 @@ Top picks advances by one card automatically after five seconds, looping back at
 Related products use the same carousel component in a single horizontal row, with native touch swiping and a partial next card on phones. Desktop arrows are available when the row overflows. Related products do not autoplay. The phone footer stacks the brand above two aligned link groups, then separates policy links, copyright, and currency into clear rows. The catalog sort select has no rectangular focus border; its label changes color/weight instead.
 
 Lenis **1.3.27** is served locally under its MIT license, with one frame loop shared by public pages, admin pages, login, and independently scrolling cart/drawer/search/sidebar panels. Wheel input and same-page anchors use the same engine; touch retains native momentum, horizontal scroll-snap stays native, and reduced-motion disables wheel easing. Navigation cancels old inertia and restores Back/Forward positions immediately. The category strip retains its previous horizontal offset and scrolls smoothly to the active label after navigation. No CDN or JavaScript build step is required.
+
+Scroll positions are cached in memory under a unique history-entry ID. History state is persisted when navigating or leaving the page, with duplicate writes skipped; scrolling, Back/Forward, and background catalog updates do not call `replaceState` on each frame. This avoids Firefox's history-modification limit. The header caches its measured height and only changes its hidden state when direction thresholds are crossed. Phone scrollbar hiding also covers touch-capable devices and mobile user agents connected to a mouse. Click/hover links have no underlines, product-card links do not select text during a swipe, and the selected gallery thumbnail uses image opacity instead of a line. Form focus uses label/fill feedback; keyboard focus remains visible on links and buttons.
 
 The desktop header has no secondary navigation row. **Delivery across Lebanon** links to Help from the announcement bar, beside Cash on delivery, including on phones. The phone drawer retains **Discover** and **Shop**. Home category links have transparent backgrounds, unframed accent icons, regular labels that become bold on hover, and no trailing arrows; selected category navigation remains bold. Cart and favorites have live counters at the upper right of their transparent header icons, including on phones; the header has no My cart label. The cash-on-delivery announcement has no arrow. Desktop catalog breadcrumbs, result count, and filters share one row, with the category strip and filters stacked on smaller screens. Card image frames are capped at 156px, empty color rows are omitted, and desktop related cards stay at most 220px wide. Product-detail image frames are 360px high on desktop, 300px on tablets, and 260px on phones, with contained images and purchase buttons beside each other.
 

@@ -3,6 +3,8 @@ let last = scrollY;
 let travel = 0;
 let direction = 0;
 let scheduled = false;
+let height = chrome?.offsetHeight || 0;
+if (chrome) new ResizeObserver(([entry]) => { height = entry.borderBoxSize?.[0]?.blockSize || entry.contentRect.height; }).observe(chrome);
 function updateHeader() {
     scheduled = false;
     const position = Math.max(0, scrollY);
@@ -13,8 +15,9 @@ function updateHeader() {
     if (nextDirection !== direction) travel = 0;
     direction = nextDirection;
     travel += delta;
-    if (position < chrome.offsetHeight || travel < -4) chrome.classList.remove("is-hidden");
-    else if (travel > 10) chrome.classList.add("is-hidden");
+    const hidden = chrome.classList.contains('is-hidden');
+    if ((position < height || travel < -8) && hidden) chrome.classList.remove("is-hidden");
+    else if (position >= height && travel > 16 && !hidden) chrome.classList.add("is-hidden");
 }
 addEventListener("scroll", () => { if (!scheduled) { scheduled = true; requestAnimationFrame(updateHeader); } }, { passive: true });
 document.addEventListener("store:dialog-open", () => chrome?.classList.remove("is-hidden"));

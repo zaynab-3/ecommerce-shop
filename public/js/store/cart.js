@@ -134,7 +134,7 @@ document.addEventListener("submit", (event) => {
                 content.querySelector('h1')?.setAttribute('tabindex', '-1');
                 content.querySelector('h1')?.focus({ preventScroll: true });
                 document.dispatchEvent(new CustomEvent('store:layout-updated'));
-                history.replaceState(null, '', data.confirmation_url);
+                history.replaceState(history.state, '', data.confirmation_url);
                 if (data.whatsapp_url) location.assign(data.whatsapp_url);
             } else {
                 if (data.html !== undefined) render(data); else updateCount(data.count);

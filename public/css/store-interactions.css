@@ -295,9 +295,9 @@
 .cookie-notice .icon-button, .cookie-notice .icon-button:hover { color: var(--store-accent-ink); background: transparent; flex-shrink: 0; }
 .cookie-notice [data-cookie-error] { margin-bottom: 0; }
 .has-store-dialog .cookie-notice, .has-mobile-navigation .cookie-notice { visibility: hidden; pointer-events: none; }
-/* One underline, including the focused state; no second oval focus frame. */
-#store-search input { border: 0 !important; border-bottom: 1px solid #000 !important; border-radius: 0; outline: none; padding-inline: 2px; }
-#store-search input:focus { border-bottom: 2px solid var(--store-accent-ink) !important; outline: none; }
+/* Search has the same quiet focus feedback as the checkout fields. */
+#store-search input { border: 0 !important; border-radius: 12px; outline: none; padding-inline: 12px; background: rgb(0 0 0 / .035); }
+#store-search input:focus { border: 0 !important; outline: none; background: rgb(0 0 0 / .055); }
 .search-dialog { max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
 .search-status { font-size: 13px; line-height: 1.6; margin: 16px 0 8px; }
 .search-results { max-height: min(420px, 50dvh); overflow-y: auto; overscroll-behavior: contain; }
@@ -307,7 +307,7 @@
 .search-result strong { display: block; font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
 .search-result small { display: block; font-size: 12px; margin-top: 3px; }
 .search-result-price { font-size: 14px; font-weight: 600; white-space: nowrap; }
-.search-result:hover strong, .search-result[aria-selected=true] strong { color: var(--store-accent-ink); text-decoration: underline; text-underline-offset: 4px; }
+.search-result:hover strong, .search-result[aria-selected=true] strong { color: var(--store-accent-ink); font-weight: 700; text-decoration: none; }
 .cart-stage-layout, .checkout-stage-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 390px); gap: clamp(28px, 6vw, 80px); align-items: start; }
 .cart-stage-summary { position: sticky; top: 0; }
 .cart-stage-summary h2, .checkout-details h2, .checkout-order-review h2 { font-size: 24px; font-weight: 600; margin: 0 0 24px; }

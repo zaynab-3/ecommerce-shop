@@ -1,7 +1,11 @@
 import Lenis from '../../vendor/lenis/lenis.mjs';
+import { rememberPosition, changePageHistory } from './page-history.js';
 
 // One frame loop; touch keeps the browser's momentum and selection behavior.
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+// Covers phone emulators and phones connected to a mouse as well as touch input.
+const touchDevice = navigator.maxTouchPoints > 0 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+document.documentElement.classList.toggle('touch-device', touchDevice);
 const options = { lerp: .12, syncTouch: false, smoothWheel: !reducedMotion.matches, respectReducedMotion: true };
 const page = new Lenis({
     ...options,
@@ -60,7 +64,8 @@ document.addEventListener('click', (event) => {
     if (!target) return;
     event.preventDefault();
     if (url.href !== location.href) {
-        history.pushState(history.state, '', url);
+        rememberPosition();
+        if (!changePageHistory(url, { x: scrollX, y: scrollY })) return;
         dispatchEvent(new HashChangeEvent('hashchange'));
     }
     if (!target.matches('a,button,input,select,textarea,[tabindex]')) target.tabIndex = -1;

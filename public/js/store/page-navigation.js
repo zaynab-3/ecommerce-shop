@@ -3,14 +3,13 @@ import { serial } from '../shared/http.js';
 import { toast } from '../shared/notices.js';
 import { scrollPageTo } from '../shared/smooth-scroll.js';
 import { capturePageState } from './page-state.js';
+import { rememberPosition, changePageHistory, savedPosition, cachePosition } from '../shared/page-history.js';
 
 const main = document.getElementById('main');
-const stateKey = 'meshPage';
 let current = new URL(location.href);
 let controller;
 let generation = 0;
 let pending = false;
-let scrollFrame;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
 export function isStorePage(value) {
@@ -19,7 +18,7 @@ export function isStorePage(value) {
 }
 function rememberScroll() {
     if (!isStorePage(location.href) || current.href !== location.href) return;
-    history.replaceState({ ...history.state, [stateKey]: { x: scrollX, y: scrollY } }, '', location.href);
+    return rememberPosition();
 }
 function focusSource(source, url) {
     if (source?.matches('.catalog-toolbar [name]')) {
@@ -33,10 +32,10 @@ function focusSource(source, url) {
     }
     main.focus({ preventScroll: true });
 }
-function scrollPage(url, position) {
+function scrollPage(url, position, restore = false) {
     let anchor;
     try { anchor = url.hash && document.getElementById(decodeURIComponent(url.hash.slice(1))); } catch { /* Ignore malformed fragment escapes. */ }
-    scrollPageTo(anchor || position.y, { immediate: true });
+    scrollPageTo(!restore && anchor ? anchor : position.y, { immediate: true });
 }
 function updateChrome(url, page, refresh = false) {
     let after = main;
@@ -72,7 +71,7 @@ export async function navigate(value, options = {}) {
     const requestController = new AbortController();
     controller = requestController;
     const position = options.scroll || { x: 0, y: 0 };
-    if (options.history !== 'pop') rememberScroll();
+    if (options.history !== 'pop' && !options.refresh) rememberScroll();
     pending = true;
     if (!options.refresh) scrollPageTo(scrollY, { immediate: true });
     main.setAttribute('aria-busy', 'true');
@@ -92,6 +91,8 @@ export async function navigate(value, options = {}) {
             document.dispatchEvent(new CustomEvent('store:page-leave', { detail: { refresh: !!options.refresh } }));
             await Promise.all([...document.querySelectorAll('dialog[open]')].map(closeDialog));
             if (version !== generation) return;
+            const historyMode = options.refresh ? 'refresh' : options.history === 'pop' ? 'pop' : options.history === 'replace' || !isStorePage(current) ? 'replace' : 'push';
+            if (!changePageHistory(url, position, historyMode)) throw new Error('Navigation is busy. Please try again in a moment.');
             // Page scripts bootstrap once; replacement content contains only markup.
             content.querySelectorAll('script').forEach((script) => script.remove());
             main.classList.toggle('is-catalog-refresh', !!options.refresh);
@@ -99,13 +100,10 @@ export async function navigate(value, options = {}) {
             document.title = page.title;
             updateChrome(url, page, !!options.refresh);
             history.scrollRestoration = 'manual';
-            // A directly opened cart/checkout has no public-page content to restore.
-            if (options.refresh || options.history === 'replace' || !isStorePage(current)) history.replaceState({ [stateKey]: position }, '', url);
-            else if (options.history !== 'pop') history.pushState({ [stateKey]: position }, '', url);
             current = url;
             document.dispatchEvent(new CustomEvent('store:page-updated', { detail: { url: url.href, refresh: !!options.refresh } }));
             restore?.();
-            scrollPage(url, position);
+            scrollPage(url, position, options.history === 'pop' || !!options.refresh);
             if (!options.refresh) focusSource(options.source, url);
             if (!options.refresh && !reducedMotion.matches) main.animate([{ transform: 'translateY(4px)' }, { transform: 'translateY(0)' }], { duration: 160, easing: 'ease-out' });
             let status = document.querySelector('[data-page-status]');
@@ -123,10 +121,10 @@ export async function navigate(value, options = {}) {
             toast(error.message);
             return true;
         }
-        if (options.history === 'pop') history.replaceState({ [stateKey]: { x: scrollX, y: scrollY } }, '', current);
+        if (options.history === 'pop') changePageHistory(current, { x: scrollX, y: scrollY }, 'replace');
         if (!options.silent) toast(error.message || 'Could not open this page. Please try again.', 'error');
     } finally {
-        if (version === generation) { pending = false; main.removeAttribute('aria-busy'); rememberScroll(); }
+        if (version === generation) { pending = false; main.removeAttribute('aria-busy'); cachePosition(); }
     }
     return true;
 }
@@ -150,17 +148,15 @@ if (main) {
         url.search = new URLSearchParams(new FormData(form));
         navigate(url, { source: document.activeElement });
     });
-    addEventListener('scroll', () => {
-        if (pending || scrollFrame) return;
-        scrollFrame = requestAnimationFrame(() => { scrollFrame = null; rememberScroll(); });
-    }, { passive: true });
+    addEventListener('pagehide', rememberScroll);
     addEventListener('popstate', (event) => {
         const url = new URL(location.href);
         if (!isStorePage(url)) return;
-        const position = event.state?.[stateKey] || { x: 0, y: 0 };
+        const position = savedPosition(event.state);
         if (url.pathname === current.pathname && url.search === current.search) {
             controller?.abort(); generation++; pending = false; main.removeAttribute('aria-busy');
-            current = url; scrollPage(url, position); return;
+            changePageHistory(url, position, 'pop');
+            current = url; scrollPage(url, position, true); return;
         }
         navigate(url, { history: 'pop', scroll: position });
     });

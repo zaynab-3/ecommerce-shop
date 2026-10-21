@@ -6,6 +6,18 @@ body, .admin-body, .login-body, .site-footer, .benefits { background: #fff; colo
 body { font-family: StoreSans, Arial, sans-serif; }
 button:disabled { opacity: 1; }
 a, button, summary { touch-action: manipulation; }
+/* Tap/hover feedback uses color and weight, with no link underlines. */
+a:any-link, a:any-link:is(:hover, :focus, :active), button, summary { text-decoration: none !important; }
+:is(a, button, summary):focus:not(:focus-visible) { outline: none; }
+[tabindex="-1"]:focus { outline: none; }
+:is(input:not([type=checkbox]):not([type=radio]), select, textarea):focus { outline: none; }
+.field:focus-within { color: var(--store-accent-ink); }
+.field :is(input, select, textarea):focus { background-color: rgb(0 0 0 / .035); }
+.product-card a, .product-card img, .gallery-thumb, button, summary {
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+.product-card img { -webkit-user-drag: none; }
+:is(.legal-page, .help-page, .summary-note, .cookie-notice-actions, .product-disclosure) a { font-weight: 600; color: var(--store-accent-ink); }
 .button, .product-card-link, .carousel-shop-all, .search-form button {
     border: 0; border-radius: 999px; font-family: StoreSans, Arial, sans-serif;
     font-size: 15px; font-weight: 600; line-height: 1.4; letter-spacing: 0; text-transform: none;
@@ -141,7 +153,9 @@ td { border: 0; padding-block: 22px; }
 .bag-count { background: #000; color: #fff; }
 .gallery-thumb { position: relative; }
 .gallery-thumb.selected { background: #fff; }
-.gallery-thumb.selected::after { content: ''; position: absolute; bottom: 2px; left: calc(50% - 10px); width: 20px; height: 4px; background: var(--store-accent); border-radius: 4px; }
+.gallery-thumb.selected::after { content: none; }
+.gallery-thumb img { opacity: .5; }
+.gallery-thumb.selected img { opacity: 1; }
 .admin-main .field input, .admin-main .field select, .admin-main .field textarea,
 .login-card .field input { background: #fff; color: #000; }
 .admin-main .field input::placeholder, .admin-main .field textarea::placeholder,

@@ -1,4 +1,6 @@
 // Each interaction lives in its own small module.
+// History positions are cached in memory while scrolling.
+import "./shared/page-history.js";
 import "./shared/smooth-scroll.js";
 import "./shared/notices.js";
 import "./store/filters.js";
