@@ -22,7 +22,7 @@ a, button, summary { touch-action: manipulation; }
 .search-form .icon, .search-form input, .search-form input::placeholder { color: #fff; }
 .search-form input { background: transparent; }
 .nav-links a.active { color: var(--store-accent-ink); font-weight: 700; }
-.nav-links a.active:after { background: var(--store-accent); height: 4px; border-radius: 4px; }
+.nav-links a.active:after { content: none; }
 .text-link, .section-heading .text-link, .breadcrumb, .breadcrumb a, .breadcrumb span,
 .product-meta, .stock, .muted, .field, .summary-note, .secure-note, .footer-bottom,
 .footer-top > div > a:not(.logo), .category-tile, .sidebar-category { color: #000; }
@@ -50,8 +50,8 @@ a, button, summary { touch-action: manipulation; }
 .carousel-arrow:disabled { visibility: hidden; }
 .category-tile { border: 0; border-radius: 0; padding: 16px 8px; }
 .category-icon { background: #000; color: #fff; border-radius: 50%; }
-.category-tile:hover, .sidebar-category:hover { background: #fff; text-decoration: underline; text-underline-offset: 5px; }
-.sidebar-category.selected, .sidebar-child.selected { background: transparent; color: var(--store-accent-ink); font-weight: 700; }
+.category-tile:hover, .sidebar-category:hover { background: #fff; color: var(--store-accent-ink); font-weight: 700; text-decoration: none; }
+.sidebar-category.selected, .sidebar-child.selected { background: transparent; color: var(--store-accent-ink); font-weight: 700; text-decoration: none; }
 .catalog-toolbar, .catalog-sidebar, .sort-select { border: 0; }
 .main-product-image, .gallery-thumb { background: #fff; border: 0; border-radius: 0; }
 .gallery-thumb.selected { background: var(--store-accent); border-radius: 12px; }

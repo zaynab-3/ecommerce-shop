@@ -67,7 +67,7 @@ class StorefrontController extends Controller
         session(['saved' => $saved]);
 
         if ($r->expectsJson()) {
-            return response()->json(['product_id' => $product->id, 'saved' => in_array($product->id, $saved), 'message' => in_array($product->id, $saved) ? 'Added to your saved items.' : 'Removed from saved items.']);
+            return response()->json(['product_id' => $product->id, 'saved' => in_array($product->id, $saved), 'count' => count($saved), 'message' => in_array($product->id, $saved) ? 'Added to your saved items.' : 'Removed from saved items.']);
         }
 
         return back()->with('success', in_array($product->id, $saved) ? 'Added to your saved items.' : 'Removed from saved items.');

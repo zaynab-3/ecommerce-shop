@@ -30,7 +30,7 @@ html.has-mobile-navigation { overflow: hidden; overscroll-behavior: none; }
 .drawer-category-link > .icon:last-child { margin-left: auto; }
 .drawer-links, .drawer-utilities { display: grid; gap: 6px; }
 .drawer-links a.active { color: var(--store-accent-ink); background: transparent; font-weight: 700; }
-.drawer-links a:hover, .drawer-utilities a:hover, .drawer-help:hover { text-decoration: underline; text-underline-offset: 5px; }
+.drawer-links a:hover, .drawer-utilities a:hover, .drawer-help:hover { color: var(--store-accent-ink); font-weight: 700; text-decoration: none; }
 .drawer-cart-count { margin-left: auto; color: var(--store-accent-ink); background: transparent; padding: 0 8px; font-size: 13px; font-weight: 700; }
 .drawer-help { color: #000; }
 @keyframes drawer-enter { from { transform: translateX(-100%); } to { transform: translateX(0); } }

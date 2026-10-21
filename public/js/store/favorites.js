@@ -10,6 +10,8 @@ document.addEventListener("submit", (event) => {
     serial(async () => {
         try {
             const data = await request(form.action, { method: "POST", body: new FormData(form) });
+            document.querySelectorAll("[data-saved-count]").forEach((counter) => { counter.textContent = data.count; });
+            document.querySelector(".saved-link")?.setAttribute("aria-label", `Saved items, ${data.count} items`);
             document.querySelectorAll(`[data-ajax-save][data-product-id="${data.product_id}"]`).forEach((match) => {
                 const control = match.querySelector("button");
                 control.classList.toggle("is-saved", data.saved);

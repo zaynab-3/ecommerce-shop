@@ -217,8 +217,25 @@ class ShopTest extends TestCase
     public function test_ajax_saved_toggle_returns_state_without_redirect_or_flash(): void
     {
         $p = $this->product();
-        $this->postJson(route('saved.toggle', $p))->assertOk()->assertJsonPath('saved', true)->assertJsonPath('product_id', $p->id)->assertSessionHas('saved', [$p->id])->assertSessionMissing('success');
-        $this->postJson(route('saved.toggle', $p))->assertOk()->assertJsonPath('saved', false)->assertSessionHas('saved', []);
+        $other = $this->product();
+        $this->postJson(route('saved.toggle', $p))->assertOk()->assertJsonPath('saved', true)->assertJsonPath('count', 1)->assertJsonPath('product_id', $p->id)->assertSessionHas('saved', [$p->id])->assertSessionMissing('success');
+        $this->postJson(route('saved.toggle', $other))->assertOk()->assertJsonPath('count', 2)->assertSessionHas('saved', [$p->id, $other->id]);
+        $this->postJson(route('saved.toggle', $p))->assertOk()->assertJsonPath('saved', false)->assertJsonPath('count', 1)->assertSessionHas('saved', [$other->id]);
+        $this->postJson(route('saved.toggle', $other))->assertOk()->assertJsonPath('saved', false)->assertJsonPath('count', 0)->assertSessionHas('saved', []);
+    }
+
+    public function test_header_shows_cart_and_saved_counts_with_the_simplified_navigation(): void
+    {
+        $p = $this->product();
+        $other = $this->product();
+        $this->withSession(['cart' => $this->cart($p, 3), 'saved' => [$p->id, $other->id]])
+            ->get(route('shop'))->assertOk()
+            ->assertSee('Saved items, 2 items')->assertSee('Shopping cart, 3 items')
+            ->assertSee('data-saved-count aria-hidden="true">2</span>', false)
+            ->assertSee('data-cart-count aria-hidden="true">3</span>', false)
+            ->assertSeeInOrder(['class="nav-links"', '>Discover</a>', '>Shop</a>'], false)
+            ->assertDontSee('class="bag-label"', false)->assertDontSee('All categories')
+            ->assertDontSee('Shop all')->assertDontSee('New arrivals')->assertDontSee('Everyday value');
     }
 
     public function test_public_stock_polling_does_not_write_a_session_cookie(): void

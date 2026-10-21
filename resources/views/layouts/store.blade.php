@@ -24,8 +24,7 @@
     <div class="store-chrome" data-store-header>
     <div class="announcement">
         <div class="container announcement-inner"><span>Delivery areas at checkout</span><span
-                class="announcement-center">Cash on delivery <x-icon name="arrow"
-                    width="14" height="14" /></span><a href="{{ route('help') }}">Help & support</a></div>
+                class="announcement-center">Cash on delivery</span><a href="{{ route('help') }}">Help & support</a></div>
     </div>
     <header class="site-header">
         <div class="container header-inner">
@@ -35,11 +34,11 @@
                     class="logo-dot">.</span></a>
             <button class="header-search-trigger" type="button" data-search-toggle aria-label="Open search" aria-controls="search-dialog" aria-haspopup="dialog" aria-expanded="false"><x-icon name="search" /><span>Search products…</span></button>
             <div class="header-actions"><button type="button" class="icon-button mobile-search-toggle" data-search-toggle aria-label="Open search" aria-expanded="false" aria-controls="search-dialog" aria-haspopup="dialog"><x-icon name="search" /></button><a href="{{ route('shop', ['saved' => 1]) }}" class="icon-button saved-link"
-                    aria-label="Saved items"><x-icon name="heart" /></a><a class="cart-link"
+                    aria-label="Saved items, {{ count(session('saved', [])) }} items"><x-icon name="heart" /><span class="header-count" data-saved-count aria-hidden="true">{{ count(session('saved', [])) }}</span></a><a class="cart-link"
                     href="{{ route('cart.index') }}"
                     aria-label="Shopping cart, {{ collect(session('cart', []))->sum('quantity') }} items"><x-icon
-                        name="bag" /><span class="bag-label">My cart</span><span
-                        class="bag-count" data-cart-count>{{ collect(session('cart', []))->sum('quantity') }}</span></a></div>
+                        name="bag" /><span
+                        class="bag-count header-count" data-cart-count aria-hidden="true">{{ collect(session('cart', []))->sum('quantity') }}</span></a></div>
         </div>
         <nav class="main-nav" aria-label="Main navigation">
             <div class="container nav-inner" data-mobile-nav>
@@ -73,7 +72,6 @@
             </div>
             <div>
                 <h3>Explore</h3><a href="{{ route('shop') }}">All products</a><a
-                    href="{{ route('shop', ['sort' => 'newest']) }}">New arrivals</a><a
                     href="{{ route('shop', ['saved' => 1]) }}">Your saved items</a>
             </div>
             <div>

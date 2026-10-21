@@ -26,12 +26,12 @@ $initialImage = ($firstColor ? $product->images->firstWhere('product_color_id', 
     <div class="product-card-body">
     <div class="product-meta"><span>{{ $product->category->name }}</span><x-stock :product="$product" /></div>
     <h3><a href="{{ route('products.show', $product) }}">{{ $product->name }}</a></h3>
-    <div class="card-colors" aria-label="Colors for {{ $product->name }}">
+    @if ($product->colors->isNotEmpty())<div class="card-colors" aria-label="Colors for {{ $product->name }}">
         @foreach ($product->colors as $color)
             @php($colorImage = $product->images->firstWhere('product_color_id', $color->id) ?? $product->images->firstWhere('product_color_id', null) ?? $product->images->first())
             <button type="button" data-card-color data-color-id="{{ $color->id }}" data-color-image="{{ $colorImage?->thumbnail_url ?? $product->image_url }}" data-color-srcset="{{ $colorImage?->thumbnail_url ?? $product->image_url }} 480w, {{ $colorImage?->url ?? $product->image_url }} 1600w" aria-pressed="{{ $loop->first ? 'true' : 'false' }}" aria-label="Select {{ $color->name }} for {{ $product->name }}" title="{{ $color->name }}"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="{{ $color->hex ?? '#ffffff' }}" stroke="currentColor" stroke-width="1" />@unless($color->hex)<path d="m5 19 14-14" stroke="currentColor" />@endunless</svg></button>
         @endforeach
-    </div>
+    </div>@endif
 
     <div class="product-purchase-row">
     <div class="product-bottom">

@@ -5,7 +5,7 @@
         <h2>{{ $title }}</h2>
         <div class="carousel-actions">
             <button type="button" class="icon-button carousel-autoplay" data-carousel-autoplay aria-label="Pause automatic scrolling" title="Pause automatic scrolling" hidden><x-icon name="pause" data-carousel-pause /><x-icon name="play" data-carousel-play hidden /></button>
-            <a class="carousel-shop-all" href="{{ $href }}">Shop all <x-icon name="arrow" width="18" /></a>
+            <a class="carousel-shop-all" href="{{ $href }}">Shop <x-icon name="arrow" width="18" /></a>
             <button type="button" class="carousel-arrow" data-carousel-prev aria-label="Previous products" disabled><x-icon name="chevron" width="18" /></button>
             <button type="button" class="carousel-arrow" data-carousel-next aria-label="Next products" disabled><x-icon name="chevron" width="18" /></button>
         </div>

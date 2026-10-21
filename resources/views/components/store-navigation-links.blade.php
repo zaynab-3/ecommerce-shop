@@ -1,10 +1,7 @@
 @props(['drawer' => false])
-<a class="{{ $drawer ? 'drawer-category-link' : 'all-categories' }}" href="{{ route('shop') }}"><x-icon name="grid" /> All categories @if ($drawer)<x-icon name="chevron" width="16" />@endif</a>
 <div class="{{ $drawer ? 'drawer-links' : 'nav-links' }}">
     <a class="{{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif>Discover</a>
-    <a class="{{ request()->routeIs('shop') && !request('saved') ? 'active' : '' }}" href="{{ route('shop') }}" @if(request()->routeIs('shop') && !request('saved')) aria-current="page" @endif>Shop all</a>
-    <a href="{{ route('shop', ['sort' => 'newest']) }}">New arrivals <span class="new-pill">NEW</span></a>
-    <a href="{{ route('shop', ['sort' => 'price_asc']) }}">Everyday value</a>
+    <a class="{{ request()->routeIs('shop') && !request('saved') ? 'active' : '' }}" href="{{ route('shop') }}" @if(request()->routeIs('shop') && !request('saved')) aria-current="page" @endif>Shop</a>
 </div>
 @if ($drawer)
     <div class="drawer-utilities">
