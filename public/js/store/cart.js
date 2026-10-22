@@ -115,8 +115,10 @@ document.addEventListener("submit", (event) => {
     if (checkout) {
         form.querySelector('[data-checkout-errors]').hidden = true;
         form.querySelectorAll('[aria-invalid]').forEach((input) => input.removeAttribute('aria-invalid'));
-        const phone = String(body.get('phone') || '').trim();
-        body.set('phone', phone ? '+961' + nationalNumber(phone) : '');
+        if (body.has('phone')) {
+            const phone = String(body.get('phone') || '').trim();
+            body.set('phone', phone ? '+961' + nationalNumber(phone) : '');
+        }
     }
     form.dataset.busy = "1";
     const controls = [...form.querySelectorAll('button')].filter((button) => !button.disabled);
@@ -143,8 +145,14 @@ document.addEventListener("submit", (event) => {
                 if (data.redirect) { originalUrl = location.href; await openDialog(dialog); await loadCart('checkout'); }
             }
         } catch (error) {
-            if (checkout) showCheckoutError(form, error);
-            else toast(error.message || "The update could not be confirmed. Check your cart before trying again.", "error");
+            if (checkout) {
+                // Settings may have changed while a WhatsApp checkout was open.
+                if (error.details?.phone && !form.elements.namedItem('phone')) {
+                    try { await loadCart('checkout'); }
+                    catch { /* Keep the validation message if the refresh fails. */ }
+                    showCheckoutError(content.querySelector('[data-checkout]') || form, error);
+                } else showCheckoutError(form, error);
+            } else toast(error.message || "The update could not be confirmed. Check your cart before trying again.", "error");
         } finally {
             delete form.dataset.busy;
             controls.forEach((button) => { button.disabled = button.dataset.stockUnavailable === "1"; button.removeAttribute('aria-busy'); });

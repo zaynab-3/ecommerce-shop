@@ -261,7 +261,7 @@ class ManagementAnalyticsTest extends TestCase
         $this->get(route('admin.team.index'))->assertOk()->assertSee('data-team-edit', false)->assertDontSee($hash);
     }
 
-    public function test_checkout_phone_is_optional_only_when_a_whatsapp_handoff_is_available(): void
+    public function test_checkout_hides_phone_for_whatsapp_and_requires_it_when_whatsapp_is_unavailable(): void
     {
         $p = $this->product();
         StoreSetting::first()->update(['delivery_enabled' => false, 'whatsapp_enabled' => true, 'whatsapp_recipient' => '96170123456']);
@@ -269,7 +269,9 @@ class ManagementAnalyticsTest extends TestCase
         $key = (string) Str::uuid();
         $cart = [$p->id.'-none' => ['product_id' => $p->id, 'color_id' => null, 'quantity' => 1]];
         $data = ['idempotency_key' => $key, 'customer_name' => 'WhatsApp customer', 'address' => 'Valid street building 12'];
-        $this->withSession(['cart' => $cart, 'checkout_key' => $key])->get(route('checkout'))->assertOk()->assertSee('(optional)');
+        $this->withSession(['cart' => $cart, 'checkout_key' => $key])->get(route('checkout'))->assertOk()->assertDontSee('name="phone"', false)->assertDontSee('data-lebanese-phone', false);
+        $cartResponse = $this->getJson(route('cart.index'))->assertOk()->assertJsonPath('count', 1);
+        $this->assertStringNotContainsString('name="phone"', $cartResponse->json('html'));
         $response = $this->postJson(route('checkout.store'), $data)->assertOk();
         $order = Order::firstOrFail();
         $this->assertNull($order->phone);
@@ -281,12 +283,14 @@ class ManagementAnalyticsTest extends TestCase
             StoreSetting::first()->update(['whatsapp_enabled' => $enabled, 'whatsapp_recipient' => $recipient]);
             Cache::forget('store.settings');
             $key = (string) Str::uuid();
+            $page = $this->withSession(['cart' => $cart, 'checkout_key' => $key])->get(route('checkout'))->assertOk()->assertSee('name="phone"', false)->assertSee('data-lebanese-phone required', false);
+            $this->assertDoesNotMatchRegularExpression('/Phone number\s*<small>\(optional\)<\/small>/', $page->getContent());
             $this->withSession(['cart' => $cart, 'checkout_key' => $key])->postJson(route('checkout.store'), [...$data, 'idempotency_key' => $key])->assertUnprocessable()->assertJsonValidationErrors('phone');
             $this->assertSame(1, Order::count());
         }
     }
 
-    public function test_optional_phone_still_validates_supplied_values_and_normalizes_them(): void
+    public function test_whatsapp_checkout_validates_any_phone_submitted_by_an_older_client(): void
     {
         StoreSetting::first()->update(['delivery_enabled' => false, 'whatsapp_enabled' => true, 'whatsapp_recipient' => '96170123456']);
         Cache::forget('store.settings');

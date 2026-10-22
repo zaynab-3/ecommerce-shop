@@ -6,9 +6,11 @@
     <section class="checkout-details"><h2>Your details</h2>
     <div class="field-grid">
         <label class="field full-span"><span>Full name</span><input name="customer_name" value="{{ old('customer_name') }}" placeholder="Your full name" autocomplete="name" maxlength="120" required></label>
-        <label class="field full-span"><span>Phone number @if($settings->canSendOrdersToWhatsApp())<small>(optional)</small>@endif</span>
-            <span class="phone-field"><span class="phone-prefix" aria-hidden="true">+961</span><input name="phone" type="tel" inputmode="tel" value="{{ old('phone') }}" placeholder="70 123 456" autocomplete="tel-national" maxlength="30" aria-label="Lebanese phone number, country code +961" data-lebanese-phone @required(!$settings->canSendOrdersToWhatsApp())></span>
+        @if (!$settings->canSendOrdersToWhatsApp())
+        <label class="field full-span"><span>Phone number</span>
+            <span class="phone-field"><span class="phone-prefix" aria-hidden="true">+961</span><input name="phone" type="tel" inputmode="tel" value="{{ old('phone') }}" placeholder="70 123 456" autocomplete="tel-national" maxlength="30" aria-label="Lebanese phone number, country code +961" data-lebanese-phone required></span>
         </label>
+        @endif
         @if ($settings->delivery_enabled)
             <label class="field full-span"><span>Delivery area</span><select name="delivery_zone_id" id="delivery-zone" required>
                 <option value="" data-fee="0">Select your area</option>
