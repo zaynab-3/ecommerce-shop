@@ -94,7 +94,7 @@ with sync_playwright() as playwright:
                     session = next(cookie for cookie in context.cookies() if cookie["name"] == "mesh_owner_preview")
                     assert session["secure"] and session["httpOnly"], "Admin session must use a secure, HttpOnly cookie"
                     edit_path = None
-                    for path in ("", "/products", "/products/create", "@edit", "/categories", "/delivery", "/settings", "/team", "/orders"):
+                    for path in ("", "/products", "/products/create", "@edit", "/categories", "/delivery", "/settings", "/team", "/orders", "/analytics"):
                         if path == "@edit":
                             assert edit_path, "The demo product must have an edit link"
                             path = edit_path
@@ -106,6 +106,18 @@ with sync_playwright() as playwright:
                         assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), (engine.name, width, path)
                         if width == 390:
                             assert page.locator("html").evaluate("e => getComputedStyle(e).scrollbarWidth") == "none"
+                        if path in ("/team", "/categories", "/delivery"):
+                            kind = {"/team": "team", "/categories": "category", "/delivery": "delivery"}[path]
+                            page.locator(f'[data-editor-open="{kind}"]').first.click()
+                            dialog = page.locator(f'[data-editor="{kind}"]')
+                            expect(dialog).to_be_visible()
+                            field = dialog.locator('input[name="name"]')
+                            field.focus()
+                            assert field.evaluate('e => getComputedStyle(e).outlineStyle === "none" && getComputedStyle(e).borderTopWidth === "0px"'), (engine.name, width, path, "input focus")
+                            assert dialog.evaluate('e => e.scrollWidth <= e.clientWidth'), (engine.name, width, path, "dialog overflow")
+                            page.screenshot(path=str(output / f"{engine.name}-{width}-admin-{kind}-editor.png"))
+                            page.keyboard.press("Escape")
+                            expect(dialog).to_be_hidden()
                         admin_results.append({"engine": engine.name, "width": width, "path": "/manage-store" + path})
                     page.screenshot(path=str(output / f"{engine.name}-{width}-admin-orders.png"))
                     stage = f"{engine.name}/{width}/admin logout"

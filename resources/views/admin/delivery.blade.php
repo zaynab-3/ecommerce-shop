@@ -1,58 +1,15 @@
 @extends('layouts.admin')
 @section('title', 'Delivery areas')
-@section('content')<x-admin-heading title="Delivery areas" />
-    <div class="admin-form-layout">
-        <div class="admin-form-primary">
-            <form method="post" action="{{ route('admin.delivery.update') }}" class="admin-panel form-panel">@csrf
-                @method('PATCH')<div class="panel-heading compact">
-                    <div>
-                        <h2>Delivery areas</h2>
-                        <p>Only enabled areas are available at checkout.</p>
-                    </div><label class="checkbox-field"><input type="checkbox" data-select-all="zones[]"> Select all</label>
-                </div>
-                <div class="bulk-delivery-controls"><label class="field">Delivery price (USD)<input name="fee"
-                            type="number" min="0" max="1000" step="0.01" value="{{ old('fee', '3.00') }}"
-                            required></label><label class="field">Availability<select name="is_active">
-                            <option value="1">Delivery available</option>
-                            <option value="0">Unavailable</option>
-                        </select></label><button class="button button-dark">Apply to selected <x-icon
-                            name="check" /></button></div>
-                @foreach ($zones as $gov => $areas)
-                    <section class="zone-group">
-                        <div class="zone-heading">
-                            <h3>{{ $gov }}</h3><button type="button" class="text-link"
-                                data-select-group="{{ $loop->index }}">Select group</button>
-                        </div>
-                        <div class="zone-grid" data-zone-group="{{ $loop->index }}">
-                            @foreach ($areas as $zone)
-                                <label class="zone-card"><input name="zones[]" type="checkbox"
-                                        value="{{ $zone->id }}"><span><strong>{{ $zone->name }}</strong><small>{{ $zone->is_active ? '$' . number_format($zone->fee_cents / 100, 2) : 'Not available' }}</small></span><span
-                                        class="zone-dot {{ $zone->is_active ? 'enabled' : '' }}"></span></label>
-                            @endforeach
-                        </div>
-                    </section>
-                @endforeach
-            </form>
-        </div>
-        <aside class="admin-form-secondary">
-            <section class="admin-panel form-panel"><x-icon name="truck" width="30" />
-                <h2 class="spaced-title">Delivery settings</h2>
-                <p class="panel-description">Use select-all, a governorate group, or individual areas. Apply one price and
-                    availability setting to your selection.</p>
-                <p class="panel-description">The store-wide delivery fee switch is in Store settings. Fees are calculated
-                    again on the server during checkout.</p><a class="text-link" href="{{ route('delivery.areas') }}"
-                    target="_blank" rel="noopener">Delivery areas JSON API <x-icon name="arrow" width="15" /></a>
-            </section>
-            <form method="post" action="{{ route('admin.delivery.store') }}" class="admin-panel form-panel">@csrf<h2>Add
-                    an area</h2>
-                <div class="field-grid single"><label class="field">Area or town<input name="name" required
-                            maxlength="100"></label><label class="field">Governorate<input name="governorate"
-                            list="governorates" required maxlength="100"><datalist id="governorates">
-                            @foreach ($zones->keys() as $gov)
-                                <option value="{{ $gov }}">
-                            @endforeach
-                        </datalist></label><button class="button button-light">Add delivery area <x-icon
-                            name="plus" /></button></div>
-            </form>
-        </aside>
-</div>@endsection
+@section('content')
+<x-admin-heading title="Delivery areas" description="Set each area's price and availability, or add a new town."><button class="button button-dark" data-editor-open="delivery"><x-icon name="plus" />Add delivery area</button></x-admin-heading>
+<section class="delivery-pricing-setting"><div><h2>Delivery fees at checkout</h2><p>{{ $settings->delivery_enabled ? 'Customers choose an enabled area and its delivery price is added.' : 'Delivery area selection and fees are currently off at checkout.' }}</p></div>@if(auth()->user()->role === 'owner')<form method="post" action="{{ route('admin.delivery.settings') }}">@csrf @method('PATCH')<label class="checkbox-field"><input type="hidden" name="delivery_enabled" value="0"><input type="checkbox" name="delivery_enabled" value="1" @checked($settings->delivery_enabled)>Enabled</label><button class="icon-button" aria-label="Save checkout delivery setting"><x-icon name="check" /></button></form>@else<strong>{{ $settings->delivery_enabled ? 'Enabled' : 'Disabled' }}</strong>@endif</section>
+<section class="admin-panel management-list">
+    <form method="get" class="management-toolbar"><strong>{{ $zones->total() }} areas</strong><div class="management-filter-controls"><label class="admin-search"><x-icon name="search" /><input name="q" value="{{ request('q') }}" placeholder="Find an area, e.g. Nabatieh" maxlength="100" aria-label="Search delivery areas"></label><select name="governorate" aria-label="Filter governorate"><option value="">All governorates</option>@foreach($governorates as $gov)<option @selected(request('governorate') === $gov)>{{ $gov }}</option>@endforeach</select><button class="icon-button" aria-label="Filter delivery areas"><x-icon name="search" /></button></div></form>
+    <form method="post" action="{{ route('admin.delivery.update') }}" id="delivery-bulk" class="delivery-bulk-form">@csrf @method('PATCH')<label class="checkbox-field"><input type="checkbox" data-select-page>Select this page</label><span data-selection-count>0 selected</span><label class="quick-money"><span>$</span><input name="fee" type="number" min="0" max="1000" step="0.01" value="3.00" aria-label="Price for selected areas" required></label><select name="is_active" aria-label="Availability for selected areas"><option value="1">Available</option><option value="0">Unavailable</option></select><button class="text-link" type="submit"><x-icon name="check" />Update selected</button></form>
+    <div class="table-scroll admin-table-viewport" tabindex="0" role="region" aria-label="Delivery area prices" data-admin-table><table class="management-table delivery-table"><thead><tr><th><span class="sr-only">Select</span></th><th>Area / town</th><th>Governorate</th><th>Delivery price · USD</th><th>Available at checkout</th><th>Save</th></tr></thead><tbody>
+        @forelse($zones as $zone)<tr data-zone-row="{{ $zone->id }}"><td data-label="Select"><input type="checkbox" name="zones[]" value="{{ $zone->id }}" form="delivery-bulk" aria-label="Select {{ $zone->name }}"></td><td data-label="Area"><strong>{{ $zone->name }}</strong></td><td data-label="Governorate">{{ $zone->governorate }}</td><td data-label="Price · USD"><label class="quick-money"><span>$</span><input type="number" name="fee" form="zone-{{ $zone->id }}" min="0" max="1000" step="0.01" value="{{ number_format($zone->fee_cents / 100, 2, '.', '') }}" aria-label="Delivery price for {{ $zone->name }}" required></label></td><td data-label="Availability"><label class="checkbox-field"><input type="hidden" name="is_active" value="0" form="zone-{{ $zone->id }}"><input type="checkbox" name="is_active" value="1" form="zone-{{ $zone->id }}" @checked($zone->is_active) aria-label="Delivery available in {{ $zone->name }}"><span>{{ $zone->is_active ? 'Available' : 'Unavailable' }}</span></label></td><td data-label="Save"><form id="zone-{{ $zone->id }}" method="post" action="{{ route('admin.delivery.quick', $zone) }}" data-zone-quick>@csrf @method('PATCH')<button class="icon-button" aria-label="Save delivery price for {{ $zone->name }}" title="Save area"><x-icon name="check" /></button></form></td></tr>
+        @empty<tr><td colspan="6"><div class="table-empty"><h3>No areas found</h3><p>Try another search, or use Add delivery area above.</p></div></td></tr>@endforelse
+    </tbody></table></div>
+</section><x-admin-pagination :items="$zones" />
+<dialog class="admin-editor-dialog" id="delivery-editor" data-editor="delivery"><div class="admin-editor-header"><h2>Add delivery area</h2><button class="icon-button" data-editor-close aria-label="Close delivery editor"><x-icon name="close" /></button></div><div class="admin-editor-body"><form method="post" action="{{ route('admin.delivery.store') }}" data-reopen="{{ $errors->any() && old('_editor_type') === 'delivery' ? '1' : '0' }}">@csrf<input type="hidden" name="_editor_type" value="delivery">@if($errors->any() && old('_editor_type') === 'delivery')<div class="admin-editor-errors" role="alert">@foreach($errors->all() as $message)<p>{{ $message }}</p>@endforeach</div>@endif<div class="field-grid"><label class="field full-span">Area / town name<input name="name" value="{{ old('name') }}" placeholder="e.g. Nabatieh" maxlength="100" required></label><label class="field full-span">Governorate<input name="governorate" value="{{ old('governorate') }}" list="delivery-governorates" placeholder="Choose or type a governorate" maxlength="100" required><datalist id="delivery-governorates">@foreach($governorates as $gov)<option value="{{ $gov }}">@endforeach</datalist></label><label class="field">Delivery price · USD<input name="fee" type="number" min="0" max="1000" step="0.01" value="{{ old('fee', '3.00') }}" required></label><label class="checkbox-field"><input type="hidden" name="is_active" value="0"><input type="checkbox" name="is_active" value="1" @checked(old('is_active', true))>Available at checkout</label></div><button class="button button-dark">Add area <x-icon name="check" /></button></form></div></dialog>
+@endsection

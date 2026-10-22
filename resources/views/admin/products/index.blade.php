@@ -1,88 +1,25 @@
 @extends('layouts.admin')
 @section('title', 'Products')
-@section('content')<x-admin-heading title="Products">
-        <a class="button button-dark" href="{{ route('admin.products.create') }}"><x-icon name="plus" /> Add
-            product</a></x-admin-heading>
-    <section class="admin-panel">
-        <div class="panel-heading">
-            <div>
-                <h2>All products</h2>
-                <p>{{ $products->total() }} products</p>
-            </div>
-            <form class="admin-search" method="get"><x-icon name="search" /><input name="q"
-                    value="{{ request('q') }}" placeholder="Find a product" maxlength="100"
-                    aria-label="Search products"><button>Search</button></form>
-        </div>
-        <p class="table-hint">Scroll across for stock and visibility controls.</p>
-        <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table">
-            <table class="products-table">
-                <thead>
-                    <tr>
-                        <th>Order</th>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Stock · quick update</th>
-                        <th>Visibility</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($products as $product)
-                        <tr>
-                            <td><x-reorder type="products" :id="$product->id" /></td>
-                            <td><a class="table-product" href="{{ route('admin.products.edit', $product) }}"><img
-                                        src="{{ $product->image_url }}" alt="" width="50"
-                                        height="50"><span><strong>{{ $product->name }}</strong><small>{{ $product->category->name }}
-                                            · {{ $product->sku }}</small></span></a></td>
-                            <td>${{ number_format($product->price_cents / 100, 2) }}</td>
-                            <td>
-                                <div class="stock-quick"><x-stock :product="$product" />
-                                    @if ($product->stock_mode === 'tracked')
-                                        <div class="quantity-quick">
-                                            <strong>{{ $product->quantity }}</strong><span>units</span>
-                                            <form method="post" action="{{ route('admin.products.quick', $product) }}">
-                                                @csrf @method('PATCH')<input type="number" name="delta" value="1"
-                                                    min="-100000" max="100000"
-                                                    aria-label="Stock adjustment for {{ $product->name }}" required><button
-                                                    title="Add or subtract stock"
-                                                    aria-label="Apply stock adjustment for {{ $product->name }}">Apply</button>
-                                            </form>
-                                    </div><small class="muted">Low at {{ $product->low_stock_threshold }}</small>@else
-                                        <form method="post" action="{{ route('admin.products.quick', $product) }}"
-                                            class="inline-form">@csrf @method('PATCH')<select name="manual_stock_status"
-                                                aria-label="Stock status for {{ $product->name }}">
-                                                @foreach (['available' => 'Available', 'low' => 'Low stock', 'out' => 'Out of stock'] as $value => $label)
-                                                    <option value="{{ $value }}" @selected($product->manual_stock_status === $value)>
-                                                        {{ $label }}</option>
-                                                @endforeach
-                                            </select>
-                                            <button>Set</button>
-                                        </form><small class="muted">Open quantity</small>
-                                    @endif
-                                </div>
-                            </td>
-                            <td>
-                                <form method="post" action="{{ route('admin.products.quick', $product) }}">@csrf
-                                    @method('PATCH')<input type="hidden" name="is_active"
-                                        value="{{ $product->is_active ? 0 : 1 }}"><button
-                                        class="visibility-toggle {{ $product->is_active ? 'on' : '' }}"
-                                        aria-label="{{ $product->is_active ? 'Hide' : 'Publish' }} {{ $product->name }}"
-                                        aria-pressed="{{ $product->is_active ? 'true' : 'false' }}"><span></span>{{ $product->is_active ? 'Visible' : 'Hidden' }}</button>
-                                </form>
-                            </td>
-                            <td><a class="icon-button" href="{{ route('admin.products.edit', $product) }}"
-                                    aria-label="Edit {{ $product->name }}"><x-icon name="edit" width="17" /></a>
-                            </td>
-                    </tr>@empty<tr>
-                            <td colspan="6">
-                                <div class="table-empty"><x-icon name="box" />
-                                    <h3>No products yet</h3>
-                                    <p>Add your first product to get started.</p>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-</section><x-admin-pagination :items="$products" />@endsection
+@section('content')
+<x-admin-heading title="Products" description="Edit prices and stock here, or open a product for its full details."><a class="button button-dark" href="{{ route('admin.products.create') }}"><x-icon name="plus" />Add product</a></x-admin-heading>
+<section class="admin-panel management-list">
+    <div class="management-toolbar"><strong>{{ $products->total() }} products <small>· 15 per page</small></strong><form class="admin-search" method="get"><x-icon name="search" /><input name="q" value="{{ request('q') }}" placeholder="Find a product" maxlength="100" aria-label="Search products"><button class="icon-button" aria-label="Search products"><x-icon name="search" /></button></form></div>
+    <div class="table-scroll admin-table-viewport" tabindex="0" role="region" aria-label="Product prices and stock" data-admin-table>
+    <table class="products-table management-table"><thead><tr><th>Order</th><th>Product</th><th>Price · USD</th><th>Quantity / availability</th><th>Visibility</th><th><span class="sr-only">Edit</span></th></tr></thead><tbody>
+    @forelse($products as $product)
+        <tr data-product-row="{{ $product->id }}">
+            <td data-label="Order"><x-reorder type="products" :id="$product->id" /></td>
+            <td data-label="Product"><a class="table-product" href="{{ route('admin.products.edit', $product) }}"><img src="{{ $product->image_url }}" alt="" width="42" height="42"><span><strong>{{ $product->name }}</strong><small>{{ $product->category->name }} · {{ $product->sku }}</small></span></a></td>
+            <td data-label="Price · USD"><form class="quick-price" method="post" action="{{ route('admin.products.quick', $product) }}" data-quick-product>@csrf @method('PATCH')<div><label class="quick-money"><span>$</span><input type="number" name="price" min="0" max="1000000" step="0.01" value="{{ number_format($product->price_cents / 100, 2, '.', '') }}" aria-label="Price for {{ $product->name }}" required></label><label class="quick-money compare-price"><span>Was</span><input type="number" name="compare_price" min="0" max="1000000" step="0.01" value="{{ $product->compare_price_cents === null ? '' : number_format($product->compare_price_cents / 100, 2, '.', '') }}" placeholder="—" aria-label="Compare price for {{ $product->name }}"></label></div><button class="icon-button" aria-label="Save price for {{ $product->name }}" title="Save price"><x-icon name="check" /></button></form></td>
+            <td data-label="Quantity / availability"><div class="quick-stock"><span class="quick-stock-label" data-product-status>{{ ['available' => 'In stock', 'low' => 'Low stock', 'out' => 'Out of stock'][$product->stock_status] }}</span>
+                <form method="post" action="{{ route('admin.products.quick', $product) }}" data-quick-product class="quick-quantity">@csrf @method('PATCH')
+                @if($product->stock_mode === 'tracked')<input type="hidden" name="stock_revision" value="{{ $product->stock_revision }}"><div class="quantity-inline-control"><button type="button" class="icon-button" data-quantity-step="-1" aria-label="Decrease quantity for {{ $product->name }}"><x-icon name="minus" /></button><input name="quantity" type="number" min="0" max="10000000" value="{{ $product->quantity }}" aria-label="Quantity for {{ $product->name }}" required><button type="button" class="icon-button" data-quantity-step="1" aria-label="Increase quantity for {{ $product->name }}"><x-icon name="plus" /></button></div>
+                @else<select name="manual_stock_status" aria-label="Availability for {{ $product->name }}">@foreach(['available' => 'Available', 'low' => 'Low stock', 'out' => 'Out of stock'] as $value => $label)<option value="{{ $value }}" @selected($product->manual_stock_status === $value)>{{ $label }}</option>@endforeach</select>@endif
+                <button class="icon-button" aria-label="Save stock for {{ $product->name }}" title="Save stock"><x-icon name="check" /></button></form><small>{{ $product->stock_mode === 'tracked' ? 'Low-stock threshold: '.$product->low_stock_threshold : 'Open quantity' }}</small></div></td>
+            <td data-label="Visibility"><form method="post" action="{{ route('admin.products.quick', $product) }}" data-quick-product data-visibility-form>@csrf @method('PATCH')<input type="hidden" name="is_active" value="{{ $product->is_active ? 0 : 1 }}"><button class="plain-visibility" aria-label="{{ $product->is_active ? 'Hide' : 'Publish' }} {{ $product->name }}" aria-pressed="{{ $product->is_active ? 'true' : 'false' }}"><x-icon name="eye" /><span>{{ $product->is_active ? 'Visible' : 'Hidden' }}</span></button></form></td>
+            <td data-label="Details"><a class="icon-button" href="{{ route('admin.products.edit', $product) }}" aria-label="Edit {{ $product->name }}"><x-icon name="edit" /></a></td>
+        </tr>
+    @empty<tr><td colspan="6"><div class="table-empty"><h3>No products found</h3><p>Try another search or add a product.</p></div></td></tr>@endforelse
+    </tbody></table></div>
+</section><x-admin-pagination :items="$products" />
+@endsection

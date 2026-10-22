@@ -1,8 +1,8 @@
 <div class="container confirmation-page">
         <div class="confirmation-icon"><x-icon name="check" width="40" height="40" /></div>
-        <h1>Order received</h1>
-        <p>Your order has been received. Our team will contact you to confirm the details.</p>
-        @if($whatsappUrl)
+        <h1>{{ $order->status === 'cancelled' ? 'Order cancelled' : 'Order received' }}</h1>
+        <p>{{ $order->status === 'cancelled' ? 'This order has been cancelled. Contact the store if you need help.' : 'Your order has been received. Our team will contact you to confirm the details.' }}</p>
+        @if($whatsappUrl && $order->status !== 'cancelled')
             <x-whatsapp-order :url="$whatsappUrl" :auto-open="$autoOpenWhatsApp" />
         @endif
         <div class="confirmation-card">

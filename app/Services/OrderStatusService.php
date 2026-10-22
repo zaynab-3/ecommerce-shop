@@ -23,14 +23,42 @@ class OrderStatusService
                 throw ValidationException::withMessages(['status' => 'This order cannot move to that status.']);
             }
             if ($status === 'cancelled' && ! $order->stock_restored_at) {
-                foreach ($order->items->where('tracked_stock', true)->sortBy('product_id') as $item) {
-                    Product::whereKey($item->product_id)->where('stock_mode', 'tracked')->increment('quantity', $item->quantity, ['stock_revision' => DB::raw('stock_revision + 1')]);
-                }$order->stock_restored_at = now();
+                $this->restoreStock($order);
             }
             $order->status = $status;
             $order->assigned_to = $assignee;
             $order->save();
             AuditLog::record('order.updated', $order->number, ['status' => $status, 'assigned_to' => $assignee]);
         });
+    }
+
+    public function delete(Order $order): void
+    {
+        abort_unless(auth()->user()?->role === 'owner', 403);
+        app(TransactionService::class)->run(function () use ($order) {
+            $order = Order::withTrashed()->with('items')->whereKey($order->id)->lockForUpdate()->firstOrFail();
+            if ($order->trashed()) {
+                return;
+            }
+            $previousStatus = $order->status;
+            if (in_array($order->status, ['pending', 'confirmed', 'processing'], true)) {
+                if (! $order->stock_restored_at) {
+                    $this->restoreStock($order);
+                }
+                $order->status = 'cancelled';
+                $order->save();
+            }
+            $order->delete();
+            AuditLog::record('order.deleted', $order->number, ['previous_status' => $previousStatus, 'status' => $order->status, 'history_retained' => true]);
+            DB::afterCommit(fn () => CatalogRevision::publish());
+        });
+    }
+
+    private function restoreStock(Order $order): void
+    {
+        foreach ($order->items->where('tracked_stock', true)->sortBy('product_id') as $item) {
+            Product::whereKey($item->product_id)->where('stock_mode', 'tracked')->increment('quantity', $item->quantity, ['stock_revision' => DB::raw('stock_revision + 1')]);
+        }
+        $order->stock_restored_at = now();
     }
 }

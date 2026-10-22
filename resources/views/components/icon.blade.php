@@ -2,6 +2,15 @@
 <svg
     {{ $attributes->merge(['class' => 'icon', 'width' => '20', 'height' => '20', 'viewBox' => '0 0 24 24', 'fill' => 'none', 'stroke' => 'currentColor', 'stroke-width' => '1.7', 'stroke-linecap' => 'round', 'stroke-linejoin' => 'round', 'aria-hidden' => 'true']) }}>
     @switch($name)
+        @case('eye')
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" />
+        @break
+        @case('chart')
+            <path d="M4 4v16h16M8 15v-4m4 4V7m4 8v-6" />
+        @break
+        @case('download')
+            <path d="M12 3v12m-4-4 4 4 4-4M5 17v4h14v-4" />
+        @break
         @case('search')
             <circle cx="10.8" cy="10.8" r="7.2" />
             <path d="m16 16 4.5 4.5" />

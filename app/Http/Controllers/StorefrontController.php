@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\DeliveryZone;
 use App\Models\Product;
 use App\Services\CatalogRevision;
+use App\Services\FavoriteStatistics;
 use App\Services\WhatsAppOrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -63,10 +64,12 @@ class StorefrontController extends Controller
         return response()->json($rows)->header('Cache-Control', 'no-store');
     }
 
-    public function save(Request $r, Product $product)
+    public function save(Request $r, Product $product, FavoriteStatistics $statistics)
     {
         $saved = session('saved', []);
+        $previous = $saved;
         $saved = in_array($product->id, $saved) ? array_values(array_diff($saved, [$product->id])) : array_slice([...$saved, $product->id], -100);
+        $statistics->record($r, $product->id, in_array($product->id, $saved), array_values(array_diff($previous, $saved, [$product->id])));
         session(['saved' => $saved]);
 
         if ($r->expectsJson()) {

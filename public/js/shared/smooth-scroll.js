@@ -13,10 +13,23 @@ const page = new Lenis({
     virtualScroll: ({ deltaX, deltaY, event }) => !event.shiftKey && Math.abs(deltaY) >= Math.abs(deltaX),
 });
 const panels = new Map();
-document.querySelectorAll('.cart-dialog-body,.drawer-content,.search-dialog,.admin-sidebar').forEach((wrapper) => {
+document.querySelectorAll('.cart-dialog-body,.drawer-content,.search-dialog,.admin-sidebar,.admin-editor-body').forEach((wrapper) => {
     wrapper.setAttribute('data-lenis-prevent', '');
     panels.set(wrapper, new Lenis({ ...options, wrapper, content: wrapper, prevent: (node) => node.matches('textarea,select,.search-results') }));
 });
+const tableMedia = matchMedia('(min-width: 751px)');
+function syncTables() {
+    for (const wrapper of document.querySelectorAll('[data-admin-table]')) {
+        if (tableMedia.matches && !panels.has(wrapper)) {
+            wrapper.setAttribute('data-lenis-prevent', '');
+            panels.set(wrapper, new Lenis({ ...options, wrapper, content: wrapper, prevent: node => node.matches('input,select,textarea') }));
+        } else if (!tableMedia.matches && panels.has(wrapper)) {
+            panels.get(wrapper).destroy(); panels.delete(wrapper); wrapper.removeAttribute('data-lenis-prevent');
+        }
+    }
+}
+syncTables();
+tableMedia.addEventListener('change', syncTables);
 function syncPanels() {
     if (document.querySelector('dialog[open]')) page.stop(); else page.start();
     page.resize();

@@ -1,0 +1,153 @@
+/* Management lists share quiet controls, clear rows, and one saved accent. */
+.admin-body .admin-sidebar nav > a.active { background: transparent !important; color: var(--store-accent-ink); font-weight: 700; }
+.admin-body .admin-main .icon-button, .admin-body .reorder-buttons button, .admin-editor-dialog .icon-button,
+.admin-body .plain-visibility, .admin-body .admin-search button { background: transparent !important; color: var(--store-accent-ink); border: 0 !important; border-radius: 0; box-shadow: none; }
+.admin-body .admin-main .icon-button:hover, .admin-body .reorder-buttons button:hover, .admin-editor-dialog .icon-button:hover { color: var(--store-accent-ink); background: transparent !important; }
+.admin-body .admin-main :is(.field input:not([type=checkbox]):not([type=radio]):not([type=color]), .field select, .field textarea),
+.admin-editor-dialog :is(input:not([type=checkbox]):not([type=radio]), select, textarea) { border: 0 !important; border-bottom: 0 !important; background: rgb(0 0 0 / .04); border-radius: 10px; padding: 11px 13px; min-height: 46px; width: 100%; min-width: 0; font: inherit; font-size: 15px; color: #000; }
+.admin-body .admin-main .field, .admin-editor-dialog .field { display: flex; flex-direction: column; gap: 7px; font-size: 13px; font-weight: 500; margin: 0; }
+.admin-body .admin-main .field small, .admin-editor-dialog .field small { font-size: 11px; line-height: 1.6; font-weight: 400; }
+.admin-body :is(input, select, textarea):focus { outline: none; }
+.admin-body .admin-main .field:focus-within, .admin-editor-dialog .field:focus-within { color: var(--store-accent-ink); }
+.admin-body .admin-main .field :is(input, select, textarea):focus, .admin-editor-dialog :is(input, select, textarea):focus { background: rgb(0 0 0 / .065); }
+.admin-body input[type=file] { font-size: 12px !important; }
+.admin-body input[type=file]::file-selector-button { border: 0; border-radius: 6px; padding: 7px 10px; margin-right: 10px; background: #fff; font: inherit; color: #000; }
+.admin-body .admin-main .field-grid { gap: 20px; }
+.full-span { grid-column: 1 / -1; }
+.management-list { padding: 0; min-width: 0; overflow: visible; }
+.management-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; padding: 18px 0; border-bottom: 1px solid rgb(0 0 0 / .12) !important; background: #fff; }
+.management-toolbar > strong { font-size: 15px; font-weight: 600; }
+.management-toolbar > strong small { font-size: 12px; font-weight: 400; }
+.management-description { font-size: 12px; line-height: 1.6; max-width: 540px; }
+.management-filter-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.management-filter-controls select, .delivery-bulk-form select { font: inherit; font-size: 13px; background: rgb(0 0 0 / .04); border: 0; border-radius: 9px; padding: 10px; min-height: 42px; }
+.admin-body .admin-search { background: rgb(0 0 0 / .035); padding: 3px 10px; border: 0; border-radius: 10px; min-height: 44px; }
+.admin-body .admin-search input { background: transparent; border: 0; min-width: 0; font-size: 14px; }
+.admin-body .admin-search > .icon { color: var(--store-accent-ink); }
+.admin-body .admin-search button { padding: 4px; min-width: 36px; }
+.admin-table-viewport { max-height: max(280px, calc(100dvh - 245px)); overflow: auto; overscroll-behavior: contain; scroll-padding-top: 48px; }
+.management-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.management-table thead th { position: sticky; top: 0; background: #fff; z-index: 3; border-bottom: 1px solid rgb(0 0 0 / .16) !important; padding: 15px 10px; font-size: 12px; white-space: nowrap; }
+.management-table td { padding: 16px 10px; vertical-align: middle; font-size: 13px; }
+.management-table td:first-child, .management-table th:first-child { padding-left: 0; }
+.management-table td:last-child, .management-table th:last-child { padding-right: 0; }
+.management-table tr + tr td { border-top: 1px solid rgb(0 0 0 / .12) !important; }
+.products-table { min-width: 920px; }
+.management-table .table-product { min-width: 210px; max-width: 300px; gap: 12px; }
+.management-table .table-product > span { min-width: 0; overflow-wrap: anywhere; }
+.management-table .table-product small { white-space: normal; }
+.management-table .table-product img { width: 42px; height: 42px; object-fit: contain; }
+.management-table .table-product strong { font-size: 13px; line-height: 1.5; font-weight: 600; }
+.management-table .table-product small, .management-table td > small { display: block; font-size: 11px; line-height: 1.5; margin-top: 5px; }
+.admin-body .reorder-buttons { display: flex; flex-direction: column; gap: 0; }
+.admin-body .reorder-buttons button { width: 32px; height: 32px; min-width: 32px; min-height: 32px; padding: 0; font-size: 20px; }
+.quick-price, .quick-quantity { display: flex; align-items: center; gap: 4px; margin: 0; }
+.quick-price > div { flex: 1; min-width: 0; }
+.quick-money { display: flex; align-items: center; gap: 6px; padding: 0 8px; border-radius: 8px; background: rgb(0 0 0 / .04); min-height: 40px; max-width: 145px; }
+.quick-money > span { font-size: 12px; font-weight: 400; }
+.quick-money input { background: transparent; border: 0; width: 85px; min-width: 0; height: 40px; font: inherit; font-size: 14px; padding: 4px 0; }
+.quick-money.compare-price { margin-top: 5px; background: transparent; min-height: 28px; }
+.quick-money.compare-price input { font-size: 12px; height: 28px; }
+.quick-price .icon-button, .quick-quantity > .icon-button { min-width: 36px; width: 36px; padding: 7px; }
+.quick-stock { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
+.quick-stock-label { font-size: 11px; }
+.quick-stock > small { font-size: 11px; }
+.quantity-inline-control { display: flex; align-items: center; border-radius: 8px; background: rgb(0 0 0 / .04); }
+.quantity-inline-control input { width: 62px; padding: 5px 3px; text-align: center; height: 40px; background: transparent; border: 0; font: inherit; font-size: 16px; font-weight: 600; }
+.quantity-inline-control .icon-button { width: 30px; min-width: 30px; height: 40px; padding: 6px; }
+.quantity-inline-control .icon-button .icon { width: 16px; height: 16px; }
+.quick-quantity select { max-width: 150px; background: rgb(0 0 0 / .04); padding: 10px; border: 0; border-radius: 8px; font: inherit; font-size: 13px; }
+.plain-visibility { display: inline-flex; gap: 6px; align-items: center; min-height: 44px; padding: 4px; font: inherit; font-size: 12px; }
+.plain-visibility[aria-pressed=true] { font-weight: 700; }
+.plain-visibility[aria-pressed=false] { opacity: .65; }
+.management-row-actions { display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
+.management-row-actions .icon-button { width: 36px; min-width: 36px; padding: 7px; }
+.category-list-name { display: flex; align-items: center; gap: 12px; min-width: 140px; }
+.category-list-name > :is(.icon, .category-custom-icon) { flex-shrink: 0; color: var(--store-accent-ink); width: 22px; height: 22px; }
+.category-list-name strong { font-size: 14px; font-weight: 600; }
+.category-list-name small { display: block; font-size: 11px; margin-top: 5px; }
+.categories-table { min-width: 720px; }
+.delivery-pricing-setting { display: flex; justify-content: space-between; align-items: center; gap: 22px; padding: 20px 0; margin-bottom: 16px; border-top: 1px solid rgb(0 0 0 / .12) !important; border-bottom: 1px solid rgb(0 0 0 / .12) !important; }
+.delivery-pricing-setting h2 { font-size: 17px; margin: 0 0 6px; }
+.delivery-pricing-setting p { font-size: 12px; line-height: 1.6; margin: 0; }
+.delivery-pricing-setting form { display: flex; align-items: center; gap: 10px; }
+.delivery-bulk-form { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; padding: 16px 0; font-size: 12px; }
+.delivery-bulk-form .quick-money { max-width: 125px; }
+.delivery-bulk-form > .text-link { gap: 6px; font-size: 12px; min-height: 44px; }
+.delivery-table { min-width: 760px; }
+.team-table { min-width: 560px; }
+.team-list-profile { display: flex; gap: 12px; align-items: center; }
+.team-list-profile strong { font-size: 14px; font-weight: 600; }
+.team-list-profile small { display: block; margin-top: 5px; font-size: 12px; overflow-wrap: anywhere; }
+.plain-access { font-size: 12px; }
+.plain-access.is-active { color: var(--store-accent-ink); font-weight: 700; }
+.admin-editor-dialog { width: min(560px, calc(100vw - 28px)); max-height: calc(100dvh - 36px); padding: 0; border: 0; border-radius: 18px; overflow: hidden; background: #fff; color: #000; }
+.admin-editor-dialog::backdrop { background: rgb(0 0 0 / .2); backdrop-filter: blur(5px); }
+.admin-editor-header { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 18px 24px; border-bottom: 1px solid rgb(0 0 0 / .1) !important; }
+.admin-editor-header h2 { margin: 0; font-size: 22px; letter-spacing: -.6px; }
+.admin-editor-body { padding: 24px; max-height: calc(100dvh - 135px); overflow-y: auto; overscroll-behavior: contain; }
+.admin-editor-body .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-bottom: 24px; }
+.admin-editor-body .checkbox-field { align-self: center; font-size: 13px; font-weight: 400; }
+.admin-editor-body .button { font-size: 14px; min-height: 44px; gap: 10px; }
+@media(max-width: 750px) {
+    .admin-table-viewport { max-height: none; overflow: visible; }
+    .management-table, .products-table, .categories-table, .delivery-table, .team-table { min-width: 0; display: block; }
+    .management-table thead { display: none; }
+    .management-table tbody { display: block; }
+    .management-table tbody tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; padding: 20px 0; }
+    .management-table tbody tr + tr { border-top: 1px solid rgb(0 0 0 / .13) !important; }
+    .admin-body .admin-main .management-table tbody tr > td { display: block; padding: 0; border-top: 0 !important; min-width: 0; font-size: 13px; }
+    .management-table td[data-label]::before { content: attr(data-label); display: block; font-size: 11px; margin-bottom: 7px; font-weight: 400; }
+    .management-table .table-product { min-width: 0; max-width: none; }
+    .products-table td:nth-child(2) { grid-column: 1 / -1; grid-row: 1; padding-right: 42px !important; }
+    .products-table td:nth-child(2)::before, .products-table td:nth-child(6)::before { display: none; }
+    .products-table td:nth-child(6) { grid-column: 2; grid-row: 1; justify-self: end; align-self: start; }
+    .products-table td:nth-child(3) { grid-column: 1; grid-row: 2; }
+    .products-table td:nth-child(4) { grid-column: 2; grid-row: 2; }
+    .products-table td:nth-child(1) { grid-column: 1; grid-row: 3; }
+    .products-table td:nth-child(5) { grid-column: 2; grid-row: 3; }
+    .admin-body .reorder-buttons { flex-direction: row; gap: 10px; }
+    .quick-money { max-width: none; width: 100%; min-width: 0; }
+    .quick-money input { width: 100%; min-width: 0; font-size: 16px; }
+    .quick-price .icon-button { min-width: 36px; }
+    .quantity-inline-control input { min-width: 0; width: 100%; }
+    .quantity-inline-control [data-quantity-step] { display: none; }
+    .quick-quantity { width: 100%; }
+    .quantity-inline-control { min-width: 0; flex: 1; }
+    .quick-quantity select { width: 100%; min-width: 0; }
+    .management-toolbar { position: sticky; top: 64px; z-index: 5; padding-block: 14px; gap: 14px; }
+    .management-filter-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; width: 100%; }
+    .management-filter-controls .admin-search { grid-column: 1 / -1; }
+    .management-filter-controls select { min-width: 0; width: 100%; }
+    .management-toolbar .admin-search { min-width: 0; max-width: 100%; width: 100%; }
+    .management-toolbar .admin-search input { width: 100%; }
+    .categories-table td:nth-child(2), .team-table td:first-child { grid-column: 1 / -1; }
+    .categories-table td:nth-child(6) { grid-column: 1 / -1; }
+    .categories-table .management-row-actions { justify-content: flex-start; }
+    .category-list-name { min-width: 0; }
+    .team-table td:last-child { grid-column: 2; justify-self: end; }
+    .team-list-profile { min-width: 0; }
+    .team-list-profile > div { min-width: 0; }
+    .delivery-pricing-setting { align-items: flex-start; flex-direction: column; gap: 14px; }
+    .delivery-table td:nth-child(2) { grid-column: 1 / -1; grid-row: 1; }
+    .delivery-table td:first-child { grid-column: 2; grid-row: 1; justify-self: end; }
+    .delivery-table td:first-child::before { display: none; }
+    .delivery-table td:nth-child(4) { grid-column: 1; }
+    .delivery-table td:nth-child(6) { justify-self: end; }
+    .delivery-bulk-form { gap: 12px; }
+    .delivery-bulk-form select { max-width: 150px; }
+}
+@media(max-width: 480px) {
+    .admin-editor-header { padding: 14px 18px; }
+    .admin-editor-body { padding: 18px; }
+    .admin-editor-body .field-grid { grid-template-columns: 1fr; gap: 16px; }
+    .admin-editor-dialog { max-height: calc(100dvh - 20px); }
+}
+
+.admin-editor-errors { color: var(--store-accent-ink); font-size: 13px; line-height: 1.6; margin-bottom: 20px; }
+.admin-editor-errors p { margin: 0 0 6px; }
+
+.login-body .field { gap: 8px; font-size: 13px; }
+.login-body .field input { min-height: 46px; padding: 11px 13px; border: 0 !important; border-radius: 10px; background: rgb(0 0 0 / .04); }
+.login-body .field input:focus { outline: none; box-shadow: none; background: rgb(0 0 0 / .065); }
+.login-body .field:focus-within { color: var(--store-accent-ink); }

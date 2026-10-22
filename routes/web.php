@@ -35,7 +35,7 @@ Route::post('/cart/{product}', [CartController::class, 'add'])->middleware(['thr
 Route::patch('/cart/{key}', [CartController::class, 'update'])->middleware('throttle:cart')->block(10, 10)->name('cart.update');
 Route::get('/checkout', [CheckoutController::class, 'index'])->block(10, 10)->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->block(15, 15)->name('checkout.store');
-Route::get('/orders/{order:public_id}', [CheckoutController::class, 'confirmation'])->name('orders.confirmation');
+Route::get('/orders/{order:public_id}', [CheckoutController::class, 'confirmation'])->withTrashed()->name('orders.confirmation');
 Route::view('/help', 'store.help')->name('help');
 Route::view('/privacy-policy', 'store.privacy')->name('privacy');
 Route::view('/terms-and-conditions', 'store.terms')->name('terms');
@@ -62,8 +62,13 @@ Route::prefix(config('shop.admin_path'))->name('admin.')->group(function () {
             Route::get('/delivery', [Admin\DeliveryController::class, 'index'])->name('delivery.index');
             Route::patch('/delivery', [Admin\DeliveryController::class, 'update'])->name('delivery.update');
             Route::post('/delivery', [Admin\DeliveryController::class, 'store'])->name('delivery.store');
+            Route::patch('/delivery/areas/{zone}', [Admin\DeliveryController::class, 'quick'])->name('delivery.quick');
         });
         Route::middleware('admin:owner')->group(function () {
+            Route::delete('/orders/{order}', [Admin\OrderController::class, 'destroy'])->name('orders.destroy');
+            Route::get('/analytics', [Admin\AnalyticsController::class, 'index'])->name('analytics');
+            Route::get('/analytics/export', [Admin\AnalyticsController::class, 'export'])->name('analytics.export');
+            Route::patch('/delivery/settings', [Admin\DeliveryController::class, 'settings'])->name('delivery.settings');
             Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings.index');
             Route::patch('/settings', [Admin\SettingsController::class, 'update'])->name('settings.update');
             Route::get('/team', [Admin\TeamController::class, 'index'])->name('team.index');

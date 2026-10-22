@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="{{ asset('css/store-interactions.css') }}?v={{ filemtime(public_path('css/store-interactions.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/store-scrollbars.css') }}?v={{ filemtime(public_path('css/store-scrollbars.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/smooth-scroll.css') }}?v={{ filemtime(public_path('css/smooth-scroll.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-analytics.css') }}?v={{ filemtime(public_path('css/admin-analytics.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-management.css') }}?v={{ filemtime(public_path('css/admin-management.css')) }}">
     <link rel="stylesheet" href="{{ route('store.theme', ['color' => substr(\App\Models\StoreSetting::current()->accentColor(), 1), 'v' => \App\Services\StoreTheme::VERSION]) }}">
     <script src="{{ asset('js/admin.js') }}?v={{ filemtime(public_path('js/admin.js')) }}" type="module"></script>
 </head>
@@ -26,6 +28,9 @@
                 class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><x-icon name="grid" />Overview</a><a
                 href="{{ route('admin.orders.index') }}"
                 class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}"><x-icon name="bag" />Orders</a>
+            @if (auth()->user()->role === 'owner')
+                <a href="{{ route('admin.analytics') }}" class="{{ request()->routeIs('admin.analytics*') ? 'active' : '' }}"><x-icon name="chart" />Analytics</a>
+            @endif
             @if (auth()->user()->canManageCatalog())
                 <a href="{{ route('admin.products.index') }}"
                     class="{{ request()->routeIs('admin.products.*') ? 'active' : '' }}"><x-icon

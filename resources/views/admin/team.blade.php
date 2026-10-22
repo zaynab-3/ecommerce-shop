@@ -1,53 +1,9 @@
 @extends('layouts.admin')
 @section('title', 'Team & access')
-@section('content')<x-admin-heading title="Team & access" />
-    <div class="admin-form-layout">
-        <div class="admin-form-primary">
-            @foreach ($admins as $admin)
-                <form method="post" action="{{ route('admin.team.update', $admin) }}" class="admin-panel form-panel team-card">
-                    @csrf @method('PATCH')<div class="team-profile"><span
-                            class="avatar">{{ strtoupper(mb_substr($admin->name, 0, 1)) }}</span>
-                        <div>
-                            <h2>{{ $admin->name }}{{ $admin->id === auth()->id() ? ' (you)' : '' }}</h2>
-                            <p>{{ $admin->email }}</p>
-                        </div><span
-                            class="status-badge {{ $admin->is_active ? 'status-delivered' : 'status-cancelled' }}">{{ $admin->is_active ? 'Active' : 'Inactive' }}</span>
-                    </div>
-                    <div class="field-grid"><label class="field">Role<select name="role">
-                                @foreach (['owner' => 'Owner', 'manager' => 'Manager', 'orders' => 'Order agent'] as $value => $label)
-                                    <option value="{{ $value }}" @selected($admin->role === $value)>{{ $label }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </label><label class="field">Access<select name="is_active">
-                                <option value="1" @selected($admin->is_active)>Active</option>
-                                <option value="0" @selected(!$admin->is_active)>Inactive</option>
-                            </select></label><label class="field">Reset password <span class="muted">Leave blank to
-                                keep</span><input name="password" type="password" minlength="12"
-                                autocomplete="new-password"></label><label class="field">Confirm new password<input
-                                name="password_confirmation" type="password" minlength="12"
-                                autocomplete="new-password"></label></div><button
-                        class="button button-light small-button">Save team member <x-icon name="check"
-                            width="15" /></button>
-                </form>
-            @endforeach
-        </div>
-        <aside class="admin-form-secondary">
-            <form method="post" action="{{ route('admin.team.store') }}" class="admin-panel form-panel">@csrf<h2>Add team member</h2>
-                <div class="field-grid single"><label class="field">Name<input name="name" value="{{ old('name') }}"
-                            maxlength="120" required></label><label class="field">Email<input name="email" type="email"
-                            value="{{ old('email') }}" maxlength="190" required></label><label class="field">Role<select
-                            name="role">
-                            <option value="orders">Order agent</option>
-                            <option value="manager">Manager</option>
-                            <option value="owner">Owner</option>
-                        </select></label><label class="field">Password<input name="password" type="password" minlength="12"
-                            autocomplete="new-password" required></label><label class="field">Confirm password<input
-                            name="password_confirmation" type="password" minlength="12" autocomplete="new-password"
-                            required></label>
-                    <p class="form-hint">Use at least 12 characters with uppercase and lowercase letters, numbers, and
-                        symbols.</p><button class="button button-dark">Add team member <x-icon name="plus" /></button>
-                </div>
-            </form>
-        </aside>
-</div>@endsection
+@section('content')
+<x-admin-heading title="Team & access" description="Manage who can work on your store and what they can access."><button class="button button-dark" data-editor-open="team"><x-icon name="plus" />Add team member</button></x-admin-heading>
+<section class="admin-panel management-list"><div class="management-toolbar"><strong>{{ $admins->count() }} team members</strong><span class="management-description">Owners manage everything · managers manage the catalog · agents handle orders</span></div><div class="table-scroll"><table class="management-table team-table"><thead><tr><th>Team member</th><th>Role</th><th>Access</th><th>Edit</th></tr></thead><tbody>
+    @foreach($admins as $admin)<tr><td data-label="Team member"><div class="team-list-profile"><span class="avatar">{{ strtoupper(mb_substr($admin->name, 0, 1)) }}</span><div><strong>{{ $admin->name }}{{ $admin->id === auth()->id() ? ' (you)' : '' }}</strong><small>{{ $admin->email }}</small></div></div></td><td data-label="Role">{{ ['owner' => 'Owner', 'manager' => 'Manager', 'orders' => 'Order agent'][$admin->role] }}</td><td data-label="Access"><span class="plain-access {{ $admin->is_active ? 'is-active' : '' }}">{{ $admin->is_active ? 'Active' : 'Inactive' }}</span></td><td data-label="Edit"><button class="icon-button" data-team-edit data-url="{{ route('admin.team.update', $admin) }}" data-id="{{ $admin->id }}" data-name="{{ $admin->name }}" data-email="{{ $admin->email }}" data-role="{{ $admin->role }}" data-active="{{ $admin->is_active ? '1' : '0' }}" aria-label="Edit {{ $admin->name }}"><x-icon name="edit" /></button></td></tr>@endforeach
+</tbody></table></div></section>
+<dialog class="admin-editor-dialog" id="team-editor" data-editor="team"><div class="admin-editor-header"><h2 data-editor-title>Add team member</h2><button class="icon-button" data-editor-close aria-label="Close team editor"><x-icon name="close" /></button></div><div class="admin-editor-body"><form method="post" action="{{ route('admin.team.store') }}" data-create-url="{{ route('admin.team.store') }}" data-team-form data-reopen="{{ $errors->any() && old('_editor_type') === 'team' ? '1' : '0' }}">@csrf<input type="hidden" name="_method" value="PATCH" disabled><input type="hidden" name="_editor_type" value="team"><input type="hidden" name="_editor_mode" value="{{ old('_editor_mode', 'create') }}">@if($errors->any() && old('_editor_type') === 'team')<div class="admin-editor-errors" role="alert">@foreach($errors->all() as $message)<p>{{ $message }}</p>@endforeach</div>@endif<div class="field-grid"><label class="field full-span">Name<input name="name" value="{{ old('name') }}" required maxlength="120" autocomplete="name"></label><label class="field full-span">Email address<input name="email" type="email" value="{{ old('email') }}" maxlength="190" autocomplete="username" required></label><label class="field full-span" data-team-role>Role<select name="role">@foreach(['orders' => 'Order agent', 'manager' => 'Manager', 'owner' => 'Owner'] as $value => $label)<option value="{{ $value }}" @selected(old('role', 'orders') === $value)>{{ $label }}</option>@endforeach</select></label><label class="field" data-team-access hidden>Access<select name="is_active"><option value="1" @selected((string) old('is_active', '1') === '1')>Active</option><option value="0" @selected((string) old('is_active') === '0')>Inactive</option></select></label><label class="field">Password<input name="password" type="password" minlength="12" autocomplete="new-password" required><small data-password-hint>At least 12 characters: upper/lowercase letters, a number, and a symbol.</small></label><label class="field">Confirm password<input name="password_confirmation" type="password" minlength="12" autocomplete="new-password" required></label></div><button class="button button-dark" data-editor-save>Save team member <x-icon name="check" /></button></form></div></dialog>
+@endsection

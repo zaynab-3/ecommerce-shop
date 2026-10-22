@@ -7,6 +7,7 @@ use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class TeamController extends Controller
@@ -27,7 +28,7 @@ class TeamController extends Controller
 
     public function update(Request $r, User $user)
     {
-        $data = $r->validate(['role' => 'required|in:owner,manager,orders', 'is_active' => 'required|boolean', 'password' => ['nullable', 'confirmed', Password::min(12)->letters()->mixedCase()->numbers()->symbols()]]);
+        $data = $r->validate(['name' => 'sometimes|required|string|max:120', 'email' => ['sometimes', 'required', 'email', 'max:190', Rule::unique('users')->ignore($user->id)], 'role' => 'required|in:owner,manager,orders', 'is_active' => 'required|boolean', 'password' => ['nullable', 'confirmed', Password::min(12)->letters()->mixedCase()->numbers()->symbols()]]);
         if (empty($data['password'])) {
             unset($data['password']);
         }DB::transaction(function () use ($user, $data) {

@@ -15,7 +15,7 @@ class CheckoutService
     public function place(array $data, array $cart): Order
     {
         return app(TransactionService::class)->run(function () use ($data, $cart) {
-            if ($existing = Order::where('idempotency_key', $data['idempotency_key'])->first()) {
+            if ($existing = Order::withTrashed()->where('idempotency_key', $data['idempotency_key'])->first()) {
                 return $existing;
             }
             if (! $cart) {
@@ -27,6 +27,9 @@ class CheckoutService
                 }
             }
             $setting = StoreSetting::firstOrCreate(['id' => 1]);
+            if (! filled($data['phone'] ?? null) && ! $setting->canSendOrdersToWhatsApp()) {
+                throw ValidationException::withMessages(['phone' => 'Enter a phone number so we can contact you about delivery.']);
+            }
             $zone = null;
             $fee = 0;
             if ($setting->delivery_enabled) {
@@ -65,7 +68,7 @@ class CheckoutService
                     }
                 }
             }
-            $order = Order::create(['public_id' => (string) Str::uuid(), 'idempotency_key' => $data['idempotency_key'], 'number' => 'MS-'.strtoupper(Str::random(8)), 'customer_name' => $data['customer_name'], 'phone' => $data['phone'], 'email' => $data['email'] ?? null, 'address' => $data['address'], 'notes' => $data['notes'] ?? null, 'delivery_zone_id' => $zone?->id, 'delivery_area' => $zone?->name, 'subtotal_cents' => $subtotal, 'delivery_cents' => $fee, 'total_cents' => $subtotal + $fee]);
+            $order = Order::create(['public_id' => (string) Str::uuid(), 'idempotency_key' => $data['idempotency_key'], 'number' => 'MS-'.strtoupper(Str::random(8)), 'customer_name' => $data['customer_name'], 'phone' => $data['phone'] ?? null, 'email' => $data['email'] ?? null, 'address' => $data['address'], 'notes' => $data['notes'] ?? null, 'delivery_zone_id' => $zone?->id, 'delivery_area' => $zone?->name, 'subtotal_cents' => $subtotal, 'delivery_cents' => $fee, 'total_cents' => $subtotal + $fee]);
             $order->items()->createMany($rows);
 
             return $order;

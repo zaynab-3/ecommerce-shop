@@ -44,8 +44,7 @@
             <section class="admin-panel form-panel">
                 <h2>Customer & delivery</h2>
                 <div class="customer-details">
-                    <div><small>CUSTOMER</small><strong>{{ $order->customer_name }}</strong><a
-                            href="tel:{{ $order->phone }}">{{ $order->phone }}</a>
+                    <div><small>CUSTOMER</small><strong>{{ $order->customer_name }}</strong>@if($order->phone)<a href="tel:{{ $order->phone }}">{{ $order->phone }}</a>@else<small>Phone not provided · WhatsApp checkout</small>@endif
                         @if ($order->email)
                             <a href="mailto:{{ $order->email }}">{{ $order->email }}</a>
                         @endif
@@ -86,6 +85,14 @@
                         order <x-icon name="check" /></button>
                 </div>
             </form>
+
+            @if(auth()->user()->role === 'owner')
+                <form method="post" action="{{ route('admin.orders.destroy', $order) }}" class="admin-panel form-panel order-delete-panel" data-confirm="Delete {{ $order->number }} from the order list? Unshipped orders will be cancelled and their tracked stock returned. Sales history stays in Analytics.">@csrf @method('DELETE')
+                    <h2>Delete order</h2>
+                    <p class="form-hint">Removes this order from the list. Unshipped orders are cancelled and tracked stock is returned once. Sales history stays in Analytics.</p>
+                    <button class="text-link order-delete"><x-icon name="trash" /> Delete order</button>
+                </form>
+            @endif
 
         </aside>
 </div>@endsection

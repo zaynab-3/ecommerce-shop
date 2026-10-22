@@ -33,15 +33,21 @@
                             <td><a class="table-link"
                                     href="{{ route('admin.orders.show', $order) }}">{{ $order->number }}</a><small>{{ $order->created_at->format('d M Y, H:i') }}</small>
                             </td>
-                            <td>{{ $order->customer_name }}<small>{{ $order->phone }}</small></td>
+                            <td>{{ $order->customer_name }}<small>{{ $order->phone ?: 'Phone not provided' }}</small></td>
                             <td>{{ $order->delivery_area ?? 'To be confirmed' }}</td>
                             <td><span class="status-badge status-{{ $order->status }}">{{ ucfirst($order->status) }}</span>
                             </td>
                             <td>${{ number_format($order->total_cents / 100, 2) }}</td>
                             <td>{{ $order->assignee?->name ?? 'Unassigned' }}</td>
-                            <td><a class="icon-button" href="{{ route('admin.orders.show', $order) }}"
+                            <td><div class="order-row-actions"><a class="icon-button" href="{{ route('admin.orders.show', $order) }}"
                                     aria-label="Open order {{ $order->number }}"><x-icon name="arrow"
-                                        width="17" /></a></td>
+                                        width="17" /></a>
+                                @if(auth()->user()->role === 'owner')
+                                    <form method="post" action="{{ route('admin.orders.destroy', $order) }}" data-confirm="Delete {{ $order->number }} from the order list? Unshipped orders will be cancelled and their tracked stock returned. Sales history stays in Analytics.">@csrf @method('DELETE')
+                                        <button class="icon-button order-delete" aria-label="Delete order {{ $order->number }}" title="Delete order"><x-icon name="trash" /></button>
+                                    </form>
+                                @endif
+                            </div></td>
                     </tr>@empty<tr>
                             <td colspan="7">
                                 <div class="table-empty"><x-icon name="bag" />

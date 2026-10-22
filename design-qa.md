@@ -108,3 +108,18 @@ The nonblocking cookie notice explains the existing essential shopping/security 
 - Blade/route compilation, JavaScript/PHP syntax, and whitespace checks passed. Final captures were visually inspected.
 
 Native Windows, iOS Safari, and Android devices are not available in this environment; the stated responsive checks use real Chromium and Linux Firefox. No WhatsApp message was sent during verification. Existing MySQL concurrency and infrastructure checks are recorded in [validation notes](docs/VALIDATION.md).
+
+
+### Management lists and inputs · 22 October 2026
+
+Shared filled controls replace the underline-only admin inputs; focus changes the label/fill without a rectangular click border. Team members appear in a clear list with a separate add/edit editor. Categories have explicit parent/type/count columns and a preselected-parent add-subcategory action. Product prices and quantities save inline with transparent accent check icons. Lists use thin row boundaries, desktop sticky headings, and 15 items per page; phones use labelled rows with compact inputs. Delivery creation includes its fee and availability, with the owner pricing switch on the same page. Sample analytics captures use temporary QA orders that were subsequently removed.
+
+| Screen | Phone | Desktop |
+| --- | --- | --- |
+| Team editor | [390px](docs/screenshots/admin-team-editor-390.png) | [1440px](docs/screenshots/admin-team-editor-1440.png) |
+| Products | [390px](docs/screenshots/admin-management-products-390.png) | [1440px](docs/screenshots/admin-management-products-1440.png) |
+| Categories | [390px](docs/screenshots/admin-management-categories-390.png) | [1440px](docs/screenshots/admin-management-categories-1440.png) |
+| Delivery | [390px](docs/screenshots/admin-management-delivery-390.png) | [1440px](docs/screenshots/admin-management-delivery-1440.png) |
+| Analytics | [390px](docs/screenshots/admin-management-analytics-390.png) | [1440px](docs/screenshots/admin-management-analytics-1440.png) |
+
+Verified in real Chromium at 320, 390, 768, 1024, and 1440px, including dialog focus/escape, no page overflow, hidden phone rails, inline saves, stock conflicts, CRUD flows, analytics refresh/export, deletion and optional-phone checkout. Native phone hardware was not available.

@@ -115,7 +115,8 @@ document.addEventListener("submit", (event) => {
     if (checkout) {
         form.querySelector('[data-checkout-errors]').hidden = true;
         form.querySelectorAll('[aria-invalid]').forEach((input) => input.removeAttribute('aria-invalid'));
-        body.set('phone', '+961' + nationalNumber(body.get('phone')));
+        const phone = String(body.get('phone') || '').trim();
+        body.set('phone', phone ? '+961' + nationalNumber(phone) : '');
     }
     form.dataset.busy = "1";
     const controls = [...form.querySelectorAll('button')].filter((button) => !button.disabled);

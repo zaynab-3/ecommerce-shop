@@ -11,6 +11,7 @@ export async function request(url, options = {}) {
         const message = response.status >= 500 ? "Something went wrong. Please try again." : response.status === 404 ? "This item is no longer available." : response.status === 419 ? "Your session expired. Reload this page and try again." : Object.values(payload.errors || {}).flat().join(" ") || payload.message || "Unable to complete this request.";
         const error = new Error(message);
         error.details = payload.errors || {};
+        error.product = payload.product;
         throw error;
     }
     return payload;

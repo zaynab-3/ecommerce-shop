@@ -24,7 +24,7 @@ class ProductController extends Controller
             $q->where('name', 'like', '%'.mb_substr($r->string('q'), 0, 100).'%');
         }
 
-        return view('admin.products.index', ['products' => $q->paginate(20)->withQueryString()]);
+        return view('admin.products.index', ['products' => $q->paginate(15)->withQueryString()]);
     }
 
     public function create()
@@ -112,25 +112,58 @@ class ProductController extends Controller
 
     public function quick(Request $r, Product $product)
     {
-        $data = $r->validate(['is_active' => 'sometimes|boolean', 'delta' => 'sometimes|integer|min:-100000|max:100000', 'manual_stock_status' => 'sometimes|in:available,low,out']);
-        DB::transaction(function () use ($data, $product) {
-            $p = Product::whereKey($product->id)->lockForUpdate()->firstOrFail();
-            if (isset($data['delta'])) {
-                abort_unless($p->stock_mode === 'tracked', 422);
-                $next = $p->quantity + $data['delta'];
-                abort_if($next < 0 || $next > 10000000, 422);
-                $p->quantity = $next;
-            }if (isset($data['is_active'])) {
-                $p->is_active = $data['is_active'];
-            }if (isset($data['manual_stock_status'])) {
-                abort_unless($p->stock_mode === 'open', 422);
-                $p->manual_stock_status = $data['manual_stock_status'];
-            }$p->stock_revision++;
-            $p->save();
-            AuditLog::record('product.quick_update', (string) $p->id, $data);
-        });
+        $data = $r->validate(['is_active' => 'sometimes|boolean', 'delta' => 'sometimes|integer|min:-100000|max:100000', 'quantity' => 'sometimes|integer|min:0|max:10000000|prohibits:delta', 'stock_revision' => 'required_with:quantity|integer|min:0', 'price' => 'sometimes|required|decimal:0,2|min:0|max:1000000', 'compare_price' => 'sometimes|nullable|decimal:0,2|min:0|max:1000000', 'manual_stock_status' => 'sometimes|in:available,low,out']);
+        try {
+            DB::transaction(function () use ($data, $product) {
+                $p = Product::whereKey($product->id)->lockForUpdate()->firstOrFail();
+                if (array_key_exists('quantity', $data)) {
+                    abort_unless($p->stock_mode === 'tracked', 422);
+                    if ((int) $p->stock_revision !== (int) $data['stock_revision']) {
+                        throw ValidationException::withMessages(['quantity' => 'Stock changed while you were editing. The current quantity is shown; enter your new quantity again.']);
+                    }
+                    $p->quantity = $data['quantity'];
+                }
+                if (array_key_exists('price', $data)) {
+                    $p->price_cents = (int) round((float) $data['price'] * 100);
+                }
+                if (array_key_exists('compare_price', $data)) {
+                    $p->compare_price_cents = filled($data['compare_price']) ? (int) round((float) $data['compare_price'] * 100) : null;
+                }
+                if (isset($data['delta'])) {
+                    abort_unless($p->stock_mode === 'tracked', 422);
+                    $next = $p->quantity + $data['delta'];
+                    abort_if($next < 0 || $next > 10000000, 422);
+                    $p->quantity = $next;
+                }if (isset($data['is_active'])) {
+                    $p->is_active = $data['is_active'];
+                }if (isset($data['manual_stock_status'])) {
+                    abort_unless($p->stock_mode === 'open', 422);
+                    $p->manual_stock_status = $data['manual_stock_status'];
+                }$p->stock_revision++;
+                $p->save();
+                AuditLog::record('product.quick_update', (string) $p->id, $data);
+            });
+
+        } catch (ValidationException $error) {
+            if (! $r->expectsJson()) {
+                throw $error;
+            }
+
+            return response()->json(['message' => $error->getMessage(), 'errors' => $error->errors(), 'product' => $this->snapshot($product->fresh())], 409);
+        }
+
+        if ($r->expectsJson()) {
+            $p = $product->fresh();
+
+            return response()->json(['message' => 'Product updated.', 'product' => $this->snapshot($p)]);
+        }
 
         return back()->with('success', 'Product updated.');
+    }
+
+    private function snapshot(Product $p): array
+    {
+        return ['id' => $p->id, 'quantity' => $p->quantity, 'stock_revision' => $p->stock_revision, 'stock_status' => $p->stock_status, 'is_active' => $p->is_active, 'price' => number_format($p->price_cents / 100, 2, '.', ''), 'compare_price' => $p->compare_price_cents === null ? '' : number_format($p->compare_price_cents / 100, 2, '.', ''), 'manual_stock_status' => $p->manual_stock_status];
     }
 
     public function image(Request $r, Product $product, ProductImage $image)

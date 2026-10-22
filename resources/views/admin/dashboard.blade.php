@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Overview')
 @section('content')<x-admin-heading title="Store overview">
+        @if(auth()->user()->role === 'owner')<a class="text-link" href="{{ route('admin.analytics') }}">View analytics</a>@endif
         <a class="button button-light" href="{{ route('home') }}" target="_blank" rel="noopener">Visit your store <x-icon
                 name="arrow" /></a></x-admin-heading>
     <div class="stat-grid">

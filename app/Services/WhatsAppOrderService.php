@@ -57,7 +57,10 @@ class WhatsAppOrderService
             $lines[] = '   '.$item->quantity.' x '.$this->money($item->price_cents).' = '.$this->money($item->price_cents * $item->quantity);
         }
 
-        $lines = [...$lines, '', 'Customer: '.$order->customer_name, 'Phone: '.$order->phone];
+        $lines = [...$lines, '', 'Customer: '.$order->customer_name];
+        if ($order->phone) {
+            $lines[] = 'Phone: '.$order->phone;
+        }
         if ($order->email) {
             $lines[] = 'Email: '.$order->email;
         }

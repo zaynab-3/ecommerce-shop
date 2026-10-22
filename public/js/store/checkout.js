@@ -30,7 +30,7 @@ document.addEventListener('focusout', (event) => {
 });
 export function validatePhone(form) {
     const input = form.querySelector('[data-lebanese-phone]');
-    input.setCustomValidity(validPhone(input.value) ? '' : 'Enter a Lebanese number, for example 03 123 456 or 70 123 456.');
+    input.setCustomValidity((!input.required && !input.value.trim()) || validPhone(input.value) ? '' : 'Enter a Lebanese number, for example 03 123 456 or 70 123 456.');
     return form.reportValidity();
 }
 initCheckout();

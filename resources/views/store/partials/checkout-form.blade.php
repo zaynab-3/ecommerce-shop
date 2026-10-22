@@ -6,8 +6,8 @@
     <section class="checkout-details"><h2>Your details</h2>
     <div class="field-grid">
         <label class="field full-span"><span>Full name</span><input name="customer_name" value="{{ old('customer_name') }}" placeholder="Your full name" autocomplete="name" maxlength="120" required></label>
-        <label class="field full-span"><span>Phone number</span>
-            <span class="phone-field"><span class="phone-prefix" aria-hidden="true">+961</span><input name="phone" type="tel" inputmode="tel" value="{{ old('phone') }}" placeholder="70 123 456" autocomplete="tel-national" maxlength="30" aria-label="Lebanese phone number, country code +961" data-lebanese-phone required></span>
+        <label class="field full-span"><span>Phone number @if($settings->canSendOrdersToWhatsApp())<small>(optional)</small>@endif</span>
+            <span class="phone-field"><span class="phone-prefix" aria-hidden="true">+961</span><input name="phone" type="tel" inputmode="tel" value="{{ old('phone') }}" placeholder="70 123 456" autocomplete="tel-national" maxlength="30" aria-label="Lebanese phone number, country code +961" data-lebanese-phone @required(!$settings->canSendOrdersToWhatsApp())></span>
         </label>
         @if ($settings->delivery_enabled)
             <label class="field full-span"><span>Delivery area</span><select name="delivery_zone_id" id="delivery-zone" required>
@@ -34,7 +34,7 @@
         <div class="summary-row"><span>Delivery</span><strong id="delivery-fee">{{ $settings->delivery_enabled && !$selectedZone ? 'Select area' : '$'.number_format(($selectedZone?->fee_cents ?? 0) / 100, 2) }}</strong></div>
         <div class="summary-row total"><strong>Total</strong><strong id="checkout-total">${{ number_format(($subtotal + ($selectedZone?->fee_cents ?? 0)) / 100, 2) }}</strong></div>
     </div>
-    <button type="submit" class="button button-dark full-width" @disabled($settings->delivery_enabled && $zones->isEmpty())><span>{{ $settings->whatsapp_enabled ? 'Place order & open WhatsApp' : 'Place order' }}</span></button>
+    <button type="submit" class="button button-dark full-width" @disabled($settings->delivery_enabled && $zones->isEmpty())><span>{{ $settings->canSendOrdersToWhatsApp() ? 'Place order & open WhatsApp' : 'Place order' }}</span></button>
     <p class="summary-note">By placing your order, you agree to our <a href="{{ route('terms') }}">terms & conditions</a>. Read how we use your information in our <a href="{{ route('privacy') }}">privacy policy</a>.@if($settings->whatsapp_enabled) Your order is saved before WhatsApp opens. Tap Send there to share it.@endif</p>
     </aside>
     </div>

@@ -1,75 +1,19 @@
 @extends('layouts.admin')
 @section('title', 'Categories')
-@section('content')<x-admin-heading title="Categories" />
-    <div class="admin-form-layout">
-        <div class="admin-form-primary">
-            @forelse($categories as $category)
-                <section class="admin-panel category-admin-panel">
-                    <div class="category-admin-row"><x-reorder type="categories" :id="$category->id" /><x-category-icon :category="$category" />
-                        <form method="post" action="{{ route('admin.categories.update', $category) }}"
-                            class="category-name-form">@csrf @method('PATCH')<input name="name"
-                                value="{{ $category->name }}" aria-label="Category name" required maxlength="100"><button
-                                class="text-link">Save</button></form>
-                        <form method="post" action="{{ route('admin.categories.update', $category) }}">@csrf
-                            @method('PATCH')<input type="hidden" name="is_active"
-                                value="{{ $category->is_active ? 0 : 1 }}"><button
-                                class="visibility-toggle {{ $category->is_active ? 'on' : '' }}"
-                                aria-pressed="{{ $category->is_active ? 'true' : 'false' }}"
-                                aria-label="Toggle {{ $category->name }}"><span></span>{{ $category->is_active ? 'Visible' : 'Hidden' }}</button>
-                        </form>
-                        <form method="post" action="{{ route('admin.categories.destroy', $category) }}"
-                            data-confirm="Delete this empty category?">@csrf @method('DELETE')<button class="icon-button"
-                                aria-label="Delete {{ $category->name }}"><x-icon name="close" width="15" /></button>
-                        </form>
-                    </div>
-                    <x-category-icon-form :category="$category" />
-                    @foreach ($category->children as $child)
-                        <div class="category-admin-row child-row"><x-reorder type="categories" :id="$child->id" /><span
-                                class="muted">↳</span><x-category-icon :category="$child" />
-                            <form method="post" action="{{ route('admin.categories.update', $child) }}"
-                                class="category-name-form">@csrf @method('PATCH')<input name="name"
-                                    value="{{ $child->name }}" aria-label="Subcategory name" required
-                                    maxlength="100"><button class="text-link">Save</button></form><span
-                                class="category-count">{{ $child->products_count }} items</span>
-                            <form method="post" action="{{ route('admin.categories.update', $child) }}">@csrf
-                                @method('PATCH')<input type="hidden" name="is_active"
-                                    value="{{ $child->is_active ? 0 : 1 }}"><button
-                                    class="visibility-toggle {{ $child->is_active ? 'on' : '' }}"
-                                    aria-label="Toggle {{ $child->name }}"
-                                    aria-pressed="{{ $child->is_active ? 'true' : 'false' }}"><span></span>{{ $child->is_active ? 'Visible' : 'Hidden' }}</button>
-                            </form>
-                            <form method="post" action="{{ route('admin.categories.destroy', $child) }}"
-                                data-confirm="Delete this empty subcategory?">@csrf @method('DELETE')<button
-                                    class="icon-button" aria-label="Delete {{ $child->name }}"><x-icon name="close"
-                                        width="15" /></button></form>
-                        </div>
-                        <x-category-icon-form :category="$child" />
-                    @endforeach
-                </section>
-            @empty<div class="admin-panel table-empty">
-                    <h3>No categories yet</h3>
-                    <p>Add your first category.</p>
-                </div>
-            @endforelse
-        </div>
-        <aside class="admin-form-secondary">
-            <form method="post" enctype="multipart/form-data" action="{{ route('admin.categories.store') }}" class="admin-panel form-panel">@csrf<h2>
-                    Add category</h2>
-                <div class="field-grid single"><label class="field">Name<input name="name" value="{{ old('name') }}"
-                            maxlength="100" required></label><label class="field">Parent category<select name="parent_id">
-                            <option value="">None · top-level category</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                    </label><label class="field">Icon<select name="icon">
-                            @foreach (['grid', 'headphones', 'home', 'bag', 'sparkles', 'gamepad', 'watch', 'gem'] as $icon)
-                                <option>{{ $icon }}</option>
-                            @endforeach
-                        </select></label><label class="field">SVG icon (optional)<input type="file" name="icon_file" accept="image/svg+xml,.svg"><small>Up to 128 KB.</small></label><button class="button button-dark">Add category <x-icon name="plus" /></button>
-                </div>
-            </form>
-            <p class="form-hint">Hiding a parent category hides its subcategories and products in the store. Existing orders
-                are preserved.</p>
-        </aside>
-</div>@endsection
+@section('content')
+<x-admin-heading title="Categories" description="Keep categories and subcategories clear, organised, and easy to find."><button class="button button-dark" data-editor-open="category"><x-icon name="plus" />Add category</button></x-admin-heading>
+<section class="admin-panel management-list">
+    <form method="get" class="management-toolbar"><strong>{{ $categories->total() }} categories <small>· 15 per page</small></strong><div class="management-filter-controls"><label class="admin-search"><x-icon name="search" /><input name="q" value="{{ request('q') }}" placeholder="Find a category" maxlength="100" aria-label="Search categories"></label><select name="parent" aria-label="Filter by parent category"><option value="">All categories</option>@foreach($parents as $parent)<option value="{{ $parent->id }}" @selected((string) request('parent') === (string) $parent->id)>{{ $parent->name }}</option>@endforeach</select><button class="icon-button" aria-label="Filter categories"><x-icon name="search" /></button></div></form>
+    <div class="table-scroll admin-table-viewport" tabindex="0" role="region" aria-label="Categories and subcategories" data-admin-table><table class="management-table categories-table"><thead><tr><th>Order</th><th>Category</th><th>Parent</th><th>Items</th><th>Visibility</th><th>Actions</th></tr></thead><tbody>
+    @forelse($categories as $category)<tr>
+        <td data-label="Order"><x-reorder type="categories" :id="$category->id" /></td>
+        <td data-label="Category"><div class="category-list-name"><x-category-icon :category="$category" /><div><strong>{{ $category->name }}</strong><small>{{ $category->parent_id ? 'Subcategory' : 'Top-level category' }}</small></div></div></td>
+        <td data-label="Parent">{{ $category->parent?->name ?? '—' }}</td>
+        <td data-label="Items"><strong>{{ $category->products_count }}</strong><small>{{ $category->children_count ? $category->children_count.' subcategories' : 'Direct products' }}</small></td>
+        <td data-label="Visibility"><form method="post" action="{{ route('admin.categories.update', $category) }}">@csrf @method('PATCH')<input type="hidden" name="is_active" value="{{ $category->is_active ? 0 : 1 }}"><button class="plain-visibility" aria-pressed="{{ $category->is_active ? 'true' : 'false' }}" aria-label="{{ $category->is_active ? 'Hide' : 'Publish' }} {{ $category->name }}"><x-icon name="eye" /><span>{{ $category->is_active ? 'Visible' : 'Hidden' }}</span></button></form></td>
+        <td data-label="Actions"><div class="management-row-actions">@unless($category->parent_id)<button class="icon-button" data-editor-open="category" data-parent="{{ $category->id }}" aria-label="Add subcategory to {{ $category->name }}" title="Add subcategory"><x-icon name="plus" /></button>@endunless<button class="icon-button" data-category-edit data-url="{{ route('admin.categories.update', $category) }}" data-id="{{ $category->id }}" data-name="{{ $category->name }}" data-parent="{{ $category->parent_id }}" data-icon="{{ $category->icon }}" data-children="{{ $category->children_count }}" data-custom-icon="{{ $category->icon_path ? '1' : '0' }}" data-active="{{ $category->is_active ? '1' : '0' }}" aria-label="Edit {{ $category->name }}" title="Edit category"><x-icon name="edit" /></button><form method="post" action="{{ route('admin.categories.destroy', $category) }}" data-confirm="Delete {{ $category->name }}? Only empty categories can be deleted.">@csrf @method('DELETE')<button class="icon-button" aria-label="Delete {{ $category->name }}" title="Delete category"><x-icon name="trash" /></button></form></div></td>
+    </tr>@empty<tr><td colspan="6"><div class="table-empty"><h3>No categories found</h3><p>Add a category or change your filters.</p></div></td></tr>@endforelse
+    </tbody></table></div>
+</section><x-admin-pagination :items="$categories" />
+<dialog class="admin-editor-dialog" id="category-editor" data-editor="category"><div class="admin-editor-header"><h2 data-editor-title>Add category</h2><button class="icon-button" data-editor-close aria-label="Close category editor"><x-icon name="close" /></button></div><div class="admin-editor-body"><form method="post" action="{{ route('admin.categories.store') }}" data-create-url="{{ route('admin.categories.store') }}" enctype="multipart/form-data" data-category-form data-reopen="{{ $errors->any() && old('_editor_type') === 'category' ? '1' : '0' }}">@csrf<input type="hidden" name="_method" value="PATCH" disabled><input type="hidden" name="_editor_type" value="category"><input type="hidden" name="_editor_mode" value="{{ old('_editor_mode', 'create') }}">@if($errors->any() && old('_editor_type') === 'category')<div class="admin-editor-errors" role="alert">@foreach($errors->all() as $message)<p>{{ $message }}</p>@endforeach</div>@endif<div class="field-grid"><label class="field full-span">Category name<input name="name" value="{{ old('name') }}" required maxlength="100" placeholder="e.g. Electronics"></label><label class="field full-span">Parent category<select name="parent_id"><option value="">None · top-level category</option>@foreach($parents as $parent)<option value="{{ $parent->id }}" @selected((string) old('parent_id') === (string) $parent->id)>{{ $parent->name }}</option>@endforeach</select><small>Select a parent to create a subcategory.</small></label><label class="field">Library icon<select name="icon">@foreach(['grid','headphones','home','bag','sparkles','gamepad','watch','gem'] as $icon)<option value="{{ $icon }}" @selected(old('icon', 'grid') === $icon)>{{ ucfirst($icon) }}</option>@endforeach</select></label><label class="field">Custom SVG (optional)<input type="file" name="icon_file" accept="image/svg+xml,.svg"><small>Up to 128 KB</small></label><label class="checkbox-field" data-remove-icon hidden><input type="checkbox" name="remove_icon" value="1">Use the library icon instead</label><label class="checkbox-field"><input type="hidden" name="is_active" value="0"><input type="checkbox" name="is_active" value="1" @checked(old('is_active', true))>Visible in the store</label></div><button class="button button-dark" data-editor-save>Save category <x-icon name="check" /></button></form></div></dialog>
+@endsection

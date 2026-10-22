@@ -12,6 +12,7 @@
     <section>
         <h2>How we use and share it</h2>
         <p>We use your information to confirm your order, check stock, arrange delivery, provide support, and prevent misuse. Store staff responsible for your order can access it. We share the details needed for delivery with the people handling your delivery. We do not sell your personal information.</p>
+        <p>The store owner can view sales, order, stock, and saved-product totals to understand demand and manage inventory. Saved-product statistics use a random browser identifier held in your existing shopping session, without your name, contact details, or cross-site tracking. Clearing that session starts a new browser count.</p>
         <p>If you choose a WhatsApp ordering or enquiry option, you are taken to WhatsApp with a prepared message. Review the message before sending it. WhatsApp processes information under its own privacy policy. Your order is saved by the store before WhatsApp opens, even if you do not send the message.</p>
     </section>
     <section id="cookies">

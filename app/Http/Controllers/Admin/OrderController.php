@@ -45,4 +45,11 @@ class OrderController extends Controller
 
         return back()->with('success', 'Order updated.');
     }
+
+    public function destroy(Order $order, OrderStatusService $service)
+    {
+        $service->delete($order);
+
+        return redirect()->route('admin.orders.index')->with('success', 'Order deleted from the list. Its history remains in Analytics; unshipped items were returned to stock.');
+    }
 }
